@@ -1,13 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { signOut } from "firebase/auth";
 import { useRouter } from "next/navigation";
 
 import { BRAND_ASSETS } from "@/lib/constants";
-import { listClientStaffBookings, softDeleteClientBooking } from "@/lib/booking/client";
+import { ClientBookingError, listClientStaffBookings, softDeleteClientBooking, staffLogout } from "@/lib/booking/client";
 import type { StaffBookingItem } from "@/lib/booking/types";
-import { getFirebaseClientAuth, isFirebaseClientConfigured } from "@/lib/firebase/client";
 import { useLanguage } from "@/components/providers/language-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 
@@ -15,42 +13,44 @@ export function StaffBookingsPage() {
   const router = useRouter();
   const { dictionary } = useLanguage();
   const [bookings, setBookings] = useState<StaffBookingItem[]>([]);
-  const firebaseConfigured = isFirebaseClientConfigured();
-  const [isLoading, setIsLoading] = useState(firebaseConfigured);
+  const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    if (!firebaseConfigured) {
-      return;
-    }
+    let ignore = false;
 
-    const auth = getFirebaseClientAuth();
-
-    if (!auth) {
-      return;
-    }
-
-    const unsubscribe = auth.onIdTokenChanged(async (user) => {
-      if (!user) {
-        router.replace("/staff/login");
-        return;
-      }
-
+    async function loadBookings() {
       setIsLoading(true);
       setMessage("");
 
       try {
-        setBookings(await listClientStaffBookings());
-      } catch {
-        setBookings([]);
-        setMessage(dictionary.staff.authRequired);
-      } finally {
-        setIsLoading(false);
-      }
-    });
+        const nextBookings = await listClientStaffBookings();
 
-    return () => unsubscribe();
-  }, [dictionary.staff.authRequired, firebaseConfigured, router]);
+        if (!ignore) {
+          setBookings(nextBookings);
+        }
+      } catch (error) {
+        if (!ignore) {
+          setBookings([]);
+          setMessage(dictionary.staff.authRequired);
+
+          if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
+            router.replace("/staff/login");
+          }
+        }
+      } finally {
+        if (!ignore) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadBookings();
+
+    return () => {
+      ignore = true;
+    };
+  }, [dictionary.staff.authRequired, router]);
 
   async function handleDelete(booking: StaffBookingItem) {
     const confirmed = window.confirm(dictionary.staff.deleteConfirm);
@@ -63,20 +63,21 @@ export function StaffBookingsPage() {
       await softDeleteClientBooking(booking);
       setBookings((current) => current.filter((item) => item.bookingId !== booking.bookingId));
       setMessage(dictionary.staff.deleted);
-    } catch {
+    } catch (error) {
+      if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
+        router.replace("/staff/login");
+      }
+
       setMessage(dictionary.staff.authRequired);
     }
   }
 
   async function handleSignOut() {
-    const auth = getFirebaseClientAuth();
-
-    if (!auth) {
-      return;
+    try {
+      await staffLogout();
+    } finally {
+      router.replace("/staff/login");
     }
-
-    await signOut(auth);
-    router.replace("/staff/login");
   }
 
   return (
@@ -91,18 +92,10 @@ export function StaffBookingsPage() {
             <p className="mt-3 max-w-2xl text-sm leading-7 text-white/62">{dictionary.staff.bookingsBody}</p>
           </div>
 
-          {firebaseConfigured ? (
-            <button type="button" onClick={handleSignOut} className="btn-secondary">
-              {dictionary.common.signOut}
-            </button>
-          ) : null}
+          <button type="button" onClick={handleSignOut} className="btn-secondary">
+            {dictionary.common.signOut}
+          </button>
         </div>
-
-        {!firebaseConfigured ? (
-          <div className="rounded-[1rem] border border-amber-500/22 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-            {dictionary.common.configuredRequired}
-          </div>
-        ) : null}
 
         {message ? (
           <div className="rounded-[1rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/72">
@@ -110,7 +103,7 @@ export function StaffBookingsPage() {
           </div>
         ) : null}
 
-        {!firebaseConfigured ? null : isLoading ? (
+        {isLoading ? (
           <div className="premium-card p-6 text-white/62">{dictionary.staff.loading}</div>
         ) : bookings.length === 0 ? (
           <div className="premium-card p-6 text-white/62">{dictionary.staff.empty}</div>

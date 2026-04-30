@@ -3,8 +3,8 @@
 ## Status
 
 - Project: Barber Brothers MVP
-- Date: 2026-04-26
-- Current phase: Specification review
+- Date: 2026-04-30
+- Current phase: Cloudflare migration
 
 ## Checklist
 
@@ -24,10 +24,15 @@
 - [x] Run production build after implementation
 - [x] Create a new Firebase project for this app
 - [x] Prepare Firebase Hosting and Firestore config files
-- [ ] Configure Firebase services and deploy hosting
-- [ ] Initialize git if needed and push to a private repository
+- [x] Initialize git if needed and push to a private repository
 - [x] Refresh the UI with real Barber Brothers brand assets and premium booking UX
 - [x] Simplify the booking UX into barber, date, time, details, confirmation
+- [x] Switch deployment target from Firebase Hosting to Cloudflare Pages
+- [x] Replace Firebase client booking persistence with Cloudflare Pages Functions API
+- [x] Add Cloudflare D1 booking schema and migrations
+- [x] Create Cloudflare D1 database and apply migrations after Wrangler login
+- [x] Set Cloudflare staff login secrets
+- [x] Run Cloudflare Pages local runtime verification with D1
 
 ## Review Notes
 
@@ -78,3 +83,12 @@
 - Local static preview is running on port `3020`; verified `/`, `/booking`, `/staff/login`, and LAN access at `http://192.168.0.109:3020/booking` all return `200`.
 - Production bug fix: captured the real save failure as Firestore `permission-denied`, deployed corrected Firestore rules only, verified a real Firebase booking write succeeds, then deleted the temporary test booking and slot lock.
 - Header cleanup: removed the duplicate desktop `Rezervo` CTA so the top navigation shows the booking action only once.
+- Cloudflare migration started after the user moved hosting to Cloudflare Pages and domain `barberbrothers.style`.
+- Active application code no longer imports Firebase SDK; booking, availability, staff login, staff bookings, and soft delete now call Cloudflare Pages Functions.
+- Added D1 schema in `migrations/0001_initial.sql` with `bookings` and `slot_locks`; `slot_locks.slot_key` is the database-level double-booking guard.
+- Removed active Firebase config/rules/deploy files from the repo.
+- Wrangler login completed for `enis.qetaj@student.uni-pr.edu`.
+- Created Cloudflare D1 database `barber-brothers-db` in EEUR with ID `1fd74c5a-6bf8-4356-aadb-422c716a4186`.
+- Applied remote D1 migration `0001_initial.sql`; verified remote tables `bookings` and `slot_locks` exist.
+- Set Cloudflare Pages production secrets for `STAFF_LOGIN_EMAIL`, `STAFF_SESSION_SECRET`, and `STAFF_LOGIN_PASSWORD`.
+- Local Cloudflare Pages runtime verification passed: booking save, duplicate-slot rejection, staff booking list, soft delete, and slot release.

@@ -1,0 +1,99 @@
+import type { CloudflareEnv } from "./types";
+
+const COOKIE_NAME = "bb_staff_session";
+const SESSION_TTL_SECONDS = 60 * 60 * 8;
+
+function bytesToHex(bytes: Uint8Array) {
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function hexToBytes(value: string) {
+  const pairs = value.match(/.{1,2}/g) ?? [];
+
+  return Uint8Array.from(pairs, (pair) => Number.parseInt(pair, 16));
+}
+
+function encodeText(value: string) {
+  return bytesToHex(new TextEncoder().encode(value));
+}
+
+function decodeText(value: string) {
+  return new TextDecoder().decode(hexToBytes(value));
+}
+
+async function sign(value: string, secret: string) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"],
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value));
+
+  return bytesToHex(new Uint8Array(signature));
+}
+
+function getCookie(request: Request, name: string) {
+  const cookie = request.headers.get("cookie") ?? "";
+  const match = cookie.split(";").map((item) => item.trim()).find((item) => item.startsWith(`${name}=`));
+
+  return match ? decodeURIComponent(match.slice(name.length + 1)) : null;
+}
+
+function getCookieSecurityAttribute(isSecureRequest: boolean) {
+  return isSecureRequest ? " Secure;" : "";
+}
+
+export function getSessionCookieHeader(email: string, secret: string, isSecureRequest: boolean) {
+  const expiresAt = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
+  const payload = encodeText(JSON.stringify({ email, exp: expiresAt }));
+
+  return sign(payload, secret).then((signature) => {
+    return `${COOKIE_NAME}=${encodeURIComponent(`${payload}.${signature}`)}; HttpOnly;${getCookieSecurityAttribute(isSecureRequest)} SameSite=Lax; Path=/; Max-Age=${SESSION_TTL_SECONDS}`;
+  });
+}
+
+export function getClearSessionCookieHeader(isSecureRequest: boolean) {
+  return `${COOKIE_NAME}=; HttpOnly;${getCookieSecurityAttribute(isSecureRequest)} SameSite=Lax; Path=/; Max-Age=0`;
+}
+
+export async function requireStaffSession(request: Request, env: CloudflareEnv) {
+  const secret = env.STAFF_SESSION_SECRET;
+  const configuredEmail = env.STAFF_LOGIN_EMAIL ?? "staff@barberbrothers.com";
+
+  if (!secret) {
+    return null;
+  }
+
+  const cookie = getCookie(request, COOKIE_NAME);
+
+  if (!cookie) {
+    return null;
+  }
+
+  const [payload, signature] = cookie.split(".");
+
+  if (!payload || !signature) {
+    return null;
+  }
+
+  const expectedSignature = await sign(payload, secret);
+
+  if (signature !== expectedSignature) {
+    return null;
+  }
+
+  try {
+    const session = JSON.parse(decodeText(payload)) as { email?: string; exp?: number };
+    const now = Math.floor(Date.now() / 1000);
+
+    if (session.email !== configuredEmail || typeof session.exp !== "number" || session.exp <= now) {
+      return null;
+    }
+
+    return session;
+  } catch {
+    return null;
+  }
+}

@@ -44,9 +44,13 @@ firebase-debug.log
 .next-smoke*
 .chrome-qa-profile*
 .chrome-qa-profile-*
+.wrangler/
+.dev.vars
+.staff-login-secret.txt
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel

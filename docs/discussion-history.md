@@ -251,3 +251,19 @@ To keep Spark/free plan, the app needs to become fully static:
 - Implement staff soft delete as an authenticated client transaction that marks the booking deleted and releases the slot lock.
 
 This preserves a normal responsive browser website and avoids Android/iOS/PWA work, but it requires a targeted architecture change before static Firebase Hosting deployment.
+
+## Session 8 Cloudflare Migration
+
+The user moved hosting direction to Cloudflare Pages with production domain `barberbrothers.style` and requested removing Firebase from the active app. The migration target is Cloudflare Pages, Pages Functions, and D1.
+
+| Topic | Decision | Rationale |
+| --- | --- | --- |
+| Hosting | Cloudflare Pages | User connected the project to GitHub and chose Cloudflare as the live platform |
+| Database | Cloudflare D1 | Keeps booking data on Cloudflare instead of Firebase |
+| Booking API | Cloudflare Pages Functions | Preserves server-side booking logic while keeping the frontend as a static export |
+| Double booking protection | D1 `slot_locks.slot_key` unique key | Enforces slot conflicts at the database layer |
+| Staff auth | HttpOnly signed Cloudflare session cookie | Avoids Firebase Auth and keeps staff pages protected |
+
+### Result
+
+Wrangler login completed for `enis.qetaj@student.uni-pr.edu`. Cloudflare D1 database `barber-brothers-db` was created in EEUR with ID `1fd74c5a-6bf8-4356-aadb-422c716a4186`, migration `0001_initial.sql` was applied, and remote tables `bookings` and `slot_locks` were verified. Cloudflare Pages production secrets were set for staff email, session secret, and staff password. The temporary generated staff password is stored only in the local ignored file `.staff-login-secret.txt`.

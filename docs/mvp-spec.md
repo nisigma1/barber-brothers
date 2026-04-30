@@ -1,5 +1,7 @@
 # Barber Brothers MVP Spec
 
+> Update 2026-04-30: active deployment/backend target changed from Firebase to Cloudflare Pages + Cloudflare Pages Functions + Cloudflare D1. See `docs/cloudflare-migration.md` for the current runtime and database decisions. Earlier Firebase references below are retained as historical spec context.
+
 ## Status
 
 - Draft date: 2026-04-26

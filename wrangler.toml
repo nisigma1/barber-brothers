@@ -3,9 +3,10 @@ compatibility_date = "2026-04-30"
 pages_build_output_dir = "out"
 
 [vars]
-NEXT_PUBLIC_FIREBASE_API_KEY = "AIzaSyBFCFMufU9FHQ0emIA3UaL3UXPynLSGGeY"
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN = "barber-brothers-3786c.firebaseapp.com"
-NEXT_PUBLIC_FIREBASE_PROJECT_ID = "barber-brothers-3786c"
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET = "barber-brothers-3786c.firebasestorage.app"
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID = "490091607279"
-NEXT_PUBLIC_FIREBASE_APP_ID = "1:490091607279:web:32b69e87e6059b7f2f971a"
+STAFF_LOGIN_EMAIL = "staff@barberbrothers.com"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "barber-brothers-db"
+database_id = "1fd74c5a-6bf8-4356-aadb-422c716a4186"
+migrations_dir = "migrations"

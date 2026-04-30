@@ -1,11 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { BRAND_ASSETS } from "@/lib/constants";
-import { getFirebaseClientAuth, isFirebaseClientConfigured } from "@/lib/firebase/client";
+import { ClientBookingError, staffLogin } from "@/lib/booking/client";
 import { useLanguage } from "@/components/providers/language-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 
@@ -17,32 +16,18 @@ export function StaffLoginPage() {
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const auth = getFirebaseClientAuth();
-
-    if (auth?.currentUser) {
-      router.replace("/staff/bookings");
-    }
-  }, [router]);
-
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    const auth = getFirebaseClientAuth();
-
-    if (!auth) {
-      setError(dictionary.common.configuredRequired);
-      return;
-    }
 
     setIsPending(true);
     setError("");
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
+      await staffLogin(email, password);
       router.replace("/staff/bookings");
-    } catch {
-      setError(dictionary.staff.invalidCredentials);
+    } catch (error) {
+      const code = error instanceof ClientBookingError ? error.code : "UNAUTHORIZED";
+      setError(code === "CONFIGURATION_ERROR" ? dictionary.common.configuredRequired : dictionary.staff.invalidCredentials);
       setIsPending(false);
     }
   }
@@ -71,12 +56,6 @@ export function StaffLoginPage() {
       </section>
 
       <section className="premium-card p-5 sm:p-7">
-        {!isFirebaseClientConfigured() ? (
-          <div className="mb-5 rounded-[1rem] border border-amber-500/22 bg-amber-500/10 px-4 py-3 text-sm text-amber-100">
-            {dictionary.common.configuredRequired}
-          </div>
-        ) : null}
-
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="field-label">
             {dictionary.staff.email}

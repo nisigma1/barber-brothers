@@ -7,8 +7,9 @@ Responsive booking website for Barber Brothers in Fushe Kosove.
 - Next.js static export
 - TypeScript
 - Tailwind CSS
-- Firebase Auth + Firestore
 - Cloudflare Pages
+- Cloudflare Pages Functions
+- Cloudflare D1 database
 
 ## Local Development
 
@@ -21,6 +22,12 @@ Open:
 
 ```text
 http://localhost:3000
+```
+
+For the real Cloudflare runtime, including API routes and D1 bindings, use:
+
+```bash
+npm run pages:preview
 ```
 
 ## Quality Checks
@@ -63,10 +70,26 @@ Build output directory:
 out
 ```
 
-The Cloudflare Pages config is in:
+## Cloudflare D1
+
+Create the D1 database after `wrangler login`:
+
+```bash
+npx wrangler d1 create barber-brothers-db
+```
+
+Copy the returned database ID into `wrangler.toml`, then apply migrations:
+
+```bash
+npx wrangler d1 migrations apply barber-brothers-db --remote
+```
+
+Set these Cloudflare Pages environment variables/secrets:
 
 ```text
-wrangler.toml
+STAFF_LOGIN_EMAIL=staff@barberbrothers.com
+STAFF_LOGIN_PASSWORD=<set securely in Cloudflare>
+STAFF_SESSION_SECRET=<long random secret>
 ```
 
 Deploy manually with Wrangler after Cloudflare login:
@@ -74,20 +97,3 @@ Deploy manually with Wrangler after Cloudflare login:
 ```bash
 npm run pages:deploy
 ```
-
-Preview locally with Cloudflare Pages runtime:
-
-```bash
-npm run pages:preview
-```
-
-## Custom Domain
-
-After the first Cloudflare Pages deploy:
-
-1. Open Cloudflare Dashboard.
-2. Go to `Workers & Pages`.
-3. Open the `barber-brothers` Pages project.
-4. Go to `Custom domains`.
-5. Add `barberbrothers.style`.
-6. Follow Cloudflare DNS instructions until the domain is active.
