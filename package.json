@@ -7,7 +7,9 @@
     "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "pages:preview": "npm run build && wrangler pages dev out",
+    "pages:deploy": "npm run build && wrangler pages deploy out --project-name=barber-brothers"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
@@ -26,6 +28,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.87.0"
   }
 }

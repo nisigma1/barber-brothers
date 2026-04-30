@@ -2,13 +2,22 @@ import { getApp, getApps, initializeApp, type FirebaseApp, type FirebaseOptions 
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
+const publicFirebaseFallbackConfig = {
+  apiKey: "AIzaSyBFCFMufU9FHQ0emIA3UaL3UXPynLSGGeY",
+  authDomain: "barber-brothers-3786c.firebaseapp.com",
+  projectId: "barber-brothers-3786c",
+  storageBucket: "barber-brothers-3786c.firebasestorage.app",
+  messagingSenderId: "490091607279",
+  appId: "1:490091607279:web:32b69e87e6059b7f2f971a",
+} satisfies FirebaseOptions;
+
 const firebaseClientConfig: FirebaseOptions = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ?? publicFirebaseFallbackConfig.apiKey,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ?? publicFirebaseFallbackConfig.authDomain,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? publicFirebaseFallbackConfig.projectId,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ?? publicFirebaseFallbackConfig.storageBucket,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ?? publicFirebaseFallbackConfig.messagingSenderId,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ?? publicFirebaseFallbackConfig.appId,
 };
 
 export function isFirebaseClientConfigured() {
