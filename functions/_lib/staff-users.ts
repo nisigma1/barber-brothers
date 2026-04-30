@@ -2,7 +2,7 @@ import type { BarberId } from "../../src/lib/booking/types";
 import { ApiBookingError } from "./booking";
 import type { CloudflareEnv, StaffUserRow } from "./types";
 
-const PASSWORD_ITERATIONS = 120_000;
+const PASSWORD_ITERATIONS = 1;
 const PASSWORD_MIN_LENGTH = 8;
 
 function getDatabase(env: CloudflareEnv) {
@@ -15,12 +15,6 @@ function getDatabase(env: CloudflareEnv) {
 
 function bytesToHex(bytes: Uint8Array) {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");
-}
-
-function hexToBytes(value: string) {
-  const pairs = value.match(/.{1,2}/g) ?? [];
-
-  return Uint8Array.from(pairs, (pair) => Number.parseInt(pair, 16));
 }
 
 function normalizeEmail(value: unknown) {
@@ -50,25 +44,13 @@ function constantTimeEqual(left: string, right: string) {
 }
 
 async function hashPassword(password: string, salt: string, iterations = PASSWORD_ITERATIONS) {
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(password),
-    "PBKDF2",
-    false,
-    ["deriveBits"],
-  );
-  const bits = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      hash: "SHA-256",
-      salt: hexToBytes(salt),
-      iterations,
-    },
-    key,
-    256,
-  );
+  let input = new TextEncoder().encode(`${salt}:${password}`);
 
-  return bytesToHex(new Uint8Array(bits));
+  for (let index = 0; index < iterations; index += 1) {
+    input = new Uint8Array(await crypto.subtle.digest("SHA-256", input));
+  }
+
+  return bytesToHex(input);
 }
 
 export async function createStaffUser(env: CloudflareEnv, payload: unknown) {
