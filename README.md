@@ -87,10 +87,11 @@ npx wrangler d1 migrations apply barber-brothers-db --remote
 Set these Cloudflare Pages environment variables/secrets:
 
 ```text
-STAFF_LOGIN_EMAIL=staff@barberbrothers.com
-STAFF_LOGIN_PASSWORD=<set securely in Cloudflare>
 STAFF_SESSION_SECRET=<long random secret>
+STAFF_SIGNUP_CODE=<private code used only for staff account creation>
 ```
+
+Staff members create their own account at `/staff/signup` using the private signup code, then sign in at `/staff/login` with their personal email and password.
 
 Deploy manually with Wrangler after Cloudflare login:
 

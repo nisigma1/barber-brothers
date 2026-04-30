@@ -19,16 +19,18 @@ Barber Brothers is now targeted for Cloudflare Pages with Cloudflare Pages Funct
 
 - `bookings`: stores confirmed and soft-deleted bookings.
 - `slot_locks`: stores active slot locks. `slot_key` is unique and prevents double booking for the same barber/date/time.
+- `staff_users`: stores D1-backed staff accounts for personal email login.
 
 ## Staff Access
 
-Staff login is handled by a Cloudflare Pages Function using an HttpOnly signed session cookie.
+Staff login is handled by a Cloudflare Pages Function using D1-backed staff users and an HttpOnly signed session cookie.
 
 Required Cloudflare variables/secrets:
 
-- `STAFF_LOGIN_EMAIL`
-- `STAFF_LOGIN_PASSWORD`
 - `STAFF_SESSION_SECRET`
+- `STAFF_SIGNUP_CODE`
+
+Staff accounts are created through `/staff/signup` using the private signup code, then staff can login with personal emails at `/staff/login`.
 
 ## Cloudflare Setup
 

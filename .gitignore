@@ -47,6 +47,8 @@ firebase-debug.log
 .wrangler/
 .dev.vars
 .staff-login-secret.txt
+.staff-signup-code.txt
+.staff-session-secret.txt
 
 # env files (can opt-in for committing if needed)
 .env*

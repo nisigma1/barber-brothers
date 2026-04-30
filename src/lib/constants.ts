@@ -23,13 +23,13 @@ export const BRAND_ASSETS = {
 export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image: string }> = [
   {
     id: "barber-1",
-    name: "Barber 1",
+    name: "Uraniku",
     tagline: "Clean fades and precise finish",
     image: "/brand/gallery-2.jpg",
   },
   {
     id: "barber-2",
-    name: "Barber 2",
+    name: "Hysi",
     tagline: "Sharp texture and modern detail",
     image: "/brand/gallery-3.jpg",
   },

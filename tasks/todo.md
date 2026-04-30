@@ -33,6 +33,7 @@
 - [x] Create Cloudflare D1 database and apply migrations after Wrangler login
 - [x] Set Cloudflare staff login secrets
 - [x] Run Cloudflare Pages local runtime verification with D1
+- [x] Add D1 staff user accounts with protected signup and personal email login
 
 ## Review Notes
 
@@ -92,3 +93,5 @@
 - Applied remote D1 migration `0001_initial.sql`; verified remote tables `bookings` and `slot_locks` exist.
 - Set Cloudflare Pages production secrets for `STAFF_LOGIN_EMAIL`, `STAFF_SESSION_SECRET`, and `STAFF_LOGIN_PASSWORD`.
 - Local Cloudflare Pages runtime verification passed: booking save, duplicate-slot rejection, staff booking list, soft delete, and slot release.
+- Staff auth now uses D1 `staff_users` accounts. `/staff/signup` requires the private `STAFF_SIGNUP_CODE`; `/staff/login` accepts each staff member's personal email and password.
+- Active barbers were renamed from placeholders to `Uraniku` and `Hysi`.

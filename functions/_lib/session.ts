@@ -45,9 +45,9 @@ function getCookieSecurityAttribute(isSecureRequest: boolean) {
   return isSecureRequest ? " Secure;" : "";
 }
 
-export function getSessionCookieHeader(email: string, secret: string, isSecureRequest: boolean) {
+export function getSessionCookieHeader(session: { email: string; displayName: string; role: string }, secret: string, isSecureRequest: boolean) {
   const expiresAt = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
-  const payload = encodeText(JSON.stringify({ email, exp: expiresAt }));
+  const payload = encodeText(JSON.stringify({ ...session, exp: expiresAt }));
 
   return sign(payload, secret).then((signature) => {
     return `${COOKIE_NAME}=${encodeURIComponent(`${payload}.${signature}`)}; HttpOnly;${getCookieSecurityAttribute(isSecureRequest)} SameSite=Lax; Path=/; Max-Age=${SESSION_TTL_SECONDS}`;
@@ -60,7 +60,6 @@ export function getClearSessionCookieHeader(isSecureRequest: boolean) {
 
 export async function requireStaffSession(request: Request, env: CloudflareEnv) {
   const secret = env.STAFF_SESSION_SECRET;
-  const configuredEmail = env.STAFF_LOGIN_EMAIL ?? "staff@barberbrothers.com";
 
   if (!secret) {
     return null;
@@ -88,7 +87,7 @@ export async function requireStaffSession(request: Request, env: CloudflareEnv) 
     const session = JSON.parse(decodeText(payload)) as { email?: string; exp?: number };
     const now = Math.floor(Date.now() / 1000);
 
-    if (session.email !== configuredEmail || typeof session.exp !== "number" || session.exp <= now) {
+    if (!session.email || typeof session.exp !== "number" || session.exp <= now) {
       return null;
     }
 

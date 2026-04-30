@@ -1,3 +1,2 @@
-STAFF_LOGIN_EMAIL=staff@barberbrothers.com
-STAFF_LOGIN_PASSWORD=change-this-locally
 STAFF_SESSION_SECRET=change-this-to-a-long-random-secret
+STAFF_SIGNUP_CODE=change-this-private-setup-code

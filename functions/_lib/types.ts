@@ -2,9 +2,8 @@ import type { D1Database } from "@cloudflare/workers-types";
 
 export type CloudflareEnv = {
   DB: D1Database;
-  STAFF_LOGIN_EMAIL?: string;
-  STAFF_LOGIN_PASSWORD?: string;
   STAFF_SESSION_SECRET?: string;
+  STAFF_SIGNUP_CODE?: string;
 };
 
 export type BookingRow = {
@@ -29,4 +28,17 @@ export type BookingRow = {
   status: "confirmed" | "deleted";
   created_at: string;
   deleted_at: string | null;
+};
+
+export type StaffUserRow = {
+  email: string;
+  display_name: string;
+  barber_id: "barber-1" | "barber-2" | null;
+  password_hash: string;
+  password_salt: string;
+  iterations: number;
+  role: "staff" | "admin";
+  status: "active" | "disabled";
+  created_at: string;
+  updated_at: string;
 };

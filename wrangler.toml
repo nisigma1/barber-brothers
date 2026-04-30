@@ -2,9 +2,6 @@ name = "barber-brothers"
 compatibility_date = "2026-04-30"
 pages_build_output_dir = "out"
 
-[vars]
-STAFF_LOGIN_EMAIL = "staff@barberbrothers.com"
-
 [[d1_databases]]
 binding = "DB"
 database_name = "barber-brothers-db"

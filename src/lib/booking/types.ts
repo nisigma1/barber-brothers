@@ -14,7 +14,8 @@ export type ApiErrorCode =
   | "BOOKING_CUTOFF"
   | "SLOT_TAKEN"
   | "UNAUTHORIZED"
-  | "NOT_FOUND";
+  | "NOT_FOUND"
+  | "EMAIL_EXISTS";
 
 export interface AvailabilitySlot {
   key: string;

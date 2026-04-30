@@ -267,3 +267,7 @@ The user moved hosting direction to Cloudflare Pages with production domain `bar
 ### Result
 
 Wrangler login completed for `enis.qetaj@student.uni-pr.edu`. Cloudflare D1 database `barber-brothers-db` was created in EEUR with ID `1fd74c5a-6bf8-4356-aadb-422c716a4186`, migration `0001_initial.sql` was applied, and remote tables `bookings` and `slot_locks` were verified. Cloudflare Pages production secrets were set for staff email, session secret, and staff password. The temporary generated staff password is stored only in the local ignored file `.staff-login-secret.txt`.
+
+### Staff Account Update
+
+The user requested staff access through personal emails instead of a shared account because more barbers may be added later. Staff authentication was moved to D1-backed accounts in `staff_users`. Signup is available at `/staff/signup` and requires the private `STAFF_SIGNUP_CODE`; login is available at `/staff/login`. Current barber labels were changed to `Uraniku` and `Hysi`.

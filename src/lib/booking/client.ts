@@ -72,6 +72,19 @@ export async function staffLogin(email: string, password: string) {
   });
 }
 
+export async function staffSignup(payload: {
+  email: string;
+  password: string;
+  displayName: string;
+  barberId: PublicBookingPayload["barberId"] | "";
+  signupCode: string;
+}) {
+  await fetchJson<{ ok: true }>("/api/staff/signup", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export async function staffLogout() {
   await fetchJson<{ ok: true }>("/api/staff/logout", {
     method: "POST",

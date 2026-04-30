@@ -11,6 +11,7 @@ import { BrandImage } from "@/components/ui/brand-image";
 const navItems = [
   { href: "/", key: "home" as const },
   { href: "/booking", key: "booking" as const },
+  { href: "/staff/login", key: "staff" as const },
 ];
 
 export function SiteHeader() {

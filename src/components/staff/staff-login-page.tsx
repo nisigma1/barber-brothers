@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -89,6 +90,10 @@ export function StaffLoginPage() {
           <button type="submit" disabled={isPending} className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-45">
             {isPending ? dictionary.staff.pending : dictionary.staff.submit}
           </button>
+
+          <Link href="/staff/signup" className="btn-secondary w-full">
+            {dictionary.staff.signupLink}
+          </Link>
         </form>
       </section>
     </div>
