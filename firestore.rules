@@ -1,0 +1,126 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isStaff() {
+      return request.auth != null
+        && request.auth.token.email == "staff@barberbrothers.com";
+    }
+
+    function isBarberId(value) {
+      return value in ["barber-1", "barber-2"];
+    }
+
+    function isDate(value) {
+      return value is string && value.matches("^\\d{4}-\\d{2}-\\d{2}$");
+    }
+
+    function isTime(value) {
+      return value is string && value.matches("^\\d{2}:\\d{2}$");
+    }
+
+    function isKosovoPhone(value) {
+      return value is string && value.matches("^\\+383\\d{8}$");
+    }
+
+    function validBookingCreate(bookingId) {
+      return request.resource.data.keys().hasOnly([
+          "bookingId",
+          "submissionId",
+          "slotKey",
+          "barberId",
+          "barberName",
+          "serviceName",
+          "serviceDurationMinutes",
+          "servicePrice",
+          "currency",
+          "localDate",
+          "localTime",
+          "endLocalTime",
+          "startUtc",
+          "endUtc",
+          "customerFirstName",
+          "customerLastName",
+          "customerPhone",
+          "timezone",
+          "status",
+          "createdAt",
+          "deletedAt"
+        ])
+        && request.resource.data.bookingId == bookingId
+        && request.resource.data.submissionId == bookingId
+        && request.resource.data.status == "confirmed"
+        && request.resource.data.deletedAt == null
+        && request.resource.data.serviceName == "Haircut"
+        && request.resource.data.serviceDurationMinutes == 40
+        && request.resource.data.servicePrice == 5
+        && request.resource.data.currency == "EUR"
+        && request.resource.data.timezone == "Europe/Pristina"
+        && isBarberId(request.resource.data.barberId)
+        && isDate(request.resource.data.localDate)
+        && isTime(request.resource.data.localTime)
+        && isTime(request.resource.data.endLocalTime)
+        && isKosovoPhone(request.resource.data.customerPhone)
+        && request.resource.data.customerFirstName is string
+        && request.resource.data.customerFirstName.size() >= 2
+        && request.resource.data.customerFirstName.size() <= 60
+        && request.resource.data.customerLastName is string
+        && request.resource.data.customerLastName.size() >= 2
+        && request.resource.data.customerLastName.size() <= 60;
+    }
+
+    function validSlotLock(lockId) {
+      return request.resource.data.keys().hasOnly([
+          "slotKey",
+          "barberId",
+          "localDate",
+          "localTime",
+          "bookingId",
+          "status",
+          "startUtc",
+          "endUtc",
+          "createdAt",
+          "releasedAt"
+        ])
+        && request.resource.data.slotKey == lockId
+        && request.resource.data.status == "active"
+        && request.resource.data.releasedAt == null
+        && isBarberId(request.resource.data.barberId)
+        && isDate(request.resource.data.localDate)
+        && isTime(request.resource.data.localTime);
+    }
+
+    match /bookings/{bookingId} {
+      allow read: if isStaff();
+      allow create: if validBookingCreate(bookingId)
+        && existsAfter(/databases/$(database)/documents/slotLocks/$(request.resource.data.slotKey));
+      allow update: if isStaff()
+        && resource.data.status == "confirmed"
+        && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status", "deletedAt"])
+        && request.resource.data.status == "deleted";
+      allow delete: if false;
+    }
+
+    match /slotLocks/{slotKey} {
+      allow read: if true;
+      allow create: if validSlotLock(slotKey)
+        && existsAfter(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId));
+      allow update: if (
+          !isStaff()
+          && resource.data.status == "released"
+          && validSlotLock(slotKey)
+          && existsAfter(/databases/$(database)/documents/bookings/$(request.resource.data.bookingId))
+        ) || (
+          isStaff()
+          && resource.data.status == "active"
+          && request.resource.data.diff(resource.data).changedKeys().hasOnly(["status", "releasedAt"])
+          && request.resource.data.status == "released"
+        );
+      allow delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

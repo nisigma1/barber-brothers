@@ -1,0 +1,485 @@
+"use client";
+
+import { useEffect, useId, useState } from "react";
+
+import { BARBERS, SERVICE } from "@/lib/constants";
+import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
+import {
+  formatConfirmationDate,
+  getAvailabilitySlots,
+  getBookableDateOptions,
+  getFirstOpenBookableDate,
+  isShopClosedOnDate,
+} from "@/lib/booking/time";
+import type { ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary } from "@/lib/booking/types";
+import { normalizeKosovoPhone } from "@/lib/booking/validation";
+import { useLanguage } from "@/components/providers/language-provider";
+import { BrandImage } from "@/components/ui/brand-image";
+
+const LAST_BOOKING_KEY = "barber-brothers-last-booking";
+
+function getErrorMessage(code: ApiErrorCode, dictionary: ReturnType<typeof useLanguage>["dictionary"]) {
+  return dictionary.booking.errors[code];
+}
+
+function fieldIsTouched(value: string) {
+  return value.trim().length > 0;
+}
+
+function getSubmitErrorCode(error: unknown): ApiErrorCode {
+  if (error instanceof ClientBookingError) {
+    return error.code;
+  }
+
+  return "BOOKING_SAVE_FAILED";
+}
+
+export function BookingForm() {
+  const formId = useId();
+  const { dictionary, language } = useLanguage();
+  const [barberId, setBarberId] = useState<BarberId | null>(null);
+  const [localDate, setLocalDate] = useState(getFirstOpenBookableDate);
+  const [selectedSlot, setSelectedSlot] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [website, setWebsite] = useState("");
+  const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
+  const [availabilityState, setAvailabilityState] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [formErrorCode, setFormErrorCode] = useState<ApiErrorCode | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [successBooking, setSuccessBooking] = useState<BookingSummary | null>(null);
+
+  const dateOptions = getBookableDateOptions(language);
+  const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
+  const selectedDate = dateOptions.find((date) => date.localDate === localDate);
+  const selectedSlotObject = slots.find((slot) => slot.localTime === selectedSlot && slot.available);
+  const isClosedDay = isShopClosedOnDate(localDate);
+  const normalizedPhone = normalizeKosovoPhone(phoneNumber);
+  const phoneIsValid = normalizedPhone !== null;
+  const firstNameValid = firstName.trim().length >= 2;
+  const lastNameValid = lastName.trim().length >= 2;
+  const detailsValid = firstNameValid && lastNameValid && phoneIsValid;
+  const hasCompleteSelection = Boolean(selectedBarber && selectedDate && selectedSlotObject);
+  const canConfirm = hasCompleteSelection && detailsValid && !isSubmitting;
+  const availableSlotCount = slots.filter((slot) => slot.available).length;
+  const summaryItems = hasCompleteSelection && detailsValid
+    ? [
+        [dictionary.booking.summaryService, dictionary.booking.fixedService],
+        [dictionary.booking.summaryBarber, selectedBarber?.name],
+        [dictionary.booking.summaryDate, selectedDate?.label],
+        [dictionary.booking.summaryTime, selectedSlotObject?.label],
+        [dictionary.booking.summaryPhone, normalizedPhone],
+        [dictionary.booking.summaryPrice, `${SERVICE.price} ${SERVICE.currency}`],
+      ]
+    : [];
+
+  useEffect(() => {
+    if (!barberId || isClosedDay) {
+      return;
+    }
+
+    let ignore = false;
+    const currentBarberId = barberId;
+
+    async function loadAvailability() {
+      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set());
+
+      setSlots(fallbackSlots);
+      setAvailabilityState("loading");
+      setFormErrorCode(null);
+      setSelectedSlot("");
+
+      try {
+        const nextSlots = await getClientAvailability(currentBarberId, localDate);
+
+        if (ignore) {
+          return;
+        }
+
+        setSlots(nextSlots);
+        setAvailabilityState("ready");
+      } catch {
+        if (ignore) {
+          return;
+        }
+
+        setSlots(fallbackSlots);
+        setAvailabilityState("ready");
+      }
+    }
+
+    void loadAvailability();
+
+    return () => {
+      ignore = true;
+    };
+  }, [barberId, isClosedDay, localDate]);
+
+  function validateDetails() {
+    const nextErrors: Record<string, string> = {};
+
+    if (!firstNameValid) {
+      nextErrors.firstName = dictionary.booking.validationFirstName;
+    }
+
+    if (!lastNameValid) {
+      nextErrors.lastName = dictionary.booking.validationLastName;
+    }
+
+    if (!phoneIsValid) {
+      nextErrors.phoneNumber = dictionary.booking.validationPhone;
+    }
+
+    setFieldErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    if (isSubmitting) {
+      return;
+    }
+
+    if (!barberId || !selectedSlotObject) {
+      setFormErrorCode("INVALID_SLOT");
+      return;
+    }
+
+    if (!validateDetails()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setFormErrorCode(null);
+
+    try {
+      const booking = await createClientBooking({
+        submissionId: crypto.randomUUID(),
+        barberId,
+        localDate,
+        localTime: selectedSlotObject.localTime,
+        firstName,
+        lastName,
+        phoneNumber,
+        website,
+      });
+
+      window.localStorage.setItem(LAST_BOOKING_KEY, JSON.stringify(booking));
+      setSuccessBooking(booking);
+    } catch (error) {
+      setFormErrorCode(getSubmitErrorCode(error));
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  function resetForm() {
+    setBarberId(null);
+    setLocalDate(getFirstOpenBookableDate());
+    setSelectedSlot("");
+    setFirstName("");
+    setLastName("");
+    setPhoneNumber("");
+    setWebsite("");
+    setSlots([]);
+    setFormErrorCode(null);
+    setFieldErrors({});
+    setSuccessBooking(null);
+  }
+
+  if (successBooking) {
+    return (
+      <section className="premium-card p-5 sm:p-7" aria-live="polite">
+        <div className="rounded-[1.25rem] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/12 p-5">
+          <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.successTitle}</p>
+          <h2 className="mt-3 font-display text-4xl uppercase leading-none tracking-[0.08em] text-white sm:text-5xl">
+            {dictionary.booking.confirmationTitle}
+          </h2>
+          <p className="mt-4 text-sm leading-7 text-white/70">{dictionary.booking.successBody}</p>
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          {[
+            [dictionary.booking.summaryService, dictionary.booking.fixedService],
+            [dictionary.booking.summaryBarber, successBooking.barberName],
+            [dictionary.booking.summaryDate, formatConfirmationDate(successBooking.localDate, language)],
+            [dictionary.booking.summaryTime, `${successBooking.localTime} - ${successBooking.endLocalTime}`],
+            [dictionary.booking.summaryPhone, successBooking.customerPhone],
+            [dictionary.booking.summaryPrice, successBooking.priceLabel],
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-[1rem] border border-white/10 bg-black/25 p-4">
+              <p className="text-xs uppercase tracking-[0.18em] text-white/42">{label}</p>
+              <p className="mt-2 text-base font-semibold text-white">{value}</p>
+            </div>
+          ))}
+        </div>
+
+        <button type="button" onClick={resetForm} className="btn-primary mt-6 w-full">
+          {dictionary.booking.bookAnother}
+        </button>
+      </section>
+    );
+  }
+
+  return (
+    <form onSubmit={handleSubmit} noValidate className="premium-card p-4 sm:p-6">
+      <div className="space-y-6">
+        <section className="space-y-3">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.stepBarber}</p>
+              <h2 className="mt-1 text-2xl font-semibold text-white">{dictionary.booking.barberLabel}</h2>
+            </div>
+            {!barberId ? <p className="text-xs font-semibold text-[var(--color-accent)]">{dictionary.booking.required}</p> : null}
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            {BARBERS.map((barber) => {
+              const active = barber.id === barberId;
+
+              return (
+                <button
+                  key={barber.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => {
+                    if (active) {
+                      return;
+                    }
+
+                    setBarberId(barber.id);
+                    setSelectedSlot("");
+                    setSlots([]);
+                    setAvailabilityState("idle");
+                  }}
+                  className={`tap-card min-h-24 overflow-hidden p-0 text-left ${active ? "selected-card" : ""}`}
+                >
+                  <div className="grid h-full gap-0 sm:grid-cols-[7rem_1fr]">
+                    <div className="image-panel min-h-28 rounded-none border-0">
+                      <BrandImage
+                        src={barber.image}
+                        alt={barber.name}
+                        className="h-full w-full"
+                        imgClassName="image-fill"
+                        fallbackLabel="BB"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <span className="eyebrow text-white/42">{dictionary.booking.barberCardLabel}</span>
+                      <span className="mt-2 block font-display text-4xl uppercase tracking-[0.06em] text-white">
+                        {barber.name}
+                      </span>
+                      <span className="mt-3 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/62">
+                        {active ? dictionary.booking.selected : dictionary.booking.tapToChoose}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <div>
+            <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.stepDate}</p>
+            <h2 className="mt-1 text-2xl font-semibold text-white">{dictionary.booking.dateLabel}</h2>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {dateOptions.map((dateOption) => {
+              const active = dateOption.localDate === localDate;
+
+              return (
+                <button
+                  key={dateOption.localDate}
+                  type="button"
+                  aria-pressed={active}
+                  disabled={dateOption.closed}
+                  onClick={() => {
+                    if (active || dateOption.closed) {
+                      return;
+                    }
+
+                    setLocalDate(dateOption.localDate);
+                    setSelectedSlot("");
+                    setSlots([]);
+                    setAvailabilityState("idle");
+                  }}
+                  className={`tap-card text-left disabled:cursor-not-allowed disabled:opacity-45 ${active ? "selected-card" : ""}`}
+                >
+                  <span className="block text-sm font-semibold text-white">{dateOption.label}</span>
+                  <span className="mt-1 block text-xs uppercase tracking-[0.16em] text-white/45">
+                    {dateOption.closed ? dictionary.booking.closedDay : dictionary.common.open}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.stepTime}</p>
+              <h2 className="mt-1 text-2xl font-semibold text-white">{dictionary.booking.slotLabel}</h2>
+            </div>
+            {barberId && availabilityState === "ready" ? (
+              <p className="text-sm font-semibold text-white/58">
+                {availableSlotCount} {dictionary.booking.availableTimes}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="rounded-[1.1rem] border border-white/10 bg-black/24 p-4">
+            {availabilityState === "loading" && slots.length === 0 ? (
+              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                {Array.from({ length: 12 }, (_, index) => (
+                  <div key={index} className="h-14 animate-pulse rounded-[0.9rem] bg-white/8" />
+                ))}
+              </div>
+            ) : isClosedDay ? (
+              <p className="rounded-[0.9rem] bg-white/5 p-4 text-sm text-white/65">{dictionary.booking.closedDay}</p>
+            ) : !barberId ? (
+              <p className="rounded-[0.9rem] bg-white/5 p-4 text-sm text-white/65">{dictionary.booking.chooseBarberFirst}</p>
+            ) : slots.length === 0 ? (
+              <p className="rounded-[0.9rem] bg-white/5 p-4 text-sm text-white/65">
+                {availabilityState === "error" ? dictionary.booking.availabilityError : dictionary.booking.noSlots}
+              </p>
+            ) : (
+              <div className="space-y-3">
+                <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 lg:grid-cols-5">
+                  {slots.map((slot) => {
+                    const active = selectedSlot === slot.localTime;
+
+                    return (
+                      <button
+                        key={slot.key}
+                        type="button"
+                        aria-pressed={active}
+                        disabled={!slot.available}
+                        onClick={() => setSelectedSlot(slot.localTime)}
+                        className={`slot-button text-center ${active ? "slot-button-active text-white" : "text-white/78"}`}
+                      >
+                        <span className="block text-base font-bold">{slot.localTime}</span>
+                        <span className="mt-1 block text-[0.66rem] uppercase tracking-[0.12em] text-white/45">
+                          {slot.available ? dictionary.booking.availableSlot : dictionary.common.unavailable}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {availableSlotCount === 0 ? (
+                  <p className="rounded-[0.9rem] border border-white/10 bg-white/[0.04] p-3 text-sm text-white/64">
+                    {dictionary.booking.noSlots}
+                  </p>
+                ) : null}
+              </div>
+            )}
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <div>
+            <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.stepDetails}</p>
+            <h2 className="mt-1 text-2xl font-semibold text-white">{dictionary.booking.detailsLabel}</h2>
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <label className="field-label" htmlFor={`${formId}-first-name`}>
+              {dictionary.booking.firstName}
+              <input
+                id={`${formId}-first-name`}
+                value={firstName}
+                onChange={(event) => setFirstName(event.target.value)}
+                autoComplete="given-name"
+                placeholder="Arben"
+                className="field-input"
+                aria-invalid={Boolean(fieldErrors.firstName)}
+              />
+              {fieldErrors.firstName || (fieldIsTouched(firstName) && !firstNameValid) ? (
+                <span className="field-error">{fieldErrors.firstName || dictionary.booking.validationFirstName}</span>
+              ) : null}
+            </label>
+            <label className="field-label" htmlFor={`${formId}-last-name`}>
+              {dictionary.booking.lastName}
+              <input
+                id={`${formId}-last-name`}
+                value={lastName}
+                onChange={(event) => setLastName(event.target.value)}
+                autoComplete="family-name"
+                placeholder="Krasniqi"
+                className="field-input"
+                aria-invalid={Boolean(fieldErrors.lastName)}
+              />
+              {fieldErrors.lastName || (fieldIsTouched(lastName) && !lastNameValid) ? (
+                <span className="field-error">{fieldErrors.lastName || dictionary.booking.validationLastName}</span>
+              ) : null}
+            </label>
+            <label className="field-label sm:col-span-2" htmlFor={`${formId}-phone`}>
+              {dictionary.booking.phoneNumber}
+              <input
+                id={`${formId}-phone`}
+                value={phoneNumber}
+                onChange={(event) => setPhoneNumber(event.target.value)}
+                inputMode="tel"
+                autoComplete="tel"
+                placeholder="+38345990079"
+                className="field-input"
+                aria-invalid={Boolean(fieldErrors.phoneNumber)}
+              />
+              <span className="text-xs text-white/45">{dictionary.booking.phoneHint}</span>
+              {fieldErrors.phoneNumber || (fieldIsTouched(phoneNumber) && !phoneIsValid) ? (
+                <span className="field-error">{fieldErrors.phoneNumber || dictionary.booking.validationPhone}</span>
+              ) : null}
+            </label>
+            <input
+              type="text"
+              name="bb-company-url"
+              value={website}
+              onChange={(event) => setWebsite(event.target.value)}
+              className="hidden"
+              tabIndex={-1}
+              autoComplete="new-password"
+              aria-hidden="true"
+            />
+          </div>
+        </section>
+
+        <section className="rounded-[1.1rem] border border-white/10 bg-white/[0.035] p-4">
+          <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.stepConfirm}</p>
+          {hasCompleteSelection && detailsValid ? (
+            <>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                {summaryItems.map(([label, value]) => (
+                  <div key={label}>
+                    <p className="text-xs uppercase tracking-[0.16em] text-white/40">{label}</p>
+                    <p className="mt-1 font-semibold text-white">{value}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-4 text-sm leading-7 text-white/58">{dictionary.booking.trustNote}</p>
+            </>
+          ) : hasCompleteSelection ? (
+            <p className="mt-3 text-sm leading-7 text-white/64">{dictionary.booking.summaryNeedsDetails}</p>
+          ) : (
+            <p className="mt-3 text-sm leading-7 text-white/64">{dictionary.booking.summaryIncomplete}</p>
+          )}
+        </section>
+
+        {formErrorCode ? (
+          <div className="rounded-[1rem] border border-rose-500/25 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+            {getErrorMessage(formErrorCode, dictionary)}
+          </div>
+        ) : null}
+
+        <button type="submit" disabled={!canConfirm} className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-45">
+          {isSubmitting ? dictionary.booking.pending : dictionary.booking.submit}
+        </button>
+      </div>
+    </form>
+  );
+}
