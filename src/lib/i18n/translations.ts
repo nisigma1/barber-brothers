@@ -39,7 +39,7 @@ export const translations = {
       serviceTitle: "Sherbimi",
       barbersEyebrow: "Dy berbere",
       mapsCta: "Hap Google Maps",
-      heroHeadline: "SHERBIM PREMIUM\nPA PRITJE",
+      heroHeadline: "PREMIUM SERVICE\nNO WAITING",
       heroSubheadline: "Rezervim i thjeshte per klientet qe duan saktesi.",
       galleryTitle: "Puna jone",
       galleryBody: "Prerje reale nga Barber Brothers.",

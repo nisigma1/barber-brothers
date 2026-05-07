@@ -110,3 +110,4 @@
 - Tightened booking input validation for customer names and added a client-side submit lock against rapid double-clicks.
 - Overrode vulnerable transitive `postcss` to `8.5.12`; `npm audit --audit-level=moderate` now reports zero vulnerabilities.
 - Disabled unnecessary Next.js link prefetching on primary navigation/CTA links to reduce background fetches and keep pages feeling faster.
+- Corrected the English hero headline so Albanian mode shows `SHERBIM PREMIUM / PA PRITJE` and English mode shows `PREMIUM SERVICE / NO WAITING`.
