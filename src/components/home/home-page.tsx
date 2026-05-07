@@ -73,7 +73,10 @@ export function HomePage() {
               {[
                 ["Online", dictionary.home.fastBooking],
                 ["2", dictionary.home.barbersEyebrow],
-                [hourLabel(WORKING_HOURS.openMinutes), dictionary.home.openingTime],
+                [
+                  `${hourLabel(WORKING_HOURS.openMinutes)}-${hourLabel(WORKING_HOURS.closeMinutes)}`,
+                  dictionary.home.hoursTitle,
+                ],
               ].map(([value, label]) => (
                 <div key={label} className="rounded-2xl border border-white/10 bg-black/52 p-4">
                   <p className="font-display text-3xl leading-none text-white sm:text-4xl">{value}</p>

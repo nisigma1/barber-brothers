@@ -193,6 +193,23 @@ input:focus-visible {
   background: rgba(0, 0, 0, 0.38);
 }
 
+select.field-input {
+  color-scheme: dark;
+  background-color: #080705;
+  color: #f7efe2;
+}
+
+select.field-input option {
+  background-color: #080705;
+  color: #f7efe2;
+}
+
+select.field-input option:checked,
+select.field-input option:hover {
+  background-color: #2a2116;
+  color: #f7efe2;
+}
+
 .field-error {
   color: #fecdd3;
   font-size: 0.78rem;

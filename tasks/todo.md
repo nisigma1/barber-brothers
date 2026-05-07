@@ -102,3 +102,5 @@
 - Removed the hero background photo/watermark layer, changed the Albanian headline to `PRERJE PREMIUM PA PRITJE`, and kept lunch-break validation enforced in UI and API.
 - Updated working hours to `09:30-20:30`, hid staff navigation from the public header/mobile nav, added direct `/staff` routing, and reduced image weight for faster pages.
 - Replaced staff email/password signup with simple barber profile + private PIN access: Uraniku `1313`, Hysi `1212`.
+- Fixed staff profile dropdown contrast so barber names stay readable in the native select menu.
+- Updated the homepage stat from opening-only copy to the full working-hours label `09:30-20:30`.

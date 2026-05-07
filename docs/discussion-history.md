@@ -326,3 +326,7 @@ The user requested removing account creation/login complexity from the staff acc
 | Signup route | Redirect `/staff/signup` to `/staff/login` | Removes account creation from the product flow |
 | Staff filtering | Show each barber only their own bookings | Profile-based PIN access should not expose another barber's schedule |
 | Session | Keep HttpOnly staff session cookie | Avoids asking for the PIN on every staff action |
+
+## Session 13 Staff Select Contrast And Hours Stat
+
+The user reported that the staff barber dropdown was hard to read because the native menu background appeared light while option labels stayed white. The staff select now forces a dark color scheme and dark option backgrounds. The homepage hero stat was also changed from showing only the opening time to showing the full working schedule `09:30-20:30`.
