@@ -109,3 +109,4 @@
 - Moved staff PIN values to Cloudflare Pages secrets instead of keeping active PINs in application code.
 - Tightened booking input validation for customer names and added a client-side submit lock against rapid double-clicks.
 - Overrode vulnerable transitive `postcss` to `8.5.12`; `npm audit --audit-level=moderate` now reports zero vulnerabilities.
+- Disabled unnecessary Next.js link prefetching on primary navigation/CTA links to reduce background fetches and keep pages feeling faster.

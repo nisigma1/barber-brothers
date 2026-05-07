@@ -69,7 +69,7 @@ export function BookingPage() {
               <a className="tap-card" href={CONTACT_DETAILS.mapsHref} target="_blank" rel="noopener noreferrer">
                 {dictionary.home.mapsCta}
               </a>
-              <Link href="/" className="btn-secondary mt-2">
+              <Link href="/" prefetch={false} className="btn-secondary mt-2">
                 {dictionary.booking.backToHome}
               </Link>
             </div>

@@ -56,7 +56,7 @@ export function HomePage() {
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{dictionary.home.subtitle}</p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-              <Link href="/booking" className="btn-primary min-w-52">
+              <Link href="/booking" prefetch={false} className="btn-primary min-w-52">
                 {dictionary.home.primaryCta}
               </Link>
               <a
@@ -109,7 +109,7 @@ export function HomePage() {
             </div>
           </div>
 
-          <Link href="/booking" className="btn-primary mt-6 w-full">
+          <Link href="/booking" prefetch={false} className="btn-primary mt-6 w-full">
             {dictionary.home.primaryCta}
           </Link>
         </article>
@@ -122,14 +122,14 @@ export function HomePage() {
                 {dictionary.home.barbersEyebrow}
               </h2>
             </div>
-            <Link href="/booking" className="btn-secondary">
+            <Link href="/booking" prefetch={false} className="btn-secondary">
               {dictionary.home.viewBooking}
             </Link>
           </div>
 
           <div className="mt-5 grid gap-4 md:grid-cols-2">
             {BARBERS.map((barber) => (
-              <Link key={barber.id} href="/booking" className="tap-card overflow-hidden p-0">
+              <Link key={barber.id} href="/booking" prefetch={false} className="tap-card overflow-hidden p-0">
                 <div className="image-panel aspect-[1.12] rounded-none border-0">
                   <BrandImage
                     src={barber.image}
@@ -260,7 +260,7 @@ export function HomePage() {
       </section>
 
       <div className="mobile-sticky-bar md:hidden">
-        <Link href="/booking" className="btn-primary w-full">
+        <Link href="/booking" prefetch={false} className="btn-primary w-full">
           {dictionary.home.bookSticky}
         </Link>
       </div>
