@@ -65,23 +65,10 @@ export async function createClientBooking(payload: unknown) {
   return body.booking;
 }
 
-export async function staffLogin(email: string, password: string) {
+export async function staffLogin(barberId: PublicBookingPayload["barberId"], pin: string) {
   await fetchJson<{ ok: true }>("/api/staff/login", {
     method: "POST",
-    body: JSON.stringify({ email, password }),
-  });
-}
-
-export async function staffSignup(payload: {
-  email: string;
-  password: string;
-  displayName: string;
-  barberId: PublicBookingPayload["barberId"] | "";
-  signupCode: string;
-}) {
-  await fetchJson<{ ok: true }>("/api/staff/signup", {
-    method: "POST",
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ barberId, pin }),
   });
 }
 

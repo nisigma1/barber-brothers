@@ -242,18 +242,23 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
   } satisfies BookingSummary;
 }
 
-export async function listStaffBookings(env: CloudflareEnv) {
+export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBookingPayload["barberId"]) {
   const db = getDatabase(env);
-  const rows = await db.prepare("SELECT * FROM bookings WHERE status = 'confirmed' ORDER BY start_utc ASC")
+  const rows = await db.prepare(
+    "SELECT * FROM bookings WHERE status = 'confirmed' AND barber_id = ? ORDER BY start_utc ASC",
+  )
+    .bind(barberId)
     .all<BookingRow>();
 
   return (rows.results ?? []).map(staffItemFromRow);
 }
 
-export async function softDeleteBooking(env: CloudflareEnv, bookingId: string) {
+export async function softDeleteBooking(env: CloudflareEnv, bookingId: string, barberId: PublicBookingPayload["barberId"]) {
   const db = getDatabase(env);
-  const booking = await db.prepare("SELECT * FROM bookings WHERE booking_id = ? AND status = 'confirmed'")
-    .bind(bookingId)
+  const booking = await db.prepare(
+    "SELECT * FROM bookings WHERE booking_id = ? AND barber_id = ? AND status = 'confirmed'",
+  )
+    .bind(bookingId, barberId)
     .first<BookingRow>();
 
   if (!booking) {

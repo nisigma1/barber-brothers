@@ -2,7 +2,11 @@ import { ApiBookingError, listStaffBookings, softDeleteBooking } from "../../_li
 import type { PagesContext } from "../../_lib/context";
 import { errorResponse, jsonResponse, readJson } from "../../_lib/http";
 import { requireStaffSession } from "../../_lib/session";
-import type { ApiErrorCode } from "../../../src/lib/booking/types";
+import type { ApiErrorCode, BarberId } from "../../../src/lib/booking/types";
+
+function isBarberId(value: unknown): value is BarberId {
+  return value === "barber-1" || value === "barber-2";
+}
 
 export const onRequestGet = async ({ env, request }: PagesContext) => {
   const session = await requireStaffSession(request, env);
@@ -11,13 +15,21 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
     return errorResponse("UNAUTHORIZED", 401);
   }
 
-  return jsonResponse({ bookings: await listStaffBookings(env) });
+  if (!isBarberId(session.barberId)) {
+    return errorResponse("UNAUTHORIZED", 401);
+  }
+
+  return jsonResponse({ bookings: await listStaffBookings(env, session.barberId) });
 };
 
 export const onRequestPost = async ({ env, request }: PagesContext) => {
   const session = await requireStaffSession(request, env);
 
   if (!session) {
+    return errorResponse("UNAUTHORIZED", 401);
+  }
+
+  if (!isBarberId(session.barberId)) {
     return errorResponse("UNAUTHORIZED", 401);
   }
 
@@ -29,7 +41,7 @@ export const onRequestPost = async ({ env, request }: PagesContext) => {
   }
 
   try {
-    await softDeleteBooking(env, bookingId);
+    await softDeleteBooking(env, bookingId, session.barberId);
 
     return jsonResponse({ ok: true });
   } catch (error) {

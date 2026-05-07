@@ -313,3 +313,16 @@ The user requested a focused production update without adding new features.
 | Public staff link | Remove staff from desktop and mobile navigation | Customers should not see staff access |
 | Direct staff entry | Add `/staff` route | Staff can still use a direct private link and be routed based on auth state |
 | Speed | Remove heavy staff-page images and compress gallery images | Keeps the site lighter without changing the booking system |
+
+## Session 12 Staff PIN Access Simplification
+
+The user requested removing account creation/login complexity from the staff access screen.
+
+| Topic | Decision | Rationale |
+| --- | --- | --- |
+| Staff access UI | Show only barber profile and private PIN | Keeps staff access simple for the two current barbers |
+| Uraniku PIN | `1313` | User-provided PIN |
+| Hysi PIN | `1212` | User-provided PIN |
+| Signup route | Redirect `/staff/signup` to `/staff/login` | Removes account creation from the product flow |
+| Staff filtering | Show each barber only their own bookings | Profile-based PIN access should not expose another barber's schedule |
+| Session | Keep HttpOnly staff session cookie | Avoids asking for the PIN on every staff action |

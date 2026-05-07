@@ -1,17 +1,18 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { BARBERS } from "@/lib/constants";
 import { ClientBookingError, staffLogin } from "@/lib/booking/client";
+import type { BarberId } from "@/lib/booking/types";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function StaffLoginPage() {
   const router = useRouter();
   const { dictionary } = useLanguage();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [barberId, setBarberId] = useState<BarberId | "">("");
+  const [pin, setPin] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
 
@@ -22,7 +23,13 @@ export function StaffLoginPage() {
     setError("");
 
     try {
-      await staffLogin(email, password);
+      if (!barberId) {
+        setError(dictionary.staff.invalidCredentials);
+        setIsPending(false);
+        return;
+      }
+
+      await staffLogin(barberId, pin);
       router.replace("/staff/bookings");
     } catch (error) {
       const code = error instanceof ClientBookingError ? error.code : "UNAUTHORIZED";
@@ -47,25 +54,35 @@ export function StaffLoginPage() {
       <section className="premium-card p-5 sm:p-7">
         <form onSubmit={handleSubmit} className="space-y-4">
           <label className="field-label">
-            {dictionary.staff.email}
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              autoComplete="email"
+            {dictionary.staff.barberProfile}
+            <select
+              value={barberId}
+              onChange={(event) => setBarberId(event.target.value as BarberId | "")}
               className="field-input"
               required
-            />
+            >
+              <option value="" disabled>
+                {dictionary.booking.barberLabel}
+              </option>
+              {BARBERS.map((barber) => (
+                <option key={barber.id} value={barber.id}>
+                  {barber.name}
+                </option>
+              ))}
+            </select>
           </label>
           <label className="field-label">
-            {dictionary.staff.password}
+            {dictionary.staff.pin}
             <input
               type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              autoComplete="current-password"
+              value={pin}
+              onChange={(event) => setPin(event.target.value)}
+              autoComplete="one-time-code"
+              inputMode="numeric"
+              pattern="[0-9]*"
               className="field-input"
               required
+              minLength={4}
             />
           </label>
 
@@ -78,10 +95,6 @@ export function StaffLoginPage() {
           <button type="submit" disabled={isPending} className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-45">
             {isPending ? dictionary.staff.pending : dictionary.staff.submit}
           </button>
-
-          <Link href="/staff/signup" className="btn-secondary w-full">
-            {dictionary.staff.signupLink}
-          </Link>
         </form>
       </section>
     </div>

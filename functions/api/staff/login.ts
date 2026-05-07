@@ -16,7 +16,7 @@ export const onRequestPost = async ({ env, request }: PagesContext) => {
       200,
       {
         "set-cookie": await getSessionCookieHeader(
-          { email: user.email, displayName: user.displayName, role: user.role },
+          { email: user.email, displayName: user.displayName, barberId: user.barberId, role: user.role },
           env.STAFF_SESSION_SECRET ?? "",
           new URL(request.url).protocol === "https:",
         ),

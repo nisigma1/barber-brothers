@@ -45,7 +45,11 @@ function getCookieSecurityAttribute(isSecureRequest: boolean) {
   return isSecureRequest ? " Secure;" : "";
 }
 
-export function getSessionCookieHeader(session: { email: string; displayName: string; role: string }, secret: string, isSecureRequest: boolean) {
+export function getSessionCookieHeader(
+  session: { email: string; displayName: string; barberId?: string; role: string },
+  secret: string,
+  isSecureRequest: boolean,
+) {
   const expiresAt = Math.floor(Date.now() / 1000) + SESSION_TTL_SECONDS;
   const payload = encodeText(JSON.stringify({ ...session, exp: expiresAt }));
 
@@ -84,7 +88,7 @@ export async function requireStaffSession(request: Request, env: CloudflareEnv) 
   }
 
   try {
-    const session = JSON.parse(decodeText(payload)) as { email?: string; exp?: number };
+    const session = JSON.parse(decodeText(payload)) as { email?: string; barberId?: string; exp?: number };
     const now = Math.floor(Date.now() / 1000);
 
     if (!session.email || typeof session.exp !== "number" || session.exp <= now) {
