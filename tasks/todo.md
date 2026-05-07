@@ -113,3 +113,6 @@
 - Corrected the English hero headline so Albanian mode shows `SHERBIM PREMIUM / PA PRITJE` and English mode shows `PREMIUM SERVICE / NO WAITING`.
 - Replaced customer-form example placeholders (`Arben`, `Krasniqi`, full phone example) with neutral prompts: `Sheno emrin`, `Sheno mbiemrin`, `Sheno numrin`.
 - Optimized gallery images from 900px wide to 720px wide and removed unused default SVG assets to reduce static payload.
+- Added a client API timeout so booking/staff calls fail cleanly instead of leaving the UI hanging.
+- Made booking submit attempts idempotent across retries by reusing the same `submissionId` until the user changes details or the booking succeeds.
+- Refreshes availability and clears the selected slot when the backend reports `SLOT_TAKEN`, `INVALID_SLOT`, or `BOOKING_CUTOFF`.

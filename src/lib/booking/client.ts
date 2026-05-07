@@ -12,6 +12,8 @@ type ApiErrorBody = {
   code?: ApiErrorCode;
 };
 
+const API_TIMEOUT_MS = 12_000;
+
 export class ClientBookingError extends Error {
   code: ApiErrorCode;
 
@@ -32,14 +34,26 @@ async function parseErrorCode(response: Response): Promise<ApiErrorCode> {
 }
 
 async function fetchJson<T>(input: RequestInfo | URL, init?: RequestInit) {
-  const response = await fetch(input, {
-    credentials: "include",
-    ...init,
-    headers: {
-      "content-type": "application/json",
-      ...init?.headers,
-    },
-  });
+  const controller = new AbortController();
+  const timeout = window.setTimeout(() => controller.abort(), API_TIMEOUT_MS);
+
+  let response: Response;
+
+  try {
+    response = await fetch(input, {
+      credentials: "include",
+      ...init,
+      signal: init?.signal ?? controller.signal,
+      headers: {
+        "content-type": "application/json",
+        ...init?.headers,
+      },
+    });
+  } catch {
+    throw new ClientBookingError("BOOKING_SAVE_FAILED", "BOOKING_SAVE_FAILED");
+  } finally {
+    window.clearTimeout(timeout);
+  }
 
   if (!response.ok) {
     const code = await parseErrorCode(response);

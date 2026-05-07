@@ -342,3 +342,7 @@ The user clarified that the previous all-Albanian headline was a prompt mistake.
 ## Session 16 Booking Form Placeholder And Speed Cleanup
 
 The user reported that example placeholders such as `Arben`, `Krasniqi`, and the full phone number looked like pre-filled customer data. The booking form now uses neutral helper placeholders in Albanian and English instead. Gallery images were resized for a lighter static payload, and unused default public SVG assets were removed.
+
+## Session 17 Booking Resilience Hardening
+
+The user requested continued hardening so the website does not feel dead and remains stable if many clients confirm bookings. Client API calls now time out cleanly instead of leaving the UI waiting forever. Booking submission attempts reuse a stable `submissionId` across retries so a slow network retry remains idempotent. If the backend reports a stale slot (`SLOT_TAKEN`, `INVALID_SLOT`, or `BOOKING_CUTOFF`), the form refreshes availability and clears the selected slot so the customer can immediately choose a valid time.

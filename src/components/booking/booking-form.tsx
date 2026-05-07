@@ -17,6 +17,11 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 
 const LAST_BOOKING_KEY = "barber-brothers-last-booking";
+const SHOULD_REFRESH_AVAILABILITY_AFTER_ERROR: ApiErrorCode[] = [
+  "BOOKING_CUTOFF",
+  "INVALID_SLOT",
+  "SLOT_TAKEN",
+];
 
 function getErrorMessage(code: ApiErrorCode, dictionary: ReturnType<typeof useLanguage>["dictionary"]) {
   return dictionary.booking.errors[code];
@@ -51,6 +56,7 @@ export function BookingForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successBooking, setSuccessBooking] = useState<BookingSummary | null>(null);
   const submitLockRef = useRef(false);
+  const submissionIdRef = useRef<string | null>(null);
 
   const dateOptions = getBookableDateOptions(language);
   const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
@@ -75,6 +81,27 @@ export function BookingForm() {
         [dictionary.booking.summaryPrice, `${SERVICE.price} ${SERVICE.currency}`],
       ]
     : [];
+
+  async function refreshAvailabilityAfterSubmitError(currentBarberId: BarberId, currentLocalDate: string) {
+    try {
+      const nextSlots = await getClientAvailability(currentBarberId, currentLocalDate);
+
+      setSlots(nextSlots);
+      setAvailabilityState("ready");
+      setSelectedSlot("");
+    } catch {
+      setSelectedSlot("");
+    }
+  }
+
+  function getSubmissionId() {
+    submissionIdRef.current ??= crypto.randomUUID();
+    return submissionIdRef.current;
+  }
+
+  function resetSubmissionAttempt() {
+    submissionIdRef.current = null;
+  }
 
   useEffect(() => {
     if (!barberId || isClosedDay) {
@@ -159,7 +186,7 @@ export function BookingForm() {
 
     try {
       const booking = await createClientBooking({
-        submissionId: crypto.randomUUID(),
+        submissionId: getSubmissionId(),
         barberId,
         localDate,
         localTime: selectedSlotObject.localTime,
@@ -170,9 +197,17 @@ export function BookingForm() {
       });
 
       window.localStorage.setItem(LAST_BOOKING_KEY, JSON.stringify(booking));
+      resetSubmissionAttempt();
       setSuccessBooking(booking);
     } catch (error) {
-      setFormErrorCode(getSubmitErrorCode(error));
+      const code = getSubmitErrorCode(error);
+
+      setFormErrorCode(code);
+
+      if (SHOULD_REFRESH_AVAILABILITY_AFTER_ERROR.includes(code)) {
+        await refreshAvailabilityAfterSubmitError(barberId, localDate);
+        resetSubmissionAttempt();
+      }
     } finally {
       submitLockRef.current = false;
       setIsSubmitting(false);
@@ -192,6 +227,7 @@ export function BookingForm() {
     setFieldErrors({});
     setSuccessBooking(null);
     submitLockRef.current = false;
+    resetSubmissionAttempt();
   }
 
   if (successBooking) {
@@ -258,6 +294,7 @@ export function BookingForm() {
                     setSelectedSlot("");
                     setSlots([]);
                     setAvailabilityState("idle");
+                    resetSubmissionAttempt();
                   }}
                   className={`tap-card min-h-24 overflow-hidden p-0 text-left ${active ? "selected-card" : ""}`}
                 >
@@ -312,6 +349,7 @@ export function BookingForm() {
                     setSelectedSlot("");
                     setSlots([]);
                     setAvailabilityState("idle");
+                    resetSubmissionAttempt();
                   }}
                   className={`tap-card text-left disabled:cursor-not-allowed disabled:opacity-45 ${active ? "selected-card" : ""}`}
                 >
@@ -365,7 +403,10 @@ export function BookingForm() {
                         type="button"
                         aria-pressed={active}
                         disabled={!slot.available}
-                        onClick={() => setSelectedSlot(slot.localTime)}
+                        onClick={() => {
+                          setSelectedSlot(slot.localTime);
+                          resetSubmissionAttempt();
+                        }}
                         className={`slot-button text-center ${active ? "slot-button-active text-white" : "text-white/78"}`}
                       >
                         <span className="block text-base font-bold">{slot.localTime}</span>
@@ -398,7 +439,10 @@ export function BookingForm() {
               <input
                 id={`${formId}-first-name`}
                 value={firstName}
-                onChange={(event) => setFirstName(event.target.value)}
+                onChange={(event) => {
+                  setFirstName(event.target.value);
+                  resetSubmissionAttempt();
+                }}
                 autoComplete="given-name"
                 placeholder={dictionary.booking.firstNamePlaceholder}
                 className="field-input"
@@ -413,7 +457,10 @@ export function BookingForm() {
               <input
                 id={`${formId}-last-name`}
                 value={lastName}
-                onChange={(event) => setLastName(event.target.value)}
+                onChange={(event) => {
+                  setLastName(event.target.value);
+                  resetSubmissionAttempt();
+                }}
                 autoComplete="family-name"
                 placeholder={dictionary.booking.lastNamePlaceholder}
                 className="field-input"
@@ -428,7 +475,10 @@ export function BookingForm() {
               <input
                 id={`${formId}-phone`}
                 value={phoneNumber}
-                onChange={(event) => setPhoneNumber(event.target.value)}
+                onChange={(event) => {
+                  setPhoneNumber(event.target.value);
+                  resetSubmissionAttempt();
+                }}
                 inputMode="tel"
                 autoComplete="tel"
                 placeholder={dictionary.booking.phonePlaceholder}
