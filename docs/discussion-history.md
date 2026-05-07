@@ -287,3 +287,15 @@ The user requested a stricter production cleanup before considering the website 
 | Currency copy | Use `5 euro` | Matches the requested local wording |
 | Favicon | Use the Barber Brothers logo | Removes the default favicon and makes the browser tab branded |
 | Project folder | Move the repo out of `Playground` after verification | Keeps the local codebase easier to find and review |
+
+## Session 10 Homepage Cleanup And Lunch Break Recheck
+
+The user requested final production cleanup for the homepage and strict verification of lunch-break behavior.
+
+| Topic | Decision | Rationale |
+| --- | --- | --- |
+| Albanian hero headline | `PRERJE PREMIUM PA PRITJE` | Removes the extra word while preserving the premium uppercase style |
+| Hero background | Use a clean dark gradient instead of a photo | Removes visible background lettering/watermark noise and improves perceived speed |
+| Heavy assets | Remove the unused hero background image | Keeps Cloudflare output lighter |
+| Time labels | Use simple 24-hour slot starts in the booking grid | Makes available appointment times faster to scan |
+| Lunch break | Keep rejecting `12:30` and `12:45` in the booking API | Prevents manual/API bypass, not just UI hiding |

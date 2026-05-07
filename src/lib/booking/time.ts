@@ -236,7 +236,7 @@ export function getAvailabilitySlots(
       localDate,
       localTime,
       endLocalTime: getEndLocalTime(localTime),
-      label: `${localTime}–${getEndLocalTime(localTime)}`,
+      label: `${localTime}-${getEndLocalTime(localTime)}`,
       available: isSlotAtLeastOneHourAhead(localDate, localTime, now) && !activeSlotKeys.has(key),
     };
   });

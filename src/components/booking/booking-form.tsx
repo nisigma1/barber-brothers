@@ -206,7 +206,7 @@ export function BookingForm() {
             [dictionary.booking.summaryService, dictionary.booking.fixedService],
             [dictionary.booking.summaryBarber, successBooking.barberName],
             [dictionary.booking.summaryDate, formatConfirmationDate(successBooking.localDate, language)],
-            [dictionary.booking.summaryTime, `${successBooking.localTime}–${successBooking.endLocalTime}`],
+            [dictionary.booking.summaryTime, `${successBooking.localTime}-${successBooking.endLocalTime}`],
             [dictionary.booking.summaryPhone, successBooking.customerPhone],
             [dictionary.booking.summaryPrice, successBooking.priceLabel],
           ].map(([label, value]) => (
@@ -364,7 +364,7 @@ export function BookingForm() {
                         onClick={() => setSelectedSlot(slot.localTime)}
                         className={`slot-button text-center ${active ? "slot-button-active text-white" : "text-white/78"}`}
                       >
-                        <span className="block text-sm font-bold sm:text-base">{slot.label}</span>
+                        <span className="block text-base font-bold">{slot.localTime}</span>
                         <span className="mt-1 block text-[0.66rem] uppercase tracking-[0.12em] text-white/45">
                           {slot.available ? dictionary.booking.availableSlot : dictionary.common.unavailable}
                         </span>

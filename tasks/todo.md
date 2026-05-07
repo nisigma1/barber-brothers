@@ -99,3 +99,4 @@
 - Booking rules were updated to 30-minute appointments, 30-minute slot intervals, and a blocked lunch break from `12:30-13:00`.
 - Favicon now uses the Barber Brothers logo asset.
 - Removed unused brand images from the public build output to keep the deployed site lighter.
+- Removed the hero background photo/watermark layer, changed the Albanian headline to `PRERJE PREMIUM PA PRITJE`, and kept lunch-break validation enforced in UI and API.

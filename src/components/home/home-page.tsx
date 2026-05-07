@@ -23,19 +23,9 @@ export function HomePage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <section className="relative overflow-hidden border-b border-white/8">
-        <div className="absolute inset-0">
-          <BrandImage
-            src={BRAND_ASSETS.heroImage}
-            alt={BRAND_ASSETS.heroAlt}
-            className="h-full w-full"
-            imgClassName="image-fill"
-            fallbackLabel="BB"
-            fetchPriority="high"
-            loading="eager"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,4,3,0.97)_0%,rgba(5,4,3,0.88)_52%,rgba(5,4,3,0.7)_100%)]" />
-        </div>
+      <section className="relative overflow-hidden border-b border-white/8 bg-[linear-gradient(135deg,#050403_0%,#0b0906_48%,#050403_100%)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_8%,rgba(217,173,114,0.14),transparent_26rem),radial-gradient(circle_at_88%_18%,rgba(217,173,114,0.08),transparent_22rem)]" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,transparent,rgba(5,4,3,0.95))]" />
 
         <div className="relative mx-auto flex min-h-[72svh] w-full max-w-7xl flex-col justify-end px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="max-w-4xl">
@@ -205,17 +195,17 @@ export function HomePage() {
           <article id="hours" className="premium-card p-5 sm:p-6">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.hoursTitle}</p>
             <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
-              {hourLabel(WORKING_HOURS.openMinutes)}–{hourLabel(WORKING_HOURS.closeMinutes)}
+              {hourLabel(WORKING_HOURS.openMinutes)}-{hourLabel(WORKING_HOURS.closeMinutes)}
             </h2>
             <p className="mt-4 text-sm leading-7 text-white/65">{dictionary.home.hoursBody}</p>
             <div className="mt-5 grid gap-3">
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.mondaySaturday}</span>
-                <span className="font-semibold text-white">09:00–21:00</span>
+                <span className="font-semibold text-white">09:00-21:00</span>
               </div>
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.lunchBreak}</span>
-                <span className="font-semibold text-white">12:30–13:00</span>
+                <span className="font-semibold text-white">12:30-13:00</span>
               </div>
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.sunday}</span>

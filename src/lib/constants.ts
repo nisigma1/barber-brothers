@@ -11,8 +11,6 @@ export const LANGUAGES: Language[] = ["sq", "en"];
 
 export const BRAND_ASSETS = {
   logo: "/brand/logo.jpg",
-  heroImage: "/brand/hero-real-1.jpeg",
-  heroAlt: "Fresh haircut at Barber Brothers",
   gallery: [
     "/brand/gallery-1.jpg",
     "/brand/gallery-2.jpg",

@@ -31,7 +31,7 @@ export const translations = {
       barbersBody:
         "Zgjidh direkt berberin qe do. Secili ka slote te pavarura dhe rezervimi yt konfirmohet ne vend.",
       hoursTitle: "Orari i punes",
-      hoursBody: "Hene - Shtune, 09:00–21:00. Pushim 12:30–13:00. E diel mbyllur.",
+      hoursBody: "Hene - Shtune, 09:00-21:00. Pushim 12:30-13:00. E diel mbyllur.",
       bookingTitle: "Rezervim i shpejte, zgjedhje e qarte.",
       bookingBody: "Zgjidh berberin, daten, oren dhe konfirmo pa hapa te panevojshem.",
       contactTitle: "Kontakt",
@@ -39,7 +39,7 @@ export const translations = {
       serviceTitle: "Sherbimi",
       barbersEyebrow: "Dy berbere",
       mapsCta: "Hap Google Maps",
-      heroHeadline: "PRERJE PREMIUM PA PRITJE PIKE",
+      heroHeadline: "PRERJE PREMIUM PA PRITJE",
       heroSubheadline: "Rezervim i thjeshte per klientet qe duan saktesi.",
       galleryTitle: "Puna jone",
       galleryBody: "Prerje reale nga Barber Brothers.",
@@ -202,7 +202,7 @@ export const translations = {
       barbersBody:
         "Choose the barber you want directly. Each barber has independent slots and your booking is confirmed immediately.",
       hoursTitle: "Working hours",
-      hoursBody: "Monday - Saturday, 09:00–21:00. Lunch break 12:30–13:00. Sunday closed.",
+      hoursBody: "Monday - Saturday, 09:00-21:00. Lunch break 12:30-13:00. Sunday closed.",
       bookingTitle: "Short flow, clear decisions.",
       bookingBody: "Service, barber, date, time, customer details, and final confirmation. No unnecessary steps.",
       contactTitle: "Contact",
