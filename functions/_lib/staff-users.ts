@@ -1,10 +1,11 @@
 import { BARBERS } from "../../src/lib/constants";
 import type { BarberId } from "../../src/lib/booking/types";
 import { ApiBookingError } from "./booking";
+import type { CloudflareEnv } from "./types";
 
-const STAFF_PIN_BY_BARBER: Record<BarberId, string> = {
-  "barber-1": "1313",
-  "barber-2": "1212",
+const STAFF_PIN_ENV_KEY_BY_BARBER: Record<BarberId, keyof Pick<CloudflareEnv, "STAFF_PIN_BARBER_1" | "STAFF_PIN_BARBER_2">> = {
+  "barber-1": "STAFF_PIN_BARBER_1",
+  "barber-2": "STAFF_PIN_BARBER_2",
 };
 
 function isBarberId(value: unknown): value is BarberId {
@@ -29,7 +30,7 @@ function constantTimeEqual(left: string, right: string) {
   return mismatch === 0;
 }
 
-export async function verifyStaffLogin(_env: unknown, payload: unknown) {
+export async function verifyStaffLogin(env: CloudflareEnv, payload: unknown) {
   const body = payload as { barberId?: unknown; pin?: unknown } | null;
   const barberId = isBarberId(body?.barberId) ? body.barberId : null;
   const pin = typeof body?.pin === "string" ? body.pin.trim() : "";
@@ -38,7 +39,13 @@ export async function verifyStaffLogin(_env: unknown, payload: unknown) {
     throw new ApiBookingError("UNAUTHORIZED", 401);
   }
 
-  if (!constantTimeEqual(pin, STAFF_PIN_BY_BARBER[barberId])) {
+  const expectedPin = env[STAFF_PIN_ENV_KEY_BY_BARBER[barberId]];
+
+  if (!expectedPin) {
+    throw new ApiBookingError("CONFIGURATION_ERROR", 500);
+  }
+
+  if (!constantTimeEqual(pin, expectedPin)) {
     throw new ApiBookingError("UNAUTHORIZED", 401);
   }
 

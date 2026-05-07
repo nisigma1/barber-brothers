@@ -104,3 +104,8 @@
 - Replaced staff email/password signup with simple barber profile + private PIN access: Uraniku `1313`, Hysi `1212`.
 - Fixed staff profile dropdown contrast so barber names stay readable in the native select menu.
 - Updated the homepage stat from opening-only copy to the full working-hours label `09:30-20:30`.
+- Replaced the hero headline with `SHERBIM PREMIUM / PA PRITJE` and removed the old English headline from the bundle.
+- Added D1-backed rate limiting for booking requests and staff login attempts.
+- Moved staff PIN values to Cloudflare Pages secrets instead of keeping active PINs in application code.
+- Tightened booking input validation for customer names and added a client-side submit lock against rapid double-clicks.
+- Overrode vulnerable transitive `postcss` to `8.5.12`; `npm audit --audit-level=moderate` now reports zero vulnerabilities.

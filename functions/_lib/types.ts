@@ -3,6 +3,8 @@ import type { D1Database } from "@cloudflare/workers-types";
 export type CloudflareEnv = {
   DB: D1Database;
   STAFF_SESSION_SECRET?: string;
+  STAFF_PIN_BARBER_1?: string;
+  STAFF_PIN_BARBER_2?: string;
 };
 
 export type BookingRow = {

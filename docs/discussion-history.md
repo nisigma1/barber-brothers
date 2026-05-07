@@ -330,3 +330,7 @@ The user requested removing account creation/login complexity from the staff acc
 ## Session 13 Staff Select Contrast And Hours Stat
 
 The user reported that the staff barber dropdown was hard to read because the native menu background appeared light while option labels stayed white. The staff select now forces a dark color scheme and dark option backgrounds. The homepage hero stat was also changed from showing only the opening time to showing the full working schedule `09:30-20:30`.
+
+## Session 14 Production Hardening And Performance Audit
+
+The user requested a production-minded pass focused on headline copy, security, stability under repeated bookings, and speed. The homepage hero headline was changed to `SHERBIM PREMIUM / PA PRITJE` for both languages so the old English headline no longer appears. Staff PINs were moved from source code to Cloudflare Pages secrets. A D1 `request_limits` table was added for booking and staff-login rate limiting, booking names now reject HTML/script-like characters, the client booking form now uses an immediate submit lock against rapid double-clicks, and the transitive `postcss` dependency was overridden to a patched version after `npm audit` reported a moderate advisory.

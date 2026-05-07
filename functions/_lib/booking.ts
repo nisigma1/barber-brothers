@@ -136,6 +136,16 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     throw new ApiBookingError("INVALID_PHONE");
   }
 
+  const recentPhoneBooking = await db.prepare(
+    "SELECT booking_id FROM bookings WHERE customer_phone = ? AND status = 'confirmed' AND created_at >= ? LIMIT 1",
+  )
+    .bind(normalizedPhone, new Date(Date.now() - 30_000).toISOString())
+    .first<{ booking_id: string }>();
+
+  if (recentPhoneBooking) {
+    throw new ApiBookingError("RATE_LIMITED", 429);
+  }
+
   const bookingId = cleanPayload.submissionId;
   const slotContext = getSlotContext(cleanPayload);
   const nowIso = new Date().toISOString();

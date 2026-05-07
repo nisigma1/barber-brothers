@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 
 import { BARBERS, SERVICE } from "@/lib/constants";
 import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
@@ -50,6 +50,7 @@ export function BookingForm() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [successBooking, setSuccessBooking] = useState<BookingSummary | null>(null);
+  const submitLockRef = useRef(false);
 
   const dateOptions = getBookableDateOptions(language);
   const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
@@ -139,7 +140,7 @@ export function BookingForm() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    if (isSubmitting) {
+    if (submitLockRef.current) {
       return;
     }
 
@@ -152,6 +153,7 @@ export function BookingForm() {
       return;
     }
 
+    submitLockRef.current = true;
     setIsSubmitting(true);
     setFormErrorCode(null);
 
@@ -172,6 +174,7 @@ export function BookingForm() {
     } catch (error) {
       setFormErrorCode(getSubmitErrorCode(error));
     } finally {
+      submitLockRef.current = false;
       setIsSubmitting(false);
     }
   }
@@ -188,6 +191,7 @@ export function BookingForm() {
     setFormErrorCode(null);
     setFieldErrors({});
     setSuccessBooking(null);
+    submitLockRef.current = false;
   }
 
   if (successBooking) {

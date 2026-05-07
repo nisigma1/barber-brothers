@@ -13,6 +13,7 @@ export type ApiErrorCode =
   | "INVALID_SLOT"
   | "BOOKING_CUTOFF"
   | "SLOT_TAKEN"
+  | "RATE_LIMITED"
   | "UNAUTHORIZED"
   | "NOT_FOUND"
   | "EMAIL_EXISTS";

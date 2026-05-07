@@ -50,7 +50,7 @@ export function HomePage() {
               </div>
             </div>
 
-            <h1 className="mt-8 max-w-4xl font-display text-[clamp(3.7rem,10vw,8rem)] uppercase leading-[0.82] tracking-[0.035em] text-white">
+            <h1 className="mt-8 max-w-4xl whitespace-pre-line font-display text-[clamp(3.7rem,10vw,8rem)] uppercase leading-[0.82] tracking-[0.035em] text-white">
               {dictionary.home.heroHeadline}
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{dictionary.home.subtitle}</p>
