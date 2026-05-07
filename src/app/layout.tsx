@@ -21,6 +21,10 @@ const barlow = Barlow_Condensed({
 export const metadata: Metadata = {
   title: "Barber Brothers",
   description: "Instant online booking for Barber Brothers in Fushe Kosove.",
+  icons: {
+    icon: "/brand/logo.jpg",
+    apple: "/brand/logo.jpg",
+  },
 };
 
 export default function RootLayout({

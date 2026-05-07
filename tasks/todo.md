@@ -95,3 +95,7 @@
 - Local Cloudflare Pages runtime verification passed: booking save, duplicate-slot rejection, staff booking list, soft delete, and slot release.
 - Staff auth now uses D1 `staff_users` accounts. `/staff/signup` requires the private `STAFF_SIGNUP_CODE`; `/staff/login` accepts each staff member's personal email and password.
 - Active barbers were renamed from placeholders to `Uraniku` and `Hysi`.
+- Homepage and booking copy were tightened to avoid repeated service claims, price/duration repetition, and mixed premium callout formatting.
+- Booking rules were updated to 30-minute appointments, 30-minute slot intervals, and a blocked lunch break from `12:30-13:00`.
+- Favicon now uses the Barber Brothers logo asset.
+- Removed unused brand images from the public build output to keep the deployed site lighter.

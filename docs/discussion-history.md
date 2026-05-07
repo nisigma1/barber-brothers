@@ -271,3 +271,19 @@ Wrangler login completed for `enis.qetaj@student.uni-pr.edu`. Cloudflare D1 data
 ### Staff Account Update
 
 The user requested staff access through personal emails instead of a shared account because more barbers may be added later. Staff authentication was moved to D1-backed accounts in `staff_users`. Signup is available at `/staff/signup` and requires the private `STAFF_SIGNUP_CODE`; login is available at `/staff/login`. Current barber labels were changed to `Uraniku` and `Hysi`.
+
+## Session 9 Homepage Copy, Timing Rules, And Project Cleanup
+
+The user requested a stricter production cleanup before considering the website finished.
+
+| Topic | Decision | Rationale |
+| --- | --- | --- |
+| Homepage copy | Reduce repeated slogans, price, and duration mentions | Keeps the site sharper and less demo-like |
+| Premium callout | Use uppercase callout copy without extra punctuation | Matches the requested premium format |
+| Appointment duration | 30 minutes | Aligns the booking product with the latest user rule |
+| Slot interval | 30-minute slots only | Keeps availability predictable and easy to scan |
+| Lunch break | Block `12:30-13:00` | No public booking can be shown or saved during lunch break |
+| Time formatting | Use 24-hour labels such as `09:00` | Avoids mixed AM/PM formatting |
+| Currency copy | Use `5 euro` | Matches the requested local wording |
+| Favicon | Use the Barber Brothers logo | Removes the default favicon and makes the browser tab branded |
+| Project folder | Move the repo out of `Playground` after verification | Keeps the local codebase easier to find and review |

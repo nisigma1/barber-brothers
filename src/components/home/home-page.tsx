@@ -31,6 +31,7 @@ export function HomePage() {
             className="h-full w-full"
             imgClassName="image-fill"
             fallbackLabel="BB"
+            fetchPriority="high"
             loading="eager"
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,4,3,0.97)_0%,rgba(5,4,3,0.88)_52%,rgba(5,4,3,0.7)_100%)]" />
@@ -46,6 +47,7 @@ export function HomePage() {
                   className="h-full w-full"
                   imgClassName="image-fill"
                   fallbackLabel="BB"
+                  fetchPriority="high"
                   loading="eager"
                 />
               </div>
@@ -76,9 +78,9 @@ export function HomePage() {
 
             <div className="mt-10 grid max-w-3xl grid-cols-3 gap-3">
               {[
-                ["40", dictionary.home.minutesShort],
-                ["5", "EUR"],
-                ["09-21", dictionary.home.mondaySaturday],
+                ["Online", dictionary.home.fastBooking],
+                ["2", dictionary.home.barbersEyebrow],
+                ["09:00", dictionary.home.openingTime],
               ].map(([value, label]) => (
                 <div key={label} className="rounded-2xl border border-white/10 bg-black/52 p-4">
                   <p className="font-display text-3xl leading-none text-white sm:text-4xl">{value}</p>
@@ -96,7 +98,7 @@ export function HomePage() {
           <h2 className="mt-4 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
             {dictionary.common.serviceName}
           </h2>
-          <p className="mt-4 text-sm leading-7 text-white/64">{dictionary.booking.fixedService}</p>
+          <p className="mt-4 text-sm leading-7 text-white/64">{dictionary.booking.serviceIntro}</p>
 
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-2xl border border-white/10 bg-black/22 p-4">
@@ -138,12 +140,12 @@ export function HomePage() {
                     alt={barber.name}
                     className="h-full w-full"
                     imgClassName="image-fill"
-                  fallbackLabel="BB"
-                />
-              </div>
-              <div className="p-4">
-                <p className="eyebrow text-white/42">{dictionary.booking.barberCardLabel}</p>
-                <h3 className="mt-2 font-display text-4xl uppercase tracking-[0.06em] text-white">{barber.name}</h3>
+                    fallbackLabel="BB"
+                  />
+                </div>
+                <div className="p-4">
+                  <p className="eyebrow text-white/42">{dictionary.booking.barberCardLabel}</p>
+                  <h3 className="mt-2 font-display text-4xl uppercase tracking-[0.06em] text-white">{barber.name}</h3>
                   <p className="mt-3 text-sm leading-7 text-white/62">
                     {barber.id === "barber-1" ? dictionary.home.barberOneTagline : dictionary.home.barberTwoTagline}
                   </p>
@@ -163,7 +165,7 @@ export function HomePage() {
             <div>
               <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.galleryTitle}</p>
               <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
-                {dictionary.home.barbersEyebrow}
+                {dictionary.home.galleryHeading}
               </h2>
             </div>
             <a
@@ -203,13 +205,17 @@ export function HomePage() {
           <article id="hours" className="premium-card p-5 sm:p-6">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.hoursTitle}</p>
             <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
-              {hourLabel(WORKING_HOURS.openMinutes)}-{hourLabel(WORKING_HOURS.closeMinutes)}
+              {hourLabel(WORKING_HOURS.openMinutes)}–{hourLabel(WORKING_HOURS.closeMinutes)}
             </h2>
             <p className="mt-4 text-sm leading-7 text-white/65">{dictionary.home.hoursBody}</p>
             <div className="mt-5 grid gap-3">
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.mondaySaturday}</span>
-                <span className="font-semibold text-white">09:00-21:00</span>
+                <span className="font-semibold text-white">09:00–21:00</span>
+              </div>
+              <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
+                <span>{dictionary.home.lunchBreak}</span>
+                <span className="font-semibold text-white">12:30–13:00</span>
               </div>
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.sunday}</span>

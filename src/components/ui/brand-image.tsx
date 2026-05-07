@@ -6,6 +6,7 @@ type BrandImageProps = {
   alt: string;
   className?: string;
   fallbackLabel?: string;
+  fetchPriority?: "high" | "low" | "auto";
   imgClassName?: string;
   loading?: "eager" | "lazy";
   src?: string;
@@ -15,6 +16,7 @@ export function BrandImage({
   alt,
   className = "",
   fallbackLabel = "BB",
+  fetchPriority,
   imgClassName = "",
   loading = "lazy",
   src,
@@ -36,6 +38,7 @@ export function BrandImage({
       alt={alt}
       loading={loading}
       decoding="async"
+      fetchPriority={fetchPriority}
       onError={() => setFailed(true)}
       className={`${className} ${imgClassName}`.trim()}
     />

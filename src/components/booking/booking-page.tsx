@@ -13,20 +13,24 @@ export function BookingPage() {
     <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="max-w-3xl">
-        <p className="eyebrow text-[var(--color-accent)]">{BRAND_NAME}</p>
-        <h1 className="mt-2 font-display text-[clamp(2.3rem,6vw,4.8rem)] uppercase leading-[0.88] tracking-[0.05em] text-white">
-          {dictionary.booking.title}
-        </h1>
-        <p className="mt-3 hidden max-w-2xl text-sm leading-7 text-white/68 sm:block sm:text-base">
-          {dictionary.booking.subtitle}
-        </p>
+          <p className="eyebrow text-[var(--color-accent)]">{BRAND_NAME}</p>
+          <h1 className="mt-2 font-display text-[clamp(2.3rem,6vw,4.8rem)] uppercase leading-[0.88] tracking-[0.05em] text-white">
+            {dictionary.booking.title}
+          </h1>
+          <p className="mt-3 hidden max-w-2xl text-sm leading-7 text-white/68 sm:block sm:text-base">
+            {dictionary.booking.subtitle}
+          </p>
         </div>
         <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold text-white">
           <span className="rounded-full border border-[var(--color-accent)]/25 bg-[var(--color-accent)]/10 px-3 py-2">
             {dictionary.common.serviceName}
           </span>
-          <span className="rounded-full border border-white/10 bg-black/24 px-3 py-2">40 min</span>
-          <span className="rounded-full border border-white/10 bg-black/24 px-3 py-2">5 EUR</span>
+          <span className="rounded-full border border-white/10 bg-black/24 px-3 py-2">
+            {dictionary.home.fastBooking}
+          </span>
+          <span className="rounded-full border border-white/10 bg-black/24 px-3 py-2">
+            {dictionary.home.barbersEyebrow}
+          </span>
         </div>
       </div>
 

@@ -11,7 +11,7 @@ export const LANGUAGES: Language[] = ["sq", "en"];
 
 export const BRAND_ASSETS = {
   logo: "/brand/logo.jpg",
-  heroImage: "/brand/gallery-1.jpg",
+  heroImage: "/brand/hero-real-1.jpeg",
   heroAlt: "Fresh haircut at Barber Brothers",
   gallery: [
     "/brand/gallery-1.jpg",
@@ -38,9 +38,9 @@ export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image
 export const SERVICE = {
   id: "haircut",
   name: "Haircut",
-  durationMinutes: 40,
+  durationMinutes: 30,
   price: 5,
-  currency: "EUR",
+  currency: "euro",
 } as const;
 
 export const WORKING_HOURS = {
@@ -51,7 +51,12 @@ export const WORKING_HOURS = {
 
 export const BOOKING_WINDOW_DAYS = 7;
 export const BOOKING_CUTOFF_MINUTES = 60;
-export const SLOT_INTERVAL_MINUTES = 40;
+export const SLOT_INTERVAL_MINUTES = 30;
+
+export const LUNCH_BREAK = {
+  startMinutes: 12 * 60 + 30,
+  endMinutes: 13 * 60,
+} as const;
 
 export const CONTACT_DETAILS = {
   primaryPhone: "+38345990079",

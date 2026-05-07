@@ -5,6 +5,7 @@ import {
   BARBERS,
   BOOKING_CUTOFF_MINUTES,
   BOOKING_WINDOW_DAYS,
+  LUNCH_BREAK,
   SERVICE,
   SHOP_RUNTIME_TIMEZONE,
   SLOT_INTERVAL_MINUTES,
@@ -28,6 +29,12 @@ function minutesToTime(minutes: number) {
 function timeToMinutes(localTime: string) {
   const [hours, minutes] = localTime.split(":").map(Number);
   return hours * 60 + minutes;
+}
+
+function slotOverlapsLunchBreak(startMinutes: number) {
+  const endMinutes = startMinutes + SERVICE.durationMinutes;
+
+  return startMinutes < LUNCH_BREAK.endMinutes && endMinutes > LUNCH_BREAK.startMinutes;
 }
 
 const albanianWeekdays = ["Die", "Hene", "Mar", "Mer", "Enj", "Pre", "Sht"];
@@ -122,7 +129,9 @@ export function generateDailySlotTimes() {
     cursor + SERVICE.durationMinutes <= WORKING_HOURS.closeMinutes;
     cursor += SLOT_INTERVAL_MINUTES
   ) {
-    slots.push(minutesToTime(cursor));
+    if (!slotOverlapsLunchBreak(cursor)) {
+      slots.push(minutesToTime(cursor));
+    }
   }
 
   return slots;
@@ -227,7 +236,7 @@ export function getAvailabilitySlots(
       localDate,
       localTime,
       endLocalTime: getEndLocalTime(localTime),
-      label: `${localTime} - ${getEndLocalTime(localTime)}`,
+      label: `${localTime}–${getEndLocalTime(localTime)}`,
       available: isSlotAtLeastOneHourAhead(localDate, localTime, now) && !activeSlotKeys.has(key),
     };
   });
