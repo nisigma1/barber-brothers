@@ -42,8 +42,8 @@ export const SERVICE = {
 } as const;
 
 export const WORKING_HOURS = {
-  openMinutes: 9 * 60,
-  closeMinutes: 21 * 60,
+  openMinutes: 9 * 60 + 30,
+  closeMinutes: 20 * 60 + 30,
   openDays: [1, 2, 3, 4, 5, 6],
 } as const;
 

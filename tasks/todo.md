@@ -100,3 +100,4 @@
 - Favicon now uses the Barber Brothers logo asset.
 - Removed unused brand images from the public build output to keep the deployed site lighter.
 - Removed the hero background photo/watermark layer, changed the Albanian headline to `PRERJE PREMIUM PA PRITJE`, and kept lunch-break validation enforced in UI and API.
+- Updated working hours to `09:30-20:30`, hid staff navigation from the public header/mobile nav, added direct `/staff` routing, and reduced image weight for faster pages.

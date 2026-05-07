@@ -299,3 +299,17 @@ The user requested final production cleanup for the homepage and strict verifica
 | Heavy assets | Remove the unused hero background image | Keeps Cloudflare output lighter |
 | Time labels | Use simple 24-hour slot starts in the booking grid | Makes available appointment times faster to scan |
 | Lunch break | Keep rejecting `12:30` and `12:45` in the booking API | Prevents manual/API bypass, not just UI hiding |
+
+## Session 11 Working Hours, Hidden Staff Entry, And Speed Pass
+
+The user requested a focused production update without adding new features.
+
+| Topic | Decision | Rationale |
+| --- | --- | --- |
+| Working hours | Use `09:30-20:30` | Matches the real shop schedule |
+| First slot | `09:30` | `09:00` is no longer valid or visible |
+| Last slot | `20:00` | A 30-minute service ending at `20:30` stays inside working hours |
+| Lunch break | Keep `12:30-13:00` blocked | `12:30` is invalid, while `13:00` remains valid |
+| Public staff link | Remove staff from desktop and mobile navigation | Customers should not see staff access |
+| Direct staff entry | Add `/staff` route | Staff can still use a direct private link and be routed based on auth state |
+| Speed | Remove heavy staff-page images and compress gallery images | Keeps the site lighter without changing the booking system |

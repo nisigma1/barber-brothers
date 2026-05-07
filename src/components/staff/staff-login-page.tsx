@@ -4,10 +4,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { BRAND_ASSETS } from "@/lib/constants";
 import { ClientBookingError, staffLogin } from "@/lib/booking/client";
 import { useLanguage } from "@/components/providers/language-provider";
-import { BrandImage } from "@/components/ui/brand-image";
 
 export function StaffLoginPage() {
   const router = useRouter();
@@ -36,22 +34,12 @@ export function StaffLoginPage() {
   return (
     <div className="mx-auto grid w-full max-w-6xl flex-1 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-14">
       <section className="premium-card overflow-hidden">
-        <div className="image-panel min-h-[22rem] rounded-none border-0">
-          <BrandImage
-            src={BRAND_ASSETS.gallery[1]}
-            alt="Barber Brothers staff visual"
-            className="h-full w-full"
-            imgClassName="image-fill"
-            fallbackLabel="Staff"
-            loading="eager"
-          />
-          <div className="absolute inset-x-0 bottom-0 z-10 p-6">
-            <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.eyebrow}</p>
-            <h1 className="mt-4 font-display text-[clamp(3.2rem,8vw,6rem)] uppercase leading-[0.85] tracking-[0.05em] text-white">
-              {dictionary.staff.loginTitle}
-            </h1>
-            <p className="mt-5 max-w-lg text-sm leading-7 text-white/68">{dictionary.staff.loginBody}</p>
-          </div>
+        <div className="relative min-h-[22rem] rounded-none border-0 bg-[radial-gradient(circle_at_20%_0%,rgba(217,173,114,0.16),transparent_18rem),linear-gradient(145deg,#15110c,#070605)] p-6">
+          <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.eyebrow}</p>
+          <h1 className="mt-4 font-display text-[clamp(3.2rem,8vw,6rem)] uppercase leading-[0.85] tracking-[0.05em] text-white">
+            {dictionary.staff.loginTitle}
+          </h1>
+          <p className="mt-5 max-w-lg text-sm leading-7 text-white/68">{dictionary.staff.loginBody}</p>
         </div>
         <div className="p-5 text-sm text-white/60">{dictionary.staff.loginCardNote}</div>
       </section>

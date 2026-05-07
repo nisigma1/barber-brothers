@@ -15,7 +15,10 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 
 function hourLabel(minutes: number) {
-  return `${Math.floor(minutes / 60).toString().padStart(2, "0")}:00`;
+  const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
+  const nextMinutes = (minutes % 60).toString().padStart(2, "0");
+
+  return `${hours}:${nextMinutes}`;
 }
 
 export function HomePage() {
@@ -70,7 +73,7 @@ export function HomePage() {
               {[
                 ["Online", dictionary.home.fastBooking],
                 ["2", dictionary.home.barbersEyebrow],
-                ["09:00", dictionary.home.openingTime],
+                [hourLabel(WORKING_HOURS.openMinutes), dictionary.home.openingTime],
               ].map(([value, label]) => (
                 <div key={label} className="rounded-2xl border border-white/10 bg-black/52 p-4">
                   <p className="font-display text-3xl leading-none text-white sm:text-4xl">{value}</p>
@@ -201,7 +204,9 @@ export function HomePage() {
             <div className="mt-5 grid gap-3">
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.mondaySaturday}</span>
-                <span className="font-semibold text-white">09:00-21:00</span>
+                <span className="font-semibold text-white">
+                  {hourLabel(WORKING_HOURS.openMinutes)}-{hourLabel(WORKING_HOURS.closeMinutes)}
+                </span>
               </div>
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
                 <span>{dictionary.home.lunchBreak}</span>

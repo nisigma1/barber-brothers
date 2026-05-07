@@ -3,11 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { BRAND_ASSETS } from "@/lib/constants";
 import { ClientBookingError, listClientStaffBookings, softDeleteClientBooking, staffLogout } from "@/lib/booking/client";
 import type { StaffBookingItem } from "@/lib/booking/types";
 import { useLanguage } from "@/components/providers/language-provider";
-import { BrandImage } from "@/components/ui/brand-image";
 
 export function StaffBookingsPage() {
   const router = useRouter();
@@ -138,18 +136,6 @@ export function StaffBookingsPage() {
             ))}
           </div>
         )}
-
-        <div className="premium-card overflow-hidden">
-          <div className="image-panel aspect-[2.4] rounded-none border-0">
-            <BrandImage
-              src={BRAND_ASSETS.gallery[2]}
-              alt="Barber Brothers shop work"
-              className="h-full w-full"
-              imgClassName="image-fill"
-              fallbackLabel="Shop"
-            />
-          </div>
-        </div>
       </div>
     </div>
   );
