@@ -111,3 +111,5 @@
 - Overrode vulnerable transitive `postcss` to `8.5.12`; `npm audit --audit-level=moderate` now reports zero vulnerabilities.
 - Disabled unnecessary Next.js link prefetching on primary navigation/CTA links to reduce background fetches and keep pages feeling faster.
 - Corrected the English hero headline so Albanian mode shows `SHERBIM PREMIUM / PA PRITJE` and English mode shows `PREMIUM SERVICE / NO WAITING`.
+- Replaced customer-form example placeholders (`Arben`, `Krasniqi`, full phone example) with neutral prompts: `Sheno emrin`, `Sheno mbiemrin`, `Sheno numrin`.
+- Optimized gallery images from 900px wide to 720px wide and removed unused default SVG assets to reduce static payload.

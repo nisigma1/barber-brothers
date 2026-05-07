@@ -400,7 +400,7 @@ export function BookingForm() {
                 value={firstName}
                 onChange={(event) => setFirstName(event.target.value)}
                 autoComplete="given-name"
-                placeholder="Arben"
+                placeholder={dictionary.booking.firstNamePlaceholder}
                 className="field-input"
                 aria-invalid={Boolean(fieldErrors.firstName)}
               />
@@ -415,7 +415,7 @@ export function BookingForm() {
                 value={lastName}
                 onChange={(event) => setLastName(event.target.value)}
                 autoComplete="family-name"
-                placeholder="Krasniqi"
+                placeholder={dictionary.booking.lastNamePlaceholder}
                 className="field-input"
                 aria-invalid={Boolean(fieldErrors.lastName)}
               />
@@ -431,7 +431,7 @@ export function BookingForm() {
                 onChange={(event) => setPhoneNumber(event.target.value)}
                 inputMode="tel"
                 autoComplete="tel"
-                placeholder="+38345990079"
+                placeholder={dictionary.booking.phonePlaceholder}
                 className="field-input"
                 aria-invalid={Boolean(fieldErrors.phoneNumber)}
               />

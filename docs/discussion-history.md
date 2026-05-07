@@ -338,3 +338,7 @@ The user requested a production-minded pass focused on headline copy, security, 
 ## Session 15 Language-Specific Hero Headline
 
 The user clarified that the previous all-Albanian headline was a prompt mistake. Albanian mode keeps `SHERBIM PREMIUM / PA PRITJE`; English mode now uses `PREMIUM SERVICE / NO WAITING`.
+
+## Session 16 Booking Form Placeholder And Speed Cleanup
+
+The user reported that example placeholders such as `Arben`, `Krasniqi`, and the full phone number looked like pre-filled customer data. The booking form now uses neutral helper placeholders in Albanian and English instead. Gallery images were resized for a lighter static payload, and unused default public SVG assets were removed.
