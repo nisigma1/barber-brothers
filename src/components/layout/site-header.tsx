@@ -18,7 +18,7 @@ export function SiteHeader() {
   const { dictionary } = useLanguage();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(8,7,5,0.88)] backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(8,7,5,0.96)]">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" prefetch={false} className="flex min-h-11 items-center gap-3">
           <div className="h-10 w-10 overflow-hidden rounded-full border border-white/12">
