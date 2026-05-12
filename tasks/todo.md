@@ -116,3 +116,4 @@
 - Added a client API timeout so booking/staff calls fail cleanly instead of leaving the UI hanging.
 - Made booking submit attempts idempotent across retries by reusing the same `submissionId` until the user changes details or the booking succeeds.
 - Refreshes availability and clears the selected slot when the backend reports `SLOT_TAKEN`, `INVALID_SLOT`, or `BOOKING_CUTOFF`.
+- Corrected Albanian working-hours copy from `Hene - Shtune` to `E Hene - E Shtune`.

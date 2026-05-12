@@ -54,12 +54,12 @@ const albanianMonths = [
 ];
 const albanianLongWeekdays = [
   "E diel",
-  "E hene",
-  "E marte",
-  "E merkure",
-  "E enjte",
-  "E premte",
-  "E shtune",
+  "E Hene",
+  "E Marte",
+  "E Merkure",
+  "E Enjte",
+  "E Premte",
+  "E Shtune",
 ];
 const albanianLongMonths = [
   "Janar",

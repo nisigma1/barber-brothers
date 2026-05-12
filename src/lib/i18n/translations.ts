@@ -31,7 +31,7 @@ export const translations = {
       barbersBody:
         "Zgjidh direkt berberin qe do. Secili ka slote te pavarura dhe rezervimi yt konfirmohet ne vend.",
       hoursTitle: "Orari i punes",
-      hoursBody: "Hene - Shtune, 09:30-20:30. Pushim 12:30-13:00. E diel mbyllur.",
+      hoursBody: "E Hene - E Shtune, 09:30-20:30. Pushim 12:30-13:00. E diel mbyllur.",
       bookingTitle: "Rezervim i shpejte, zgjedhje e qarte.",
       bookingBody: "Zgjidh berberin, daten, oren dhe konfirmo pa hapa te panevojshem.",
       contactTitle: "Kontakt",
@@ -54,7 +54,7 @@ export const translations = {
       openingTime: "Orari i punes",
       lunchBreak: "Pushim dreke",
       minutesShort: "min",
-      mondaySaturday: "Hene - Shtune",
+      mondaySaturday: "E Hene - E Shtune",
       sunday: "E diel",
       closed: "Mbyllur",
     },

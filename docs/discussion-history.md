@@ -346,3 +346,7 @@ The user reported that example placeholders such as `Arben`, `Krasniqi`, and the
 ## Session 17 Booking Resilience Hardening
 
 The user requested continued hardening so the website does not feel dead and remains stable if many clients confirm bookings. Client API calls now time out cleanly instead of leaving the UI waiting forever. Booking submission attempts reuse a stable `submissionId` across retries so a slow network retry remains idempotent. If the backend reports a stale slot (`SLOT_TAKEN`, `INVALID_SLOT`, or `BOOKING_CUTOFF`), the form refreshes availability and clears the selected slot so the customer can immediately choose a valid time.
+
+## Session 18 Albanian Working-Hours Copy
+
+The user noticed the public hours copy said `Hene - Shtune`. The visible Albanian schedule label and body copy now use `E Hene - E Shtune`, and long Albanian weekday names were capitalized consistently.
