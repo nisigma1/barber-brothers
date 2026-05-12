@@ -37,7 +37,7 @@ export const translations = {
       contactTitle: "Kontakt",
       contactBody: "Na gjen ne Rruga Xhemail Mustafa, Fushe Kosove.",
       serviceTitle: "Sherbimi",
-      barbersEyebrow: "Dy berbere",
+      barbersEyebrow: "2 Berber",
       mapsCta: "Hap Google Maps",
       heroHeadline: "SHERBIM PREMIUM\nPA PRITJE",
       heroSubheadline: "Rezervim i thjeshte per klientet qe duan saktesi.",
