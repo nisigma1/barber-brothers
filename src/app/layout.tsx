@@ -19,11 +19,22 @@ const barlow = Barlow_Condensed({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://barberbrothers.style"),
   title: "Barber Brothers",
   description: "Instant online booking for Barber Brothers in Fushe Kosove.",
   icons: {
-    icon: "/brand/logo.jpg",
-    apple: "/brand/logo.jpg",
+    icon: [
+      { url: "/favicon.ico" },
+      { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
+  openGraph: {
+    title: "Barber Brothers",
+    description: "Rezervim i thjeshte online per Barber Brothers ne Fushe Kosove.",
+    images: [{ url: "/brand/logo.png", width: 512, height: 512, alt: "Barber Brothers logo" }],
   },
 };
 

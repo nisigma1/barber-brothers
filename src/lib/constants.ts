@@ -10,7 +10,7 @@ export const MAP_COORDINATES = "42.6406311, 21.0969184";
 export const LANGUAGES: Language[] = ["sq", "en"];
 
 export const BRAND_ASSETS = {
-  logo: "/brand/logo.jpg",
+  logo: "/brand/logo.png",
   gallery: [
     "/brand/gallery-1.jpg",
     "/brand/gallery-2.jpg",
