@@ -61,7 +61,10 @@ export function BookingForm() {
   const dateOptions = getBookableDateOptions(language);
   const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
   const selectedDate = dateOptions.find((date) => date.localDate === localDate);
-  const selectedSlotObject = slots.find((slot) => slot.localTime === selectedSlot && slot.available);
+  const availabilityIsVerified = availabilityState === "ready";
+  const selectedSlotObject = availabilityIsVerified
+    ? slots.find((slot) => slot.localTime === selectedSlot && slot.available)
+    : undefined;
   const isClosedDay = isShopClosedOnDate(localDate);
   const normalizedPhone = normalizeKosovoPhone(phoneNumber);
   const phoneIsValid = normalizedPhone !== null;
@@ -69,7 +72,7 @@ export function BookingForm() {
   const lastNameValid = lastName.trim().length >= 2;
   const detailsValid = firstNameValid && lastNameValid && phoneIsValid;
   const hasCompleteSelection = Boolean(selectedBarber && selectedDate && selectedSlotObject);
-  const canConfirm = hasCompleteSelection && detailsValid && !isSubmitting;
+  const canConfirm = availabilityIsVerified && hasCompleteSelection && detailsValid && !isSubmitting;
   const availableSlotCount = slots.filter((slot) => slot.available).length;
   const summaryItems = hasCompleteSelection && detailsValid
     ? [
@@ -112,7 +115,10 @@ export function BookingForm() {
     const currentBarberId = barberId;
 
     async function loadAvailability() {
-      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set());
+      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set()).map((slot) => ({
+        ...slot,
+        available: false,
+      }));
 
       setSlots(fallbackSlots);
       setAvailabilityState("loading");
@@ -133,8 +139,8 @@ export function BookingForm() {
           return;
         }
 
-        setSlots(fallbackSlots);
-        setAvailabilityState("ready");
+        setSlots([]);
+        setAvailabilityState("error");
       }
     }
 
@@ -377,7 +383,7 @@ export function BookingForm() {
           </div>
 
           <div className="rounded-[1.1rem] border border-white/10 bg-black/24 p-4">
-            {availabilityState === "loading" && slots.length === 0 ? (
+            {availabilityState === "loading" ? (
               <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                 {Array.from({ length: 12 }, (_, index) => (
                   <div key={index} className="h-14 animate-pulse rounded-[0.9rem] bg-white/8" />
@@ -402,7 +408,7 @@ export function BookingForm() {
                         key={slot.key}
                         type="button"
                         aria-pressed={active}
-                        disabled={!slot.available}
+                        disabled={!availabilityIsVerified || !slot.available}
                         onClick={() => {
                           setSelectedSlot(slot.localTime);
                           resetSubmissionAttempt();

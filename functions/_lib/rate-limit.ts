@@ -35,28 +35,29 @@ export async function enforceRateLimit(
   const resetAtIso = new Date(now.getTime() + windowSeconds * 1000).toISOString();
   const hashedKey = await hashKey(key);
 
-  await env.DB.prepare("DELETE FROM request_limits WHERE reset_at <= ?").bind(nowIso).run();
-
-  const existing = await env.DB.prepare("SELECT count, reset_at FROM request_limits WHERE key = ?")
-    .bind(hashedKey)
-    .first<RateLimitRow>();
-
-  if (!existing || existing.reset_at <= nowIso) {
-    await env.DB.prepare(
-      "INSERT OR REPLACE INTO request_limits (key, count, reset_at, updated_at) VALUES (?, 1, ?, ?)",
-    )
-      .bind(hashedKey, resetAtIso, nowIso)
-      .run();
-    return;
+  if (Math.random() < 0.02) {
+    await env.DB.prepare("DELETE FROM request_limits WHERE reset_at <= ?").bind(nowIso).run();
   }
 
-  const nextCount = existing.count + 1;
+  const row = await env.DB.prepare(
+    `INSERT INTO request_limits (key, count, reset_at, updated_at)
+     VALUES (?, 1, ?, ?)
+     ON CONFLICT(key) DO UPDATE SET
+       count = CASE
+         WHEN request_limits.reset_at <= ? THEN 1
+         ELSE request_limits.count + 1
+       END,
+       reset_at = CASE
+         WHEN request_limits.reset_at <= ? THEN excluded.reset_at
+         ELSE request_limits.reset_at
+       END,
+       updated_at = excluded.updated_at
+     RETURNING count, reset_at`,
+  )
+    .bind(hashedKey, resetAtIso, nowIso, nowIso, nowIso)
+    .first<RateLimitRow>();
 
-  await env.DB.prepare("UPDATE request_limits SET count = ?, updated_at = ? WHERE key = ?")
-    .bind(nextCount, nowIso, hashedKey)
-    .run();
-
-  if (nextCount > limit) {
+  if ((row?.count ?? limit + 1) > limit) {
     throw new ApiBookingError("RATE_LIMITED", 429);
   }
 }

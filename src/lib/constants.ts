@@ -10,11 +10,11 @@ export const MAP_COORDINATES = "42.6406311, 21.0969184";
 export const LANGUAGES: Language[] = ["sq", "en"];
 
 export const BRAND_ASSETS = {
-  logo: "/brand/logo.png",
+  logo: "/brand/logo-ui.webp",
   gallery: [
-    "/brand/gallery-1.jpg",
-    "/brand/gallery-2.jpg",
-    "/brand/gallery-3.jpg",
+    "/brand/gallery-1.webp",
+    "/brand/gallery-2.webp",
+    "/brand/gallery-3.webp",
   ],
 } as const;
 
@@ -23,13 +23,13 @@ export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image
     id: "barber-1",
     name: "Uraniku",
     tagline: "Clean fades and precise finish",
-    image: "/brand/gallery-2.jpg",
+    image: "/brand/gallery-2.webp",
   },
   {
     id: "barber-2",
     name: "Hysi",
     tagline: "Sharp texture and modern detail",
-    image: "/brand/gallery-3.jpg",
+    image: "/brand/gallery-3.webp",
   },
 ];
 
