@@ -12,6 +12,7 @@ type ThemeContextValue = {
 
 const STORAGE_KEY = "barber-brothers-theme";
 const THEME_CHANGE_EVENT = "barber-brothers-theme-change";
+const DEFAULT_THEME: Theme = "light";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
@@ -21,12 +22,12 @@ function isTheme(value: string | null): value is Theme {
 
 function getStoredTheme(): Theme {
   if (typeof window === "undefined") {
-    return "dark";
+    return DEFAULT_THEME;
   }
 
   const savedTheme = window.localStorage.getItem(STORAGE_KEY);
 
-  return isTheme(savedTheme) ? savedTheme : "dark";
+  return isTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
 }
 
 function subscribeToThemeChanges(onStoreChange: () => void) {
@@ -45,7 +46,7 @@ function applyTheme(theme: Theme) {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const theme = useSyncExternalStore<Theme>(subscribeToThemeChanges, getStoredTheme, () => "dark");
+  const theme = useSyncExternalStore<Theme>(subscribeToThemeChanges, getStoredTheme, () => DEFAULT_THEME);
 
   useEffect(() => {
     applyTheme(theme);

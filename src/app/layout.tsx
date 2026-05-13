@@ -22,7 +22,7 @@ const barlow = Barlow_Condensed({
 const themeScript = `
 try {
   var theme = localStorage.getItem("barber-brothers-theme");
-  if (theme !== "dark" && theme !== "light") theme = "dark";
+  if (theme !== "dark" && theme !== "light") theme = "light";
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
 } catch (_) {}
