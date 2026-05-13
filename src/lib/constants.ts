@@ -5,7 +5,7 @@ export const SHOP_TIMEZONE = "Europe/Pristina";
 export const SHOP_RUNTIME_TIMEZONE = "Europe/Tirane";
 export const SHOP_CITY = "Fushe Kosove";
 export const SHOP_COUNTRY = "Kosovo";
-export const MAP_COORDINATES = "42.6406311, 21.0969184";
+export const GOOGLE_MAPS_URL = "https://maps.app.goo.gl/Gc8ro72mKUt859Vt5";
 
 export const LANGUAGES: Language[] = ["sq", "en"];
 
@@ -63,5 +63,5 @@ export const CONTACT_DETAILS = {
   secondaryPhone: "+38345990003",
   instagramHandle: "brotherscutss",
   address: "Rruga Xhemail Mustafa, Fushe Kosove",
-  mapsHref: `https://www.google.com/maps?q=${encodeURIComponent(MAP_COORDINATES)}`,
+  mapsHref: GOOGLE_MAPS_URL,
 };
