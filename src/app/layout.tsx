@@ -5,6 +5,7 @@ import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { BRAND_NAME, CONTACT_DETAILS } from "@/lib/constants";
 
 import "./globals.css";
 
@@ -28,24 +29,70 @@ try {
 } catch (_) {}
 `;
 
+const siteUrl = "https://barberbrothers.style";
+const brandLogoUrl = "/brand/barber-brothers-logo-512.png";
+const absoluteBrandLogoUrl = `${siteUrl}${brandLogoUrl}`;
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://barberbrothers.style"),
-  title: "Barber Brothers",
+  metadataBase: new URL(siteUrl),
+  title: BRAND_NAME,
   description: "Instant online booking for Barber Brothers in Fushe Kosove.",
+  alternates: {
+    canonical: "/",
+  },
+  manifest: "/site.webmanifest",
+  robots: {
+    index: true,
+    follow: true,
+  },
   icons: {
     icon: [
-      { url: "/favicon.ico" },
+      { url: brandLogoUrl, sizes: "512x512", type: "image/png" },
+      { url: "/favicon-512x512.png", sizes: "512x512", type: "image/png" },
+      { url: "/favicon-192x192.png", sizes: "192x192", type: "image/png" },
       { url: "/favicon-48x48.png", sizes: "48x48", type: "image/png" },
       { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/favicon.ico" },
     ],
     shortcut: "/favicon.ico",
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: "Barber Brothers",
+    title: BRAND_NAME,
     description: "Rezervim i thjeshte online per Barber Brothers ne Fushe Kosove.",
-    images: [{ url: "/brand/logo.png", width: 512, height: 512, alt: "Barber Brothers logo" }],
+    url: siteUrl,
+    siteName: BRAND_NAME,
+    type: "website",
+    images: [{ url: brandLogoUrl, width: 512, height: 512, alt: "Barber Brothers logo" }],
   },
+  twitter: {
+    card: "summary_large_image",
+    title: BRAND_NAME,
+    description: "Rezervim i thjeshte online per Barber Brothers ne Fushe Kosove.",
+    images: [{ url: brandLogoUrl, alt: "Barber Brothers logo" }],
+  },
+};
+
+const businessJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "HairSalon",
+  name: BRAND_NAME,
+  url: siteUrl,
+  logo: absoluteBrandLogoUrl,
+  image: absoluteBrandLogoUrl,
+  telephone: CONTACT_DETAILS.primaryPhone,
+  priceRange: "5 euro",
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: CONTACT_DETAILS.address,
+    addressLocality: "Fushe Kosove",
+    addressCountry: "XK",
+  },
+  hasMap: CONTACT_DETAILS.mapsHref,
+  sameAs: [
+    `https://instagram.com/${CONTACT_DETAILS.instagramHandle}`,
+    CONTACT_DETAILS.mapsHref,
+  ],
 };
 
 export default function RootLayout({
@@ -61,6 +108,10 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+        />
       </head>
       <body className="min-h-full">
         <ThemeProvider>

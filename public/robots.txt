@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://barberbrothers.style/sitemap.xml
