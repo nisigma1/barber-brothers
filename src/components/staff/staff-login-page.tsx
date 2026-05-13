@@ -41,14 +41,14 @@ export function StaffLoginPage() {
   return (
     <div className="mx-auto grid w-full max-w-6xl flex-1 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-[0.95fr_1.05fr] lg:px-8 lg:py-14">
       <section className="premium-card overflow-hidden">
-        <div className="relative min-h-[22rem] rounded-none border-0 bg-[radial-gradient(circle_at_20%_0%,rgba(217,173,114,0.16),transparent_18rem),linear-gradient(145deg,#15110c,#070605)] p-6">
+        <div className="staff-login-hero relative min-h-[22rem] rounded-none border-0 p-6">
           <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.eyebrow}</p>
-          <h1 className="mt-4 font-display text-[clamp(3.2rem,8vw,6rem)] uppercase leading-[0.85] tracking-[0.05em] text-white">
+          <h1 className="mt-4 font-display text-[clamp(3.2rem,8vw,6rem)] uppercase leading-[0.85] tracking-[0.05em]">
             {dictionary.staff.loginTitle}
           </h1>
-          <p className="mt-5 max-w-lg text-sm leading-7 text-white/68">{dictionary.staff.loginBody}</p>
+          <p className="mt-5 max-w-lg text-sm leading-7">{dictionary.staff.loginBody}</p>
         </div>
-        <div className="p-5 text-sm text-white/60">{dictionary.staff.loginCardNote}</div>
+        <div className="staff-note p-5 text-sm">{dictionary.staff.loginCardNote}</div>
       </section>
 
       <section className="premium-card p-5 sm:p-7">

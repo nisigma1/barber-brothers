@@ -252,6 +252,32 @@ html[data-theme="light"] .theme-toggle-knob {
   box-shadow: var(--shadow-soft);
 }
 
+.staff-login-hero {
+  background:
+    radial-gradient(circle at 20% 0%, rgba(217, 173, 114, 0.16), transparent 18rem),
+    linear-gradient(145deg, #15110c, #070605);
+  color: #f7efe2;
+}
+
+.staff-login-hero p:not(.eyebrow) {
+  color: rgba(247, 239, 226, 0.68);
+}
+
+.staff-note {
+  color: var(--muted);
+}
+
+html[data-theme="light"] .staff-login-hero {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(217, 173, 114, 0.22), transparent 18rem),
+    linear-gradient(145deg, #fffaf1, #f0dfc4);
+  color: #17110a;
+}
+
+html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
+  color: rgba(23, 17, 10, 0.66);
+}
+
 .eyebrow {
   font-size: 0.72rem;
   font-weight: 800;
