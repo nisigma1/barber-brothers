@@ -12,6 +12,7 @@ import {
   WORKING_HOURS,
 } from "@/lib/constants";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useTheme } from "@/components/providers/theme-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 
 function hourLabel(minutes: number) {
@@ -23,22 +24,24 @@ function hourLabel(minutes: number) {
 
 export function HomePage() {
   const { dictionary } = useLanguage();
+  const { theme } = useTheme();
+  const logoSrc = theme === "light" ? BRAND_ASSETS.logoLight : BRAND_ASSETS.logoDark;
 
   return (
     <div className="flex flex-1 flex-col">
-      <section className="relative overflow-hidden border-b border-white/8 bg-[linear-gradient(135deg,#050403_0%,#0b0906_48%,#050403_100%)]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_8%,rgba(217,173,114,0.14),transparent_26rem),radial-gradient(circle_at_88%_18%,rgba(217,173,114,0.08),transparent_22rem)]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-[linear-gradient(180deg,transparent,rgba(5,4,3,0.95))]" />
+      <section className="hero-section relative overflow-hidden">
+        <div className="hero-ambient" />
+        <div className="hero-fade" />
 
         <div className="relative mx-auto flex min-h-[72svh] w-full max-w-7xl flex-col justify-end px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="max-w-4xl">
-            <div className="inline-flex w-fit items-center gap-3 rounded-full border border-white/10 bg-black/55 px-3 py-2">
-              <div className="h-10 w-10 overflow-hidden rounded-full border border-white/15">
+            <div className="hero-badge inline-flex w-fit items-center gap-3 rounded-full px-3 py-2">
+              <div className="brand-mark hero-brand-mark">
                 <BrandImage
-                  src={BRAND_ASSETS.logo}
+                  src={logoSrc}
                   alt={`${BRAND_NAME} logo`}
                   className="h-full w-full"
-                  imgClassName="image-fill"
+                  imgClassName="brand-logo-img"
                   fallbackLabel="BB"
                   fetchPriority="high"
                   loading="eager"

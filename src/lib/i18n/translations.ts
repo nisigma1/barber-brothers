@@ -16,6 +16,8 @@ export const translations = {
       signOut: "Dil",
       open: "Hapur",
       unavailable: "E padisponueshme",
+      darkTheme: "Zi",
+      lightTheme: "Bardhe",
       configuredRequired: "Sistemi i rezervimeve duhet te konfigurohet para perdorimit real.",
     },
     home: {
@@ -192,6 +194,8 @@ export const translations = {
       signOut: "Sign out",
       open: "Open",
       unavailable: "Unavailable",
+      darkTheme: "Dark",
+      lightTheme: "Light",
       configuredRequired: "The booking system must be configured before real use.",
     },
     home: {

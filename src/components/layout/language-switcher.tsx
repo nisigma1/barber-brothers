@@ -7,7 +7,7 @@ export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
 
   return (
-    <div className="inline-flex rounded-full border border-white/10 bg-white/5 p-1">
+    <div className="language-switcher inline-flex rounded-full p-1">
       {LANGUAGES.map((item) => {
         const active = item === language;
 

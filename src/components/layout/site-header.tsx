@@ -5,7 +5,9 @@ import { usePathname } from "next/navigation";
 
 import { BRAND_ASSETS, BRAND_NAME } from "@/lib/constants";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useTheme } from "@/components/providers/theme-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 
 const navItems = [
@@ -16,17 +18,19 @@ const navItems = [
 export function SiteHeader() {
   const pathname = usePathname();
   const { dictionary } = useLanguage();
+  const { theme } = useTheme();
+  const logoSrc = theme === "light" ? BRAND_ASSETS.logoLight : BRAND_ASSETS.logoDark;
 
   return (
-    <header className="sticky top-0 z-40 border-b border-white/8 bg-[rgba(8,7,5,0.96)]">
+    <header className="site-header sticky top-0 z-40">
       <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" prefetch={false} className="flex min-h-11 items-center gap-3">
-          <div className="h-10 w-10 overflow-hidden rounded-full border border-white/12">
+          <div className="brand-mark brand-mark-compact">
             <BrandImage
-              src={BRAND_ASSETS.logo}
+              src={logoSrc}
               alt={`${BRAND_NAME} logo`}
               className="h-full w-full"
-              imgClassName="image-fill"
+              imgClassName="brand-logo-img"
               fallbackLabel="BB"
               loading="eager"
             />
@@ -59,6 +63,7 @@ export function SiteHeader() {
             })}
           </nav>
           <LanguageSwitcher />
+          <ThemeToggle />
         </div>
       </div>
       <nav className="mx-auto flex w-full max-w-7xl gap-2 overflow-x-auto px-4 pb-3 sm:px-6 md:hidden">

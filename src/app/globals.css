@@ -9,6 +9,52 @@
   --accent-strong: #f0c98b;
   --muted: rgba(247, 239, 226, 0.68);
   --ink: #17110a;
+  --line: rgba(239, 210, 166, 0.13);
+  --card-bg: rgba(12, 10, 7, 0.88);
+  --card-grad: linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018));
+  --soft-bg: rgba(12, 10, 7, 0.68);
+  --soft-bg-strong: rgba(18, 14, 10, 0.9);
+  --input-bg: rgba(0, 0, 0, 0.34);
+  --input-bg-focus: rgba(0, 0, 0, 0.38);
+  --header-bg: rgba(8, 7, 5, 0.96);
+  --page-bg:
+    radial-gradient(circle at 12% 0%, rgba(217, 173, 114, 0.13), transparent 30rem),
+    linear-gradient(180deg, #0d0b08 0%, #080705 62%, #040403 100%);
+  --hero-bg: linear-gradient(135deg, #050403 0%, #0b0906 48%, #050403 100%);
+  --hero-ambient:
+    radial-gradient(circle at 18% 8%, rgba(217, 173, 114, 0.14), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(217, 173, 114, 0.08), transparent 22rem);
+  --hero-fade: linear-gradient(180deg, transparent, rgba(5, 4, 3, 0.95));
+  --logo-frame: #040403;
+  --logo-border: rgba(240, 201, 139, 0.22);
+  --shadow-soft: 0 18px 48px rgba(0, 0, 0, 0.28);
+}
+
+html[data-theme="light"] {
+  --background: #f7f0e3;
+  --foreground: #17110a;
+  --panel: #fffaf1;
+  --panel-border: rgba(70, 49, 24, 0.14);
+  --muted: rgba(23, 17, 10, 0.68);
+  --line: rgba(70, 49, 24, 0.12);
+  --card-bg: rgba(255, 250, 241, 0.9);
+  --card-grad: linear-gradient(180deg, rgba(255, 255, 255, 0.84), rgba(255, 247, 235, 0.62));
+  --soft-bg: rgba(255, 250, 241, 0.78);
+  --soft-bg-strong: rgba(255, 255, 255, 0.96);
+  --input-bg: rgba(255, 255, 255, 0.74);
+  --input-bg-focus: rgba(255, 255, 255, 0.92);
+  --header-bg: rgba(250, 244, 234, 0.94);
+  --page-bg:
+    radial-gradient(circle at 10% 0%, rgba(217, 173, 114, 0.18), transparent 28rem),
+    linear-gradient(180deg, #fffaf1 0%, #f5ecdd 58%, #ede0cc 100%);
+  --hero-bg: linear-gradient(135deg, #fff8ed 0%, #f2e5d1 54%, #fffaf1 100%);
+  --hero-ambient:
+    radial-gradient(circle at 18% 8%, rgba(217, 173, 114, 0.24), transparent 26rem),
+    radial-gradient(circle at 88% 18%, rgba(23, 17, 10, 0.08), transparent 22rem);
+  --hero-fade: linear-gradient(180deg, transparent, rgba(255, 250, 241, 0.94));
+  --logo-frame: #ffffff;
+  --logo-border: rgba(23, 17, 10, 0.12);
+  --shadow-soft: 0 18px 50px rgba(54, 36, 18, 0.1);
 }
 
 @theme inline {
@@ -30,9 +76,7 @@
 html {
   min-width: 320px;
   scroll-behavior: smooth;
-  background:
-    radial-gradient(circle at 12% 0%, rgba(217, 173, 114, 0.13), transparent 30rem),
-    linear-gradient(180deg, #0d0b08 0%, #080705 62%, #040403 100%);
+  background: var(--page-bg);
 }
 
 body {
@@ -76,13 +120,127 @@ input:focus-visible {
   color: var(--foreground);
 }
 
+.site-header {
+  border-bottom: 1px solid var(--line);
+  background: var(--header-bg);
+  backdrop-filter: blur(16px);
+}
+
+.hero-section {
+  border-bottom: 1px solid var(--line);
+  background: var(--hero-bg);
+}
+
+.hero-ambient {
+  position: absolute;
+  inset: 0;
+  background: var(--hero-ambient);
+  pointer-events: none;
+}
+
+.hero-fade {
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 10rem;
+  background: var(--hero-fade);
+  pointer-events: none;
+}
+
+.hero-badge,
+.language-switcher,
+.theme-toggle {
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--card-bg) 82%, transparent);
+}
+
+.brand-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 1px solid var(--logo-border);
+  background: var(--logo-frame);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.16);
+}
+
+.brand-mark-compact {
+  height: 2.55rem;
+  width: 3.25rem;
+  border-radius: 0.95rem;
+  padding: 0.12rem;
+}
+
+.hero-brand-mark {
+  height: 2.75rem;
+  width: 3.5rem;
+  border-radius: 1rem;
+  padding: 0.14rem;
+}
+
+.brand-logo-img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  gap: 0.65rem;
+  border-radius: 999px;
+  padding: 0.28rem 0.32rem 0.28rem 0.85rem;
+  color: var(--muted);
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    color 160ms ease;
+}
+
+.theme-toggle:hover {
+  border-color: rgba(217, 173, 114, 0.45);
+  color: var(--foreground);
+}
+
+.theme-toggle-label {
+  min-width: 2.5rem;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.theme-toggle-track {
+  position: relative;
+  display: inline-flex;
+  height: 2.05rem;
+  width: 3.35rem;
+  border-radius: 999px;
+  background: rgba(217, 173, 114, 0.2);
+  box-shadow: inset 0 0 0 1px rgba(217, 173, 114, 0.2);
+}
+
+.theme-toggle-knob {
+  position: absolute;
+  top: 0.22rem;
+  left: 0.24rem;
+  height: 1.6rem;
+  width: 1.6rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  transition: transform 180ms ease;
+}
+
+html[data-theme="light"] .theme-toggle-knob {
+  transform: translateX(1.26rem);
+}
+
 .premium-card {
   border: 1px solid var(--panel-border);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)),
-    rgba(12, 10, 7, 0.88);
+  background: var(--card-grad), var(--card-bg);
   border-radius: 1.25rem;
-  box-shadow: 0 18px 48px rgba(0, 0, 0, 0.28);
+  box-shadow: var(--shadow-soft);
 }
 
 .eyebrow {
@@ -121,9 +279,9 @@ input:focus-visible {
 }
 
 .btn-secondary {
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(9, 8, 6, 0.72);
-  color: rgba(247, 239, 226, 0.86);
+  border: 1px solid var(--line);
+  background: color-mix(in srgb, var(--soft-bg) 86%, transparent);
+  color: var(--foreground);
 }
 
 .btn-primary:hover,
@@ -141,10 +299,10 @@ input:focus-visible {
 .tap-card {
   min-height: 3.25rem;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(12, 10, 7, 0.68);
+  border: 1px solid var(--line);
+  background: var(--soft-bg);
   padding: 1rem;
-  color: rgba(247, 239, 226, 0.78);
+  color: var(--muted);
   transition:
     transform 160ms ease,
     border-color 160ms ease,
@@ -154,8 +312,8 @@ input:focus-visible {
 
 .tap-card:hover {
   border-color: rgba(217, 173, 114, 0.45);
-  background: rgba(18, 14, 10, 0.9);
-  color: white;
+  background: var(--soft-bg-strong);
+  color: var(--foreground);
   transform: translateY(-1px);
 }
 
@@ -170,7 +328,7 @@ input:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  color: rgba(247, 239, 226, 0.74);
+  color: var(--muted);
   font-size: 0.9rem;
 }
 
@@ -178,10 +336,10 @@ input:focus-visible {
   min-height: 3.25rem;
   width: 100%;
   border-radius: 0.9rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(0, 0, 0, 0.34);
+  border: 1px solid var(--line);
+  background: var(--input-bg);
   padding: 0.85rem 1rem;
-  color: white;
+  color: var(--foreground);
   outline: none;
   transition:
     border-color 160ms ease,
@@ -190,7 +348,7 @@ input:focus-visible {
 
 .field-input:focus {
   border-color: rgba(240, 201, 139, 0.8);
-  background: rgba(0, 0, 0, 0.38);
+  background: var(--input-bg-focus);
 }
 
 select.field-input {
@@ -208,6 +366,17 @@ select.field-input option:checked,
 select.field-input option:hover {
   background-color: #2a2116;
   color: #f7efe2;
+}
+
+html[data-theme="light"] select.field-input {
+  color-scheme: light;
+  background-color: #fffaf1;
+  color: #17110a;
+}
+
+html[data-theme="light"] select.field-input option {
+  background-color: #fffaf1;
+  color: #17110a;
 }
 
 .field-error {
@@ -257,16 +426,16 @@ select.field-input option:hover {
 }
 
 .glass-strip {
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(8, 7, 5, 0.68);
+  border: 1px solid var(--line);
+  background: var(--soft-bg);
 }
 
 .gallery-card {
   position: relative;
   overflow: hidden;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--line);
+  background: var(--soft-bg);
 }
 
 .gallery-card img {
@@ -283,14 +452,14 @@ select.field-input option:hover {
   z-index: 30;
   margin-top: auto;
   padding: 1rem;
-  background: linear-gradient(180deg, rgba(8, 7, 5, 0), rgba(8, 7, 5, 0.92) 34%, rgba(8, 7, 5, 0.98) 100%);
+  background: linear-gradient(180deg, transparent, var(--background) 42%, var(--background) 100%);
 }
 
 .slot-button {
   min-height: 3.75rem;
   border-radius: 0.95rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(12, 10, 7, 0.68);
+  border: 1px solid var(--line);
+  background: var(--soft-bg);
   padding: 0.8rem 0.95rem;
   text-align: left;
   transition:
@@ -319,6 +488,44 @@ select.field-input option:hover {
   box-shadow:
     inset 0 0 0 1px rgba(240, 201, 139, 0.18),
     0 12px 30px rgba(217, 173, 114, 0.08);
+}
+
+html[data-theme="light"] .text-white {
+  color: var(--foreground) !important;
+}
+
+html[data-theme="light"] [class*="text-white/"] {
+  color: var(--muted) !important;
+}
+
+html[data-theme="light"] [class*="border-white/"] {
+  border-color: var(--line) !important;
+}
+
+html[data-theme="light"] [class*="bg-black/"],
+html[data-theme="light"] [class*="bg-white/"] {
+  background-color: var(--soft-bg) !important;
+}
+
+html[data-theme="light"] [class*="hover:bg-white/"]:hover {
+  background-color: var(--soft-bg-strong) !important;
+}
+
+html[data-theme="light"] [class*="hover:text-white"]:hover {
+  color: var(--foreground) !important;
+}
+
+html[data-theme="light"] .text-rose-100 {
+  color: #9f1239 !important;
+}
+
+html[data-theme="light"] .image-panel::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0), rgba(23, 17, 10, 0.34));
+}
+
+html[data-theme="light"] .slot-button:disabled {
+  background: rgba(23, 17, 10, 0.035);
+  color: rgba(23, 17, 10, 0.36);
 }
 
 @media (prefers-reduced-motion: reduce) {

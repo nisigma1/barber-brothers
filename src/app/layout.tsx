@@ -4,6 +4,7 @@ import { Barlow_Condensed, Manrope } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { LanguageProvider } from "@/components/providers/language-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 
 import "./globals.css";
 
@@ -49,13 +50,15 @@ export default function RootLayout({
       className={`${manrope.variable} ${barlow.variable} h-full antialiased`}
     >
       <body className="min-h-full">
-        <LanguageProvider>
-          <div className="flex min-h-full flex-col">
-            <SiteHeader />
-            <main className="flex flex-1 flex-col">{children}</main>
-            <SiteFooter />
-          </div>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <div className="flex min-h-full flex-col">
+              <SiteHeader />
+              <main className="flex flex-1 flex-col">{children}</main>
+              <SiteFooter />
+            </div>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
