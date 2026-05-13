@@ -19,7 +19,8 @@ import type {
   PublicBookingPayload,
   StaffBookingItem,
 } from "../../src/lib/booking/types";
-import { bookingRequestSchema, normalizeKosovoPhone } from "../../src/lib/booking/validation";
+import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
+import { bookingRequestSchema } from "../../src/lib/booking/validation";
 import type { BookingRow, CloudflareEnv } from "./types";
 
 export class ApiBookingError extends Error {

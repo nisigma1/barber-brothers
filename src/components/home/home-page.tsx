@@ -91,7 +91,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8 lg:py-8">
+      <section className="defer-render mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8 lg:py-8">
         <article className="premium-card p-5 sm:p-6">
           <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.serviceTitle}</p>
           <h2 className="mt-4 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
@@ -158,7 +158,7 @@ export function HomePage() {
         </article>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+      <section className="defer-render mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
         <div className="premium-card p-5 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -199,7 +199,7 @@ export function HomePage() {
         </div>
       </section>
 
-      <section className="mx-auto w-full max-w-7xl px-4 py-4 pb-8 sm:px-6 lg:px-8">
+      <section className="defer-render mx-auto w-full max-w-7xl px-4 py-4 pb-8 sm:px-6 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-2">
           <article id="hours" className="premium-card p-5 sm:p-6">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.hoursTitle}</p>

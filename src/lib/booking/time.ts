@@ -1,6 +1,3 @@
-import { addMinutes, differenceInMinutes } from "date-fns";
-import { fromZonedTime, formatInTimeZone } from "date-fns-tz";
-
 import {
   BARBERS,
   BOOKING_CUTOFF_MINUTES,
@@ -88,8 +85,71 @@ function formatAlbanianLongDate(localDate: string) {
   return `${albanianLongWeekdays[date.getUTCDay()]}, ${date.getUTCDate()} ${albanianLongMonths[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
 }
 
+const shopDateTimeFormatter = new Intl.DateTimeFormat("en-US", {
+  timeZone: SHOP_RUNTIME_TIMEZONE,
+  hourCycle: "h23",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  second: "2-digit",
+});
+
+const englishShortDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  weekday: "short",
+  month: "short",
+  day: "numeric",
+  timeZone: SHOP_RUNTIME_TIMEZONE,
+});
+
+const englishLongDateFormatter = new Intl.DateTimeFormat("en-GB", {
+  weekday: "long",
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: SHOP_RUNTIME_TIMEZONE,
+});
+
+function getShopDateTimeParts(date: Date) {
+  const parts = shopDateTimeFormatter.formatToParts(date);
+  const partValue = (type: Intl.DateTimeFormatPartTypes) => {
+    const value = parts.find((part) => part.type === type)?.value;
+    return Number(value);
+  };
+
+  return {
+    year: partValue("year"),
+    month: partValue("month"),
+    day: partValue("day"),
+    hour: partValue("hour"),
+    minute: partValue("minute"),
+    second: partValue("second"),
+  };
+}
+
+function getShopTimezoneOffsetMs(date: Date) {
+  const parts = getShopDateTimeParts(date);
+  const utcFromShopParts = Date.UTC(
+    parts.year,
+    parts.month - 1,
+    parts.day,
+    parts.hour,
+    parts.minute,
+    parts.second,
+  );
+
+  return utcFromShopParts - date.getTime();
+}
+
+function getShopNoonDate(localDate: string) {
+  return getSlotStartDate(localDate, "12:00");
+}
+
 export function getTodayLocalDate(now = new Date()) {
-  return formatInTimeZone(now, SHOP_RUNTIME_TIMEZONE, "yyyy-MM-dd");
+  const parts = getShopDateTimeParts(now);
+
+  return [parts.year, pad(parts.month), pad(parts.day)].join("-");
 }
 
 export function addDaysToLocalDate(localDate: string, days: number) {
@@ -148,15 +208,28 @@ export function getEndLocalTime(localTime: string) {
 }
 
 export function getSlotStartDate(localDate: string, localTime: string) {
-  return fromZonedTime(`${localDate}T${localTime}:00`, SHOP_RUNTIME_TIMEZONE);
+  const [year, month, day] = localDate.split("-").map(Number);
+  const [hour, minute] = localTime.split(":").map(Number);
+  const utcGuess = new Date(Date.UTC(year, month - 1, day, hour, minute, 0));
+  const firstOffset = getShopTimezoneOffsetMs(utcGuess);
+  const firstResult = new Date(utcGuess.getTime() - firstOffset);
+  const secondOffset = getShopTimezoneOffsetMs(firstResult);
+
+  if (secondOffset !== firstOffset) {
+    return new Date(utcGuess.getTime() - secondOffset);
+  }
+
+  return firstResult;
 }
 
 export function getSlotEndDate(localDate: string, localTime: string) {
-  return addMinutes(getSlotStartDate(localDate, localTime), SERVICE.durationMinutes);
+  return new Date(getSlotStartDate(localDate, localTime).getTime() + SERVICE.durationMinutes * 60000);
 }
 
 export function isSlotAtLeastOneHourAhead(localDate: string, localTime: string, now = new Date()) {
-  return differenceInMinutes(getSlotStartDate(localDate, localTime), now) >= BOOKING_CUTOFF_MINUTES;
+  const differenceMinutes = (getSlotStartDate(localDate, localTime).getTime() - now.getTime()) / 60000;
+
+  return differenceMinutes >= BOOKING_CUTOFF_MINUTES;
 }
 
 export function buildSlotKey(barberId: BarberId, localDate: string, localTime: string) {
@@ -178,12 +251,7 @@ export function getBookableDateOptions(language: Language, now = new Date()): Da
       label:
         language === "sq"
           ? formatAlbanianShortDate(localDate)
-          : new Intl.DateTimeFormat("en-GB", {
-              weekday: "short",
-              month: "short",
-              day: "numeric",
-              timeZone: SHOP_RUNTIME_TIMEZONE,
-            }).format(fromZonedTime(`${localDate}T12:00:00`, SHOP_RUNTIME_TIMEZONE)),
+          : englishShortDateFormatter.format(getShopNoonDate(localDate)),
     };
   });
 }
@@ -211,15 +279,7 @@ export function formatConfirmationDate(localDate: string, language: Language) {
     return formatAlbanianLongDate(localDate);
   }
 
-  const sample = fromZonedTime(`${localDate}T12:00:00`, SHOP_RUNTIME_TIMEZONE);
-
-  return new Intl.DateTimeFormat("en-GB", {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    timeZone: SHOP_RUNTIME_TIMEZONE,
-  }).format(sample);
+  return englishLongDateFormatter.format(getShopNoonDate(localDate));
 }
 
 export function getAvailabilitySlots(

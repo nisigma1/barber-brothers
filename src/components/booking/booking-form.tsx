@@ -12,7 +12,7 @@ import {
   isShopClosedOnDate,
 } from "@/lib/booking/time";
 import type { ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary } from "@/lib/booking/types";
-import { normalizeKosovoPhone } from "@/lib/booking/validation";
+import { normalizeKosovoPhone } from "@/lib/booking/phone";
 import { useLanguage } from "@/components/providers/language-provider";
 import { BrandImage } from "@/components/ui/brand-image";
 

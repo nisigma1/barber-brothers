@@ -252,6 +252,11 @@ html[data-theme="light"] .theme-toggle-knob {
   box-shadow: var(--shadow-soft);
 }
 
+.defer-render {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 44rem;
+}
+
 .staff-login-hero {
   background:
     radial-gradient(circle at 20% 0%, rgba(217, 173, 114, 0.16), transparent 18rem),
