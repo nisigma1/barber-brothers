@@ -23,8 +23,8 @@ export function SiteHeader() {
 
   return (
     <header className="site-header sticky top-0 z-40">
-      <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
-        <Link href="/" prefetch={false} className="flex min-h-11 items-center gap-3">
+      <div className="site-header-inner mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
+        <Link href="/" prefetch={false} className="brand-link flex min-h-11 min-w-0 items-center gap-3">
           <div className="brand-mark brand-mark-compact">
             <BrandImage
               src={logoSrc}
@@ -35,14 +35,18 @@ export function SiteHeader() {
               loading="eager"
             />
           </div>
-          <div>
-            <p className="font-display text-base uppercase tracking-[0.18em] text-white sm:text-lg">{BRAND_NAME}</p>
-            <p className="hidden text-xs uppercase tracking-[0.16em] text-white/42 sm:block">Fushe Kosove</p>
+          <div className="min-w-0">
+            <p className="brand-title font-display text-base uppercase tracking-[0.18em] text-white sm:text-lg">
+              {BRAND_NAME}
+            </p>
+            <p className="brand-location hidden text-xs uppercase tracking-[0.16em] text-white/42 sm:block">
+              Fushe Kosove
+            </p>
           </div>
         </Link>
 
-        <div className="flex items-center gap-2">
-          <nav className="hidden items-center gap-1 md:flex">
+        <div className="header-actions flex shrink-0 items-center gap-2">
+          <nav className="desktop-nav hidden items-center gap-1 md:flex">
             {navItems.map((item) => {
               const active = pathname === item.href;
 
@@ -66,7 +70,7 @@ export function SiteHeader() {
           <ThemeToggle />
         </div>
       </div>
-      <nav className="mx-auto flex w-full max-w-7xl gap-2 overflow-x-auto px-4 pb-3 sm:px-6 md:hidden">
+      <nav className="mobile-nav mx-auto grid w-full max-w-7xl grid-cols-2 gap-2 px-4 pb-3 sm:px-6 md:hidden">
         {navItems.map((item) => {
           const active = pathname === item.href;
 
@@ -75,7 +79,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               prefetch={false}
-              className={`min-h-11 shrink-0 rounded-full px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] ${
+              className={`min-h-11 rounded-full px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.16em] ${
                 active ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "bg-white/[0.06] text-white/70"
               }`}
             >

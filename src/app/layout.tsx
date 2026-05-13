@@ -19,6 +19,15 @@ const barlow = Barlow_Condensed({
   weight: ["400", "600", "700"],
 });
 
+const themeScript = `
+try {
+  var theme = localStorage.getItem("barber-brothers-theme");
+  if (theme !== "dark" && theme !== "light") theme = "dark";
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+} catch (_) {}
+`;
+
 export const metadata: Metadata = {
   metadataBase: new URL("https://barberbrothers.style"),
   title: "Barber Brothers",
@@ -47,8 +56,12 @@ export default function RootLayout({
   return (
     <html
       lang="sq"
+      suppressHydrationWarning
       className={`${manrope.variable} ${barlow.variable} h-full antialiased`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body className="min-h-full">
         <ThemeProvider>
           <LanguageProvider>

@@ -33,9 +33,9 @@ export function HomePage() {
         <div className="hero-ambient" />
         <div className="hero-fade" />
 
-        <div className="relative mx-auto flex min-h-[72svh] w-full max-w-7xl flex-col justify-end px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
+        <div className="hero-content relative mx-auto flex min-h-[72svh] w-full max-w-7xl flex-col justify-end px-4 py-10 sm:px-6 lg:px-8 lg:py-16">
           <div className="max-w-4xl">
-            <div className="hero-badge inline-flex w-fit items-center gap-3 rounded-full px-3 py-2">
+            <div className="hero-badge inline-flex w-full max-w-full items-center gap-3 rounded-full px-3 py-2 sm:w-fit">
               <div className="brand-mark hero-brand-mark">
                 <BrandImage
                   src={logoSrc}
@@ -53,7 +53,7 @@ export function HomePage() {
               </div>
             </div>
 
-            <h1 className="mt-8 max-w-4xl whitespace-pre-line font-display text-[clamp(3.7rem,10vw,8rem)] uppercase leading-[0.82] tracking-[0.035em] text-white">
+            <h1 className="hero-title mt-8 max-w-4xl whitespace-pre-line font-display text-[clamp(3.05rem,15.5vw,8rem)] uppercase leading-[0.84] tracking-[0.035em] text-white">
               {dictionary.home.heroHeadline}
             </h1>
             <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{dictionary.home.subtitle}</p>
@@ -72,7 +72,7 @@ export function HomePage() {
               </a>
             </div>
 
-            <div className="mt-10 grid max-w-3xl grid-cols-3 gap-3">
+            <div className="mt-10 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
               {[
                 ["Online", dictionary.home.fastBooking],
                 ["2", dictionary.home.barbersEyebrow],
@@ -262,11 +262,6 @@ export function HomePage() {
         </div>
       </section>
 
-      <div className="mobile-sticky-bar md:hidden">
-        <Link href="/booking" prefetch={false} className="btn-primary w-full">
-          {dictionary.home.bookSticky}
-        </Link>
-      </div>
     </div>
   );
 }

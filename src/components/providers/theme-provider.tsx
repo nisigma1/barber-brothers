@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
 
 type Theme = "dark" | "light";
 
@@ -11,37 +11,63 @@ type ThemeContextValue = {
 };
 
 const STORAGE_KEY = "barber-brothers-theme";
+const THEME_CHANGE_EVENT = "barber-brothers-theme-change";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window === "undefined") {
-      return "dark";
-    }
+function isTheme(value: string | null): value is Theme {
+  return value === "dark" || value === "light";
+}
 
-    const savedTheme = window.localStorage.getItem(STORAGE_KEY);
-
-    if (savedTheme === "dark" || savedTheme === "light") {
-      return savedTheme;
-    }
-
+function getStoredTheme(): Theme {
+  if (typeof window === "undefined") {
     return "dark";
-  });
+  }
+
+  const savedTheme = window.localStorage.getItem(STORAGE_KEY);
+
+  return isTheme(savedTheme) ? savedTheme : "dark";
+}
+
+function subscribeToThemeChanges(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(THEME_CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(THEME_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const theme = useSyncExternalStore<Theme>(subscribeToThemeChanges, getStoredTheme, () => "dark");
 
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-    document.documentElement.style.colorScheme = theme;
-    window.localStorage.setItem(STORAGE_KEY, theme);
+    applyTheme(theme);
   }, [theme]);
+
+  const setTheme = useCallback((nextTheme: Theme) => {
+    applyTheme(nextTheme);
+    window.localStorage.setItem(STORAGE_KEY, nextTheme);
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    setTheme(getStoredTheme() === "dark" ? "light" : "dark");
+  }, [setTheme]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
       theme,
-      setTheme: setThemeState,
-      toggleTheme: () => setThemeState((currentTheme) => (currentTheme === "dark" ? "light" : "dark")),
+      setTheme,
+      toggleTheme,
     }),
-    [theme],
+    [setTheme, theme, toggleTheme],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
