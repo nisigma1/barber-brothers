@@ -1,7 +1,10 @@
+import { withSecurityHeaders } from "./_lib/headers";
+
 export function onRequest() {
   return new Response("google-site-verification: googlea3dcd0a38a812f73.html", {
-    headers: {
+    headers: withSecurityHeaders({
+      "cache-control": "public, max-age=3600",
       "content-type": "text/html; charset=utf-8",
-    },
+    }),
   });
 }

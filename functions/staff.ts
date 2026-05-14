@@ -1,4 +1,5 @@
 import type { PagesContext } from "./_lib/context";
+import { redirectResponse } from "./_lib/headers";
 import { requireStaffSession } from "./_lib/session";
 
 async function staffRedirect({ env, request }: PagesContext) {
@@ -8,7 +9,7 @@ async function staffRedirect({ env, request }: PagesContext) {
   url.pathname = session ? "/staff/bookings" : "/staff/login";
   url.search = "";
 
-  return Response.redirect(url.toString(), 302);
+  return redirectResponse(url.toString());
 }
 
 export const onRequestGet = staffRedirect;
