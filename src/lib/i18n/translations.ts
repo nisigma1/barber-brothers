@@ -4,7 +4,7 @@ export const translations = {
   sq: {
     nav: {
       home: "Ballina",
-      ourwork: "Ourwork",
+      ourwork: "Puna Jone",
       booking: "Rezervo",
       staff: "Stafi",
     },
@@ -183,7 +183,7 @@ export const translations = {
   en: {
     nav: {
       home: "Home",
-      ourwork: "Ourwork",
+      ourwork: "OurWork",
       booking: "Book",
       staff: "Staff",
     },
