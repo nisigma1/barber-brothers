@@ -549,7 +549,7 @@ html[data-theme="light"] select.field-input option {
 
 .brotherspace-copy {
   display: flex;
-  min-height: 20rem;
+  min-height: 19rem;
   flex-direction: column;
   justify-content: flex-start;
   border-radius: 1.6rem;
@@ -588,6 +588,9 @@ html[data-theme="light"] select.field-input option {
 
 .brotherspace-title {
   color: rgba(255, 252, 245, 0.96);
+  font-size: clamp(3.25rem, 8vw, 5.7rem);
+  max-width: 100%;
+  overflow-wrap: anywhere;
 }
 
 .brotherspace-body {
@@ -623,7 +626,7 @@ html[data-theme="light"] .brotherspace-body {
 
 @media (min-width: 900px) {
   .brotherspace-layout {
-    grid-template-columns: minmax(16rem, 0.52fr) minmax(0, 1.48fr);
+    grid-template-columns: minmax(18rem, 0.54fr) minmax(0, 1.46fr);
     align-items: stretch;
   }
 
@@ -643,6 +646,13 @@ html[data-theme="light"] .brotherspace-body {
 
   .brotherspace-frame-exterior {
     aspect-ratio: 1.12;
+  }
+}
+
+@media (min-width: 1200px) {
+  .brotherspace-title {
+    font-size: clamp(3.8rem, 5.7vw, 5.25rem);
+    letter-spacing: 0.035em;
   }
 }
 

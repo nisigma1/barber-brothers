@@ -1,10 +1,10 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
 import { BRAND_ASSETS } from "@/lib/constants";
 import { useLanguage } from "@/components/providers/language-provider";
-import { BrandImage } from "@/components/ui/brand-image";
 
 export function BrotherspacePage() {
   const { dictionary } = useLanguage();
@@ -16,7 +16,7 @@ export function BrotherspacePage() {
         <div className="brotherspace-layout">
           <div className="brotherspace-copy">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.brotherspaceTitle}</p>
-            <h1 className="brotherspace-title mt-4 font-display text-[clamp(3.3rem,10vw,7.2rem)] uppercase leading-[0.82] tracking-[0.05em]">
+            <h1 className="brotherspace-title mt-4 font-display uppercase leading-[0.84] tracking-[0.045em]">
               {dictionary.home.brotherspaceHeading}
             </h1>
             <p className="brotherspace-body mt-5 max-w-xl text-sm leading-7 sm:text-base">
@@ -29,36 +29,33 @@ export function BrotherspacePage() {
 
           <div className="brotherspace-showcase" aria-label="Barber Brothers interior">
             <div className="brotherspace-frame brotherspace-frame-main">
-              <BrandImage
+              <img
                 src={mainImage}
                 alt="Barber Brothers interior with modern lighting"
-                className="h-full w-full"
-                imgClassName="image-fill"
-                fallbackLabel="BB"
+                className="image-fill"
                 loading="eager"
+                decoding="async"
                 fetchPriority="high"
               />
             </div>
 
             <div className="brotherspace-frame brotherspace-frame-detail">
-              <BrandImage
+              <img
                 src={detailImage}
                 alt="Barber Brothers premium chair and wall detail"
-                className="h-full w-full"
-                imgClassName="image-fill"
-                fallbackLabel="BB"
                 loading="lazy"
+                decoding="async"
+                className="image-fill"
               />
             </div>
 
             <div className="brotherspace-frame brotherspace-frame-exterior">
-              <BrandImage
+              <img
                 src={exteriorImage}
                 alt="Barber Brothers exterior entrance"
-                className="h-full w-full"
-                imgClassName="image-fill"
-                fallbackLabel="BB"
                 loading="lazy"
+                decoding="async"
+                className="image-fill"
               />
             </div>
           </div>

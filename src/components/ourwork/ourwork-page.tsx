@@ -1,10 +1,10 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
 import { BRAND_ASSETS, CONTACT_DETAILS } from "@/lib/constants";
 import { useLanguage } from "@/components/providers/language-provider";
-import { BrandImage } from "@/components/ui/brand-image";
 
 export function OurworkPage() {
   const { dictionary } = useLanguage();
@@ -47,12 +47,11 @@ export function OurworkPage() {
               rel="noopener noreferrer"
               className={`gallery-card ourwork-editorial-item ourwork-editorial-item-${index + 1}`}
             >
-              <BrandImage
+              <img
                 src={image}
                 alt={`Barber Brothers work image ${index + 1}`}
-                className="h-full w-full"
-                imgClassName="image-fill"
-                fallbackLabel="Work"
+                className="image-fill"
+                decoding="async"
                 fetchPriority={index === 0 ? "high" : undefined}
                 loading={index === 0 ? "eager" : "lazy"}
               />

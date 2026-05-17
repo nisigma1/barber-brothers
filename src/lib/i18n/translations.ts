@@ -49,7 +49,7 @@ export const translations = {
       galleryBody: "Prerje te pastra, te prezantuara me qetesi dhe fokus.",
       galleryHeading: "Detaje reale",
       brotherspaceTitle: "Ambienti",
-      brotherspaceBody: "Pamje e lokalit, ndricim modern dhe ambient i krijuar per prerje te sakta.",
+      brotherspaceBody: "Pamje e lokalit, ndriqim modern dhe ambient i krijuar per prerje te sakta.",
       brotherspaceHeading: "Ambienti",
       brotherspaceCta: "Rezervo ne kete ambient",
       contactCardTitle: "Na gjen shpejt",
