@@ -8,6 +8,7 @@ import { BrandImage } from "@/components/ui/brand-image";
 
 export function BrotherspacePage() {
   const { dictionary } = useLanguage();
+  const [mainImage, detailImage] = BRAND_ASSETS.brotherspace;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -26,16 +27,29 @@ export function BrotherspacePage() {
             </Link>
           </div>
 
-          <div className="brotherspace-frame">
-            <BrandImage
-              src={BRAND_ASSETS.brotherspace}
-              alt="Barber Brothers interior"
-              className="h-full w-full"
-              imgClassName="image-fill"
-              fallbackLabel="BB"
-              loading="eager"
-              fetchPriority="high"
-            />
+          <div className="brotherspace-showcase" aria-label="Barber Brothers interior">
+            <div className="brotherspace-frame brotherspace-frame-main">
+              <BrandImage
+                src={mainImage}
+                alt="Barber Brothers interior with modern lighting"
+                className="h-full w-full"
+                imgClassName="image-fill"
+                fallbackLabel="BB"
+                loading="eager"
+                fetchPriority="high"
+              />
+            </div>
+
+            <div className="brotherspace-frame brotherspace-frame-detail">
+              <BrandImage
+                src={detailImage}
+                alt="Barber Brothers premium chair and wall detail"
+                className="h-full w-full"
+                imgClassName="image-fill"
+                fallbackLabel="BB"
+                loading="lazy"
+              />
+            </div>
           </div>
         </div>
       </section>
