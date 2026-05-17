@@ -26,13 +26,13 @@ export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image
   {
     id: "barber-1",
     name: "Uraniku",
-    tagline: "Precision fade. Clean finish.",
+    tagline: "10 years of experience. Unique style, precise detail.",
     image: "/brand/gallery-2.webp",
   },
   {
     id: "barber-2",
     name: "Hysi",
-    tagline: "Sharp detail. Controlled style.",
+    tagline: "10 years of experience. Classic cuts, clean finish.",
     image: "/brand/gallery-3.webp",
   },
 ];
