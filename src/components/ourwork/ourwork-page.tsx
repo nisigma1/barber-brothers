@@ -11,7 +11,7 @@ export function OurworkPage() {
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <section className="premium-card overflow-hidden p-5 sm:p-7">
+      <section className="ourwork-showcase premium-card overflow-hidden p-5 sm:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.galleryTitle}</p>
@@ -38,14 +38,14 @@ export function OurworkPage() {
           </div>
         </div>
 
-        <div className="mt-7 grid gap-4 md:grid-cols-3">
+        <div className="ourwork-grid mt-8">
           {BRAND_ASSETS.gallery.map((image, index) => (
             <a
               key={image}
               href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="gallery-card aspect-[0.92]"
+              className="gallery-card ourwork-item"
             >
               <BrandImage
                 src={image}
