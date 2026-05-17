@@ -319,6 +319,11 @@ export function BookingForm() {
                       <span className="mt-2 block font-display text-4xl uppercase tracking-[0.06em] text-white">
                         {barber.name}
                       </span>
+                      <span className="mt-2 block text-sm leading-6 text-white/58">
+                        {barber.id === "barber-1"
+                          ? dictionary.home.barberOneTagline
+                          : dictionary.home.barberTwoTagline}
+                      </span>
                       <span className="mt-3 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/62">
                         {active ? dictionary.booking.selected : dictionary.booking.tapToChoose}
                       </span>
