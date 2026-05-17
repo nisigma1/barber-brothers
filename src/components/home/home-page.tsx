@@ -158,47 +158,6 @@ export function HomePage() {
         </article>
       </section>
 
-      <section className="defer-render mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="premium-card p-5 sm:p-6">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.galleryTitle}</p>
-              <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
-                {dictionary.home.galleryHeading}
-              </h2>
-            </div>
-            <a
-              href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-            >
-              @{CONTACT_DETAILS.instagramHandle}
-            </a>
-          </div>
-
-          <div className="mt-5 grid gap-4 sm:grid-cols-3">
-            {BRAND_ASSETS.gallery.map((image, index) => (
-              <a
-                key={image}
-                href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="gallery-card aspect-[0.92]"
-              >
-                <BrandImage
-                  src={image}
-                  alt={`Barber Brothers gallery image ${index + 1}`}
-                  className="h-full w-full"
-                  imgClassName="image-fill"
-                  fallbackLabel="Work"
-                />
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="defer-render mx-auto w-full max-w-7xl px-4 py-4 pb-8 sm:px-6 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-2">
           <article id="hours" className="premium-card p-5 sm:p-6">

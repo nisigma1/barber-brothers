@@ -12,6 +12,7 @@ import { BrandImage } from "@/components/ui/brand-image";
 
 const navItems = [
   { href: "/", key: "home" as const },
+  { href: "/ourwork", key: "ourwork" as const },
   { href: "/booking", key: "booking" as const },
 ];
 
@@ -70,7 +71,7 @@ export function SiteHeader() {
           <ThemeToggle />
         </div>
       </div>
-      <nav className="mobile-nav mx-auto grid w-full max-w-7xl grid-cols-2 gap-2 px-4 pb-3 sm:px-6 md:hidden">
+      <nav className="mobile-nav mx-auto grid w-full max-w-7xl grid-cols-3 gap-2 px-4 pb-3 sm:px-6 md:hidden">
         {navItems.map((item) => {
           const active = pathname === item.href;
 
@@ -79,7 +80,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               prefetch={false}
-              className={`min-h-11 rounded-full px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.16em] ${
+              className={`min-h-11 rounded-full px-3 py-3 text-center text-xs font-bold uppercase tracking-[0.1em] sm:tracking-[0.16em] ${
                 active ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "bg-white/[0.06] text-white/70"
               }`}
             >
