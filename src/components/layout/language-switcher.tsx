@@ -22,7 +22,7 @@ export function LanguageSwitcher() {
                 : "text-white/65 hover:text-white"
             }`}
           >
-            {item}
+            {item === "sq" ? "AL" : "EN"}
           </button>
         );
       })}

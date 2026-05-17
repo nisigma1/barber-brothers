@@ -23,6 +23,10 @@ export function SiteHeader() {
   const { theme } = useTheme();
   const logoSrc = theme === "light" ? BRAND_ASSETS.logoLight : BRAND_ASSETS.logoDark;
 
+  if (pathname === "/preview") {
+    return null;
+  }
+
   return (
     <header className="site-header sticky top-0 z-40">
       <div className="site-header-inner mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">

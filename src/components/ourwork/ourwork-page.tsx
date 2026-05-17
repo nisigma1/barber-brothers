@@ -38,14 +38,14 @@ export function OurworkPage() {
           </div>
         </div>
 
-        <div className="ourwork-grid mt-8">
+        <div className="ourwork-editorial-grid mt-8">
           {BRAND_ASSETS.gallery.map((image, index) => (
             <a
               key={image}
               href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="gallery-card ourwork-item"
+              className={`gallery-card ourwork-editorial-item ourwork-editorial-item-${index + 1}`}
             >
               <BrandImage
                 src={image}
@@ -53,6 +53,8 @@ export function OurworkPage() {
                 className="h-full w-full"
                 imgClassName="image-fill"
                 fallbackLabel="Work"
+                fetchPriority={index === 0 ? "high" : undefined}
+                loading={index === 0 ? "eager" : "lazy"}
               />
             </a>
           ))}

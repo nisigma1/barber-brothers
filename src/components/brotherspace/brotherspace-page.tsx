@@ -11,8 +11,8 @@ export function BrotherspacePage() {
   const [mainImage, detailImage, exteriorImage] = BRAND_ASSETS.brotherspace;
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <section className="brotherspace-hero premium-card overflow-hidden p-4 sm:p-6 lg:p-8">
+    <div className="mx-auto flex w-full max-w-[92rem] flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <section className="brotherspace-hero premium-card overflow-hidden p-3 sm:p-5 lg:p-7">
         <div className="brotherspace-layout">
           <div className="brotherspace-copy">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.brotherspaceTitle}</p>

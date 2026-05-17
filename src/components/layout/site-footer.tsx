@@ -1,10 +1,17 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+
 import { CONTACT_DETAILS } from "@/lib/constants";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function SiteFooter() {
+  const pathname = usePathname();
   const { dictionary } = useLanguage();
+
+  if (pathname === "/preview") {
+    return null;
+  }
 
   return (
     <footer className="border-t border-white/8 bg-black/25">
