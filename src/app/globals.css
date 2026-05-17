@@ -588,9 +588,10 @@ html[data-theme="light"] select.field-input option {
 
 .brotherspace-title {
   color: rgba(255, 252, 245, 0.96);
-  font-size: clamp(3.25rem, 8vw, 5.7rem);
+  font-size: clamp(3rem, 6.4vw, 4.85rem);
   max-width: 100%;
-  overflow-wrap: anywhere;
+  white-space: nowrap;
+  letter-spacing: 0.025em;
 }
 
 .brotherspace-body {
@@ -651,8 +652,8 @@ html[data-theme="light"] .brotherspace-body {
 
 @media (min-width: 1200px) {
   .brotherspace-title {
-    font-size: clamp(3.8rem, 5.7vw, 5.25rem);
-    letter-spacing: 0.035em;
+    font-size: clamp(3.65rem, 4.6vw, 4.65rem);
+    letter-spacing: 0.018em;
   }
 }
 

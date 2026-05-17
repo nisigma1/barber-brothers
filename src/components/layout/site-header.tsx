@@ -28,7 +28,7 @@ export function SiteHeader() {
   }
 
   return (
-    <header className="site-header sticky top-0 z-40">
+    <header className="site-header">
       <div className="site-header-inner mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" prefetch={false} className="brand-link flex min-h-11 min-w-0 items-center gap-3">
           <div className="brand-mark brand-mark-compact">
