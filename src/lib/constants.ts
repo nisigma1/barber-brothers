@@ -13,6 +13,7 @@ export const BRAND_ASSETS = {
   logo: "/brand/logo-ui.webp",
   logoDark: "/brand/logo-dark.webp",
   logoLight: "/brand/logo-light.webp",
+  brotherspace: "/brand/brotherspace-main.webp",
   gallery: [
     "/brand/gallery-1.webp",
     "/brand/gallery-2.webp",

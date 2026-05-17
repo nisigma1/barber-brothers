@@ -478,26 +478,12 @@ html[data-theme="light"] select.field-input option {
   background: var(--soft-bg);
 }
 
-.gallery-card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(180deg, transparent 52%, color-mix(in srgb, var(--background) 78%, transparent)),
-    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.08), transparent 38%);
-  pointer-events: none;
-}
-
 .gallery-card img {
-  filter: saturate(0.94) contrast(1.04) brightness(0.96);
-  transition:
-    transform 260ms ease,
-    filter 260ms ease;
+  transition: transform 260ms ease;
 }
 
 .gallery-card:hover img {
   transform: scale(1.04);
-  filter: saturate(1) contrast(1.07) brightness(0.99);
 }
 
 .ourwork-showcase {
@@ -505,6 +491,58 @@ html[data-theme="light"] select.field-input option {
     radial-gradient(circle at 20% 0%, rgba(217, 173, 114, 0.16), transparent 34%),
     var(--card-grad),
     var(--card-bg);
+}
+
+.brotherspace-hero {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(217, 173, 114, 0.18), transparent 34%),
+    linear-gradient(145deg, rgba(22, 17, 12, 0.96), rgba(8, 7, 5, 0.98));
+}
+
+.brotherspace-layout {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.brotherspace-copy {
+  display: flex;
+  min-height: 22rem;
+  flex-direction: column;
+  justify-content: flex-start;
+  border-radius: 1.6rem;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 16% 12%, rgba(217, 173, 114, 0.16), transparent 34%),
+    linear-gradient(145deg, rgba(19, 15, 11, 0.98), rgba(8, 7, 5, 0.98));
+  padding: clamp(1.2rem, 4vw, 3rem);
+}
+
+.brotherspace-frame {
+  min-height: 32rem;
+  overflow: hidden;
+  border-radius: 1.6rem;
+  border: 1px solid color-mix(in srgb, var(--color-accent) 36%, var(--line));
+  background: #090806;
+  box-shadow: 0 2rem 5rem rgba(0, 0, 0, 0.28);
+}
+
+.brotherspace-title {
+  color: rgba(255, 252, 245, 0.96);
+}
+
+.brotherspace-body {
+  color: rgba(255, 252, 245, 0.68);
+}
+
+@media (min-width: 900px) {
+  .brotherspace-layout {
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    align-items: stretch;
+  }
+
+  .brotherspace-frame {
+    min-height: 42rem;
+  }
 }
 
 .ourwork-grid {
