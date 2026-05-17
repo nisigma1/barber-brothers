@@ -5,7 +5,7 @@ export const translations = {
     nav: {
       home: "Ballina",
       ourwork: "Puna Jone",
-      brotherspace: "BROTHERSPACE",
+      brotherspace: "Ambienti",
       booking: "Rezervo",
       staff: "Stafi",
     },
@@ -48,7 +48,7 @@ export const translations = {
       galleryTitle: "Puna jone",
       galleryBody: "Prerje te pastra, te prezantuara me qetesi dhe fokus.",
       galleryHeading: "Detaje reale",
-      brotherspaceTitle: "BROTHERSPACE",
+      brotherspaceTitle: "Ambienti",
       brotherspaceBody: "Pamje e lokalit, ndricim modern dhe ambient i krijuar per prerje te sakta.",
       brotherspaceHeading: "Ambienti",
       brotherspaceCta: "Rezervo ne kete ambient",

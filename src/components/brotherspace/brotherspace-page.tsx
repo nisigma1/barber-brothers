@@ -8,7 +8,7 @@ import { BrandImage } from "@/components/ui/brand-image";
 
 export function BrotherspacePage() {
   const { dictionary } = useLanguage();
-  const [mainImage, detailImage] = BRAND_ASSETS.brotherspace;
+  const [mainImage, detailImage, exteriorImage] = BRAND_ASSETS.brotherspace;
 
   return (
     <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
@@ -44,6 +44,17 @@ export function BrotherspacePage() {
               <BrandImage
                 src={detailImage}
                 alt="Barber Brothers premium chair and wall detail"
+                className="h-full w-full"
+                imgClassName="image-fill"
+                fallbackLabel="BB"
+                loading="lazy"
+              />
+            </div>
+
+            <div className="brotherspace-frame brotherspace-frame-exterior">
+              <BrandImage
+                src={exteriorImage}
+                alt="Barber Brothers exterior entrance"
                 className="h-full w-full"
                 imgClassName="image-fill"
                 fallbackLabel="BB"
