@@ -1,8 +1,8 @@
 import { withSecurityHeaders } from "./_lib/headers";
 
 const LOCK_COOKIE = "bb_preview_access";
+const LOCK_COOKIE_VALUE = "session-v2";
 const LOCK_PIN = "9090";
-const LOCK_MAX_AGE_SECONDS = 60 * 60 * 24 * 14;
 const PUBLIC_PATHS = new Set(["/preview", "/googlea3dcd0a38a812f73.html"]);
 const PUBLIC_PREFIXES = ["/_next/", "/brand/"];
 const PUBLIC_FILE_EXTENSIONS = /\.(?:ico|png|jpg|jpeg|webp|svg|css|js|txt|xml|json|webmanifest)$/i;
@@ -17,7 +17,7 @@ function hasAccessCookie(request: Request) {
   return cookieHeader
     .split(";")
     .map((cookie) => cookie.trim())
-    .some((cookie) => cookie === `${LOCK_COOKIE}=granted`);
+    .some((cookie) => cookie === `${LOCK_COOKIE}=${LOCK_COOKIE_VALUE}`);
 }
 
 function isPublicPath(pathname: string) {
@@ -37,10 +37,14 @@ function safeNextPath(value: FormDataEntryValue | string | null) {
 function redirectToPreview(url: URL) {
   const previewUrl = new URL("/preview", url.origin);
   previewUrl.searchParams.set("next", `${url.pathname}${url.search}`);
+  const secureCookie = url.protocol === "https:" ? "; Secure" : "";
 
   return new Response(null, {
     status: 302,
-    headers: withSecurityHeaders({ location: previewUrl.toString() }),
+    headers: withSecurityHeaders({
+      location: previewUrl.toString(),
+      "set-cookie": `${LOCK_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0${secureCookie}`,
+    }),
   });
 }
 
@@ -67,7 +71,7 @@ export const onRequest = async ({ next, request }: MiddlewareContext) => {
         status: 302,
         headers: withSecurityHeaders({
           location: new URL(nextPath, url.origin).toString(),
-          "set-cookie": `${LOCK_COOKIE}=granted; Path=/; HttpOnly; SameSite=Lax; Max-Age=${LOCK_MAX_AGE_SECONDS}${secureCookie}`,
+          "set-cookie": `${LOCK_COOKIE}=${LOCK_COOKIE_VALUE}; Path=/; HttpOnly; SameSite=Lax${secureCookie}`,
         }),
       });
     }
