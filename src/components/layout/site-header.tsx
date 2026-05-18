@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 
 import { BRAND_ASSETS, BRAND_NAME } from "@/lib/constants";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
@@ -23,6 +24,7 @@ export function SiteHeader() {
   const { dictionary } = useLanguage();
   const { theme } = useTheme();
   const logoSrc = theme === "light" ? BRAND_ASSETS.logoLight : BRAND_ASSETS.logoDark;
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (pathname === "/preview") {
     return null;
@@ -74,26 +76,39 @@ export function SiteHeader() {
           </nav>
           <LanguageSwitcher />
           <ThemeToggle />
+          <button
+            type="button"
+            className={`mobile-menu-button md:hidden ${mobileMenuOpen ? "mobile-menu-button-open" : ""}`}
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
+            onClick={() => setMobileMenuOpen((open) => !open)}
+          >
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
+            <span aria-hidden="true" />
+          </button>
         </div>
       </div>
-      <nav className="mobile-nav mx-auto grid w-full max-w-7xl grid-cols-2 gap-2 px-4 pb-3 sm:grid-cols-4 sm:px-6 md:hidden">
-        {navItems.map((item) => {
-          const active = pathname === item.href;
+      <div id="mobile-menu" className={`mobile-menu-shell md:hidden ${mobileMenuOpen ? "mobile-menu-shell-open" : ""}`}>
+        <nav className="mobile-menu mx-auto grid w-full max-w-7xl gap-2 px-4 pb-4 pt-1 sm:px-6">
+          {navItems.map((item) => {
+            const active = pathname === item.href;
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={false}
-              className={`min-h-11 rounded-full px-3 py-3 text-center text-[0.68rem] font-bold uppercase tracking-[0.08em] sm:text-xs sm:tracking-[0.12em] ${
-                active ? "bg-[var(--color-accent)] text-[var(--color-ink)]" : "bg-white/[0.06] text-white/70"
-              }`}
-            >
-              {dictionary.nav[item.key]}
-            </Link>
-          );
-        })}
-      </nav>
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                prefetch={false}
+                className={`mobile-menu-link ${active ? "mobile-menu-link-active" : ""}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {dictionary.nav[item.key]}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
     </header>
   );
 }
