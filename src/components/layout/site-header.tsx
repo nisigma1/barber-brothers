@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -8,7 +10,6 @@ import { LanguageSwitcher } from "@/components/layout/language-switcher";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useTheme } from "@/components/providers/theme-provider";
-import { BrandImage } from "@/components/ui/brand-image";
 
 const navItems = [
   { href: "/", key: "home" as const },
@@ -32,12 +33,11 @@ export function SiteHeader() {
       <div className="site-header-inner mx-auto flex w-full max-w-7xl items-center justify-between gap-3 px-4 py-3 sm:px-6 lg:px-8">
         <Link href="/" prefetch={false} className="brand-link flex min-h-11 min-w-0 items-center gap-3">
           <div className="brand-mark brand-mark-compact">
-            <BrandImage
+            <img
               src={logoSrc}
               alt={`${BRAND_NAME} logo`}
-              className="h-full w-full"
-              imgClassName="brand-logo-img"
-              fallbackLabel="BB"
+              className="h-full w-full brand-logo-img"
+              decoding="async"
               loading="eager"
             />
           </div>

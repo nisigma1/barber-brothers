@@ -26,6 +26,8 @@ try {
   if (theme !== "dark" && theme !== "light") theme = "light";
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
+  var language = localStorage.getItem("barber-brothers-language");
+  document.documentElement.lang = language === "en" ? "en" : "sq";
 } catch (_) {}
 `;
 

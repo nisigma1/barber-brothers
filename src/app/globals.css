@@ -120,6 +120,18 @@ input:focus-visible {
   color: var(--foreground);
 }
 
+.i18n-en {
+  display: none;
+}
+
+html[lang="en"] .i18n-sq {
+  display: none;
+}
+
+html[lang="en"] .i18n-en {
+  display: inline;
+}
+
 .site-header {
   border-bottom: 1px solid var(--line);
   background: var(--header-bg);
@@ -191,6 +203,18 @@ input:focus-visible {
   height: 100%;
   width: 100%;
   object-fit: contain;
+}
+
+.theme-logo-dark {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-logo-light {
+  display: none;
+}
+
+html[data-theme="dark"] .theme-logo-dark {
+  display: block;
 }
 
 .theme-toggle {

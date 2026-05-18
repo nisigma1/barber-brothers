@@ -1,5 +1,7 @@
 "use client";
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useEffect, useId, useRef, useState } from "react";
 
 import { BARBERS, SERVICE } from "@/lib/constants";
@@ -14,7 +16,6 @@ import {
 import type { ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary } from "@/lib/booking/types";
 import { normalizeKosovoPhone } from "@/lib/booking/phone";
 import { useLanguage } from "@/components/providers/language-provider";
-import { BrandImage } from "@/components/ui/brand-image";
 
 const LAST_BOOKING_KEY = "barber-brothers-last-booking";
 const SHOULD_REFRESH_AVAILABILITY_AFTER_ERROR: ApiErrorCode[] = [
@@ -306,12 +307,12 @@ export function BookingForm() {
                 >
                   <div className="grid h-full gap-0 sm:grid-cols-[7rem_1fr]">
                     <div className="image-panel min-h-28 rounded-none border-0">
-                      <BrandImage
+                      <img
                         src={barber.image}
                         alt={barber.name}
-                        className="h-full w-full"
-                        imgClassName="image-fill"
-                        fallbackLabel="BB"
+                        className="h-full w-full image-fill"
+                        decoding="async"
+                        loading="lazy"
                       />
                     </div>
                     <div className="p-4">

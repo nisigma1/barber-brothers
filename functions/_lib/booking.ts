@@ -256,7 +256,14 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
 export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBookingPayload["barberId"]) {
   const db = getDatabase(env);
   const rows = await db.prepare(
-    "SELECT * FROM bookings WHERE status = 'confirmed' AND barber_id = ? ORDER BY start_utc ASC",
+    `SELECT
+      booking_id, submission_id, slot_key, barber_id, barber_name, service_name, service_duration_minutes,
+      service_price, currency, local_date, local_time, end_local_time, start_utc, end_utc,
+      customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at
+    FROM bookings
+    WHERE status = 'confirmed' AND barber_id = ?
+    ORDER BY start_utc ASC
+    LIMIT 300`,
   )
     .bind(barberId)
     .all<BookingRow>();
@@ -267,10 +274,10 @@ export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBook
 export async function softDeleteBooking(env: CloudflareEnv, bookingId: string, barberId: PublicBookingPayload["barberId"]) {
   const db = getDatabase(env);
   const booking = await db.prepare(
-    "SELECT * FROM bookings WHERE booking_id = ? AND barber_id = ? AND status = 'confirmed'",
+    "SELECT slot_key FROM bookings WHERE booking_id = ? AND barber_id = ? AND status = 'confirmed'",
   )
     .bind(bookingId, barberId)
-    .first<BookingRow>();
+    .first<{ slot_key: string }>();
 
   if (!booking) {
     throw new ApiBookingError("NOT_FOUND", 404);

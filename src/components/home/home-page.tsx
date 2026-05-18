@@ -1,5 +1,4 @@
-"use client";
-
+/* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
 import {
@@ -11,9 +10,7 @@ import {
   SHOP_CITY,
   WORKING_HOURS,
 } from "@/lib/constants";
-import { useLanguage } from "@/components/providers/language-provider";
-import { useTheme } from "@/components/providers/theme-provider";
-import { BrandImage } from "@/components/ui/brand-image";
+import { translations } from "@/lib/i18n/translations";
 
 function hourLabel(minutes: number) {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -22,10 +19,18 @@ function hourLabel(minutes: number) {
   return `${hours}:${nextMinutes}`;
 }
 
+function BilingualText({ en, sq }: { en: string; sq: string }) {
+  return (
+    <>
+      <span className="i18n-sq">{sq}</span>
+      <span className="i18n-en">{en}</span>
+    </>
+  );
+}
+
 export function HomePage() {
-  const { dictionary } = useLanguage();
-  const { theme } = useTheme();
-  const logoSrc = theme === "light" ? BRAND_ASSETS.logoLight : BRAND_ASSETS.logoDark;
+  const sq = translations.sq;
+  const en = translations.en;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -37,30 +42,42 @@ export function HomePage() {
           <div className="max-w-4xl">
             <div className="hero-badge inline-flex w-full max-w-full items-center gap-3 rounded-full px-3 py-2 sm:w-fit">
               <div className="brand-mark hero-brand-mark">
-                <BrandImage
-                  src={logoSrc}
+                <img
+                  src={BRAND_ASSETS.logoLight}
                   alt={`${BRAND_NAME} logo`}
-                  className="h-full w-full"
-                  imgClassName="brand-logo-img"
-                  fallbackLabel="BB"
+                  className="theme-logo-light h-full w-full brand-logo-img"
+                  decoding="async"
                   fetchPriority="high"
+                  loading="eager"
+                />
+                <img
+                  src={BRAND_ASSETS.logoDark}
+                  alt={`${BRAND_NAME} logo`}
+                  className="theme-logo-dark h-full w-full brand-logo-img"
+                  decoding="async"
                   loading="eager"
                 />
               </div>
               <div>
-                <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.kicker}</p>
-                <p className="text-sm text-white/62">{dictionary.home.heroSubheadline}</p>
+                <p className="eyebrow text-[var(--color-accent)]">
+                  <BilingualText sq={sq.home.kicker} en={en.home.kicker} />
+                </p>
+                <p className="text-sm text-white/62">
+                  <BilingualText sq={sq.home.heroSubheadline} en={en.home.heroSubheadline} />
+                </p>
               </div>
             </div>
 
             <h1 className="hero-title mt-8 max-w-4xl whitespace-pre-line font-display text-[clamp(3.05rem,15.5vw,8rem)] uppercase leading-[0.84] tracking-[0.035em] text-white">
-              {dictionary.home.heroHeadline}
+              <BilingualText sq={sq.home.heroHeadline} en={en.home.heroHeadline} />
             </h1>
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">{dictionary.home.subtitle}</p>
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/78 sm:text-lg">
+              <BilingualText sq={sq.home.subtitle} en={en.home.subtitle} />
+            </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Link href="/booking" prefetch={false} className="btn-primary min-w-52">
-                {dictionary.home.primaryCta}
+                <BilingualText sq={sq.home.primaryCta} en={en.home.primaryCta} />
               </Link>
               <a
                 href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
@@ -68,22 +85,26 @@ export function HomePage() {
                 rel="noopener noreferrer"
                 className="btn-secondary min-w-44"
               >
-                {dictionary.home.secondaryCta}
+                <BilingualText sq={sq.home.secondaryCta} en={en.home.secondaryCta} />
               </a>
             </div>
 
             <div className="mt-10 grid max-w-3xl grid-cols-1 gap-3 sm:grid-cols-3">
               {[
-                ["Online", dictionary.home.fastBooking],
-                ["2", dictionary.home.barbersEyebrow],
-                [
-                  `${hourLabel(WORKING_HOURS.openMinutes)}-${hourLabel(WORKING_HOURS.closeMinutes)}`,
-                  dictionary.home.hoursTitle,
-                ],
-              ].map(([value, label]) => (
-                <div key={label} className="rounded-2xl border border-white/10 bg-black/52 p-4">
-                  <p className="font-display text-3xl leading-none text-white sm:text-4xl">{value}</p>
-                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/52">{label}</p>
+                { key: "online", value: "Online", sqLabel: sq.home.fastBooking, enLabel: en.home.fastBooking },
+                { key: "barbers", value: "2", sqLabel: sq.home.barbersEyebrow, enLabel: en.home.barbersEyebrow },
+                {
+                  key: "hours",
+                  value: `${hourLabel(WORKING_HOURS.openMinutes)}-${hourLabel(WORKING_HOURS.closeMinutes)}`,
+                  sqLabel: sq.home.hoursTitle,
+                  enLabel: en.home.hoursTitle,
+                },
+              ].map((item) => (
+                <div key={item.key} className="rounded-2xl border border-white/10 bg-black/52 p-4">
+                  <p className="font-display text-3xl leading-none text-white sm:text-4xl">{item.value}</p>
+                  <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/52">
+                    <BilingualText sq={item.sqLabel} en={item.enLabel} />
+                  </p>
                 </div>
               ))}
             </div>
@@ -93,19 +114,27 @@ export function HomePage() {
 
       <section className="defer-render mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[0.82fr_1.18fr] lg:px-8 lg:py-8">
         <article className="premium-card p-5 sm:p-6">
-          <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.serviceTitle}</p>
+          <p className="eyebrow text-[var(--color-accent)]">
+            <BilingualText sq={sq.home.serviceTitle} en={en.home.serviceTitle} />
+          </p>
           <h2 className="mt-4 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
-            {dictionary.common.serviceName}
+            <BilingualText sq={sq.common.serviceName} en={en.common.serviceName} />
           </h2>
-          <p className="mt-4 text-sm leading-7 text-white/64">{dictionary.booking.serviceIntro}</p>
+          <p className="mt-4 text-sm leading-7 text-white/64">
+            <BilingualText sq={sq.booking.serviceIntro} en={en.booking.serviceIntro} />
+          </p>
 
           <div className="mt-5 grid grid-cols-2 gap-3">
             <div className="rounded-2xl border border-white/10 bg-black/22 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/42">{dictionary.booking.duration}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-white/42">
+                <BilingualText sq={sq.booking.duration} en={en.booking.duration} />
+              </p>
               <p className="mt-1 text-lg font-semibold text-white">{SERVICE.durationMinutes} min</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-black/22 p-4">
-              <p className="text-xs uppercase tracking-[0.18em] text-white/42">{dictionary.booking.price}</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-white/42">
+                <BilingualText sq={sq.booking.price} en={en.booking.price} />
+              </p>
               <p className="mt-1 text-lg font-semibold text-white">
                 {SERVICE.price} {SERVICE.currency}
               </p>
@@ -113,20 +142,22 @@ export function HomePage() {
           </div>
 
           <Link href="/booking" prefetch={false} className="btn-primary mt-6 w-full">
-            {dictionary.home.primaryCta}
+            <BilingualText sq={sq.home.primaryCta} en={en.home.primaryCta} />
           </Link>
         </article>
 
         <article className="premium-card p-5 sm:p-6">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.barbersTitle}</p>
+              <p className="eyebrow text-[var(--color-accent)]">
+                <BilingualText sq={sq.home.barbersTitle} en={en.home.barbersTitle} />
+              </p>
               <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
-                {dictionary.home.barbersEyebrow}
+                <BilingualText sq={sq.home.barbersEyebrow} en={en.home.barbersEyebrow} />
               </h2>
             </div>
             <Link href="/booking" prefetch={false} className="btn-secondary">
-              {dictionary.home.viewBooking}
+              <BilingualText sq={sq.home.viewBooking} en={en.home.viewBooking} />
             </Link>
           </div>
 
@@ -134,22 +165,28 @@ export function HomePage() {
             {BARBERS.map((barber) => (
               <Link key={barber.id} href="/booking" prefetch={false} className="tap-card overflow-hidden p-0">
                 <div className="image-panel aspect-[1.12] rounded-none border-0">
-                  <BrandImage
+                  <img
                     src={barber.image}
                     alt={barber.name}
-                    className="h-full w-full"
-                    imgClassName="image-fill"
-                    fallbackLabel="BB"
+                    className="h-full w-full image-fill"
+                    decoding="async"
+                    loading="lazy"
                   />
                 </div>
                 <div className="p-4">
-                  <p className="eyebrow text-white/42">{dictionary.booking.barberCardLabel}</p>
+                  <p className="eyebrow text-white/42">
+                    <BilingualText sq={sq.booking.barberCardLabel} en={en.booking.barberCardLabel} />
+                  </p>
                   <h3 className="mt-2 font-display text-4xl uppercase tracking-[0.06em] text-white">{barber.name}</h3>
                   <p className="mt-3 text-sm leading-7 text-white/62">
-                    {barber.id === "barber-1" ? dictionary.home.barberOneTagline : dictionary.home.barberTwoTagline}
+                    {barber.id === "barber-1" ? (
+                      <BilingualText sq={sq.home.barberOneTagline} en={en.home.barberOneTagline} />
+                    ) : (
+                      <BilingualText sq={sq.home.barberTwoTagline} en={en.home.barberTwoTagline} />
+                    )}
                   </p>
                   <span className="mt-4 inline-flex text-xs font-bold uppercase tracking-[0.16em] text-[var(--color-accent)]">
-                    {dictionary.home.barbersCardCta}
+                    <BilingualText sq={sq.home.barbersCardCta} en={en.home.barbersCardCta} />
                   </span>
                 </div>
               </Link>
@@ -161,42 +198,62 @@ export function HomePage() {
       <section className="defer-render mx-auto w-full max-w-7xl px-4 py-4 pb-8 sm:px-6 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-2">
           <article id="hours" className="premium-card p-5 sm:p-6">
-            <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.hoursTitle}</p>
+            <p className="eyebrow text-[var(--color-accent)]">
+              <BilingualText sq={sq.home.hoursTitle} en={en.home.hoursTitle} />
+            </p>
             <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
               {hourLabel(WORKING_HOURS.openMinutes)}-{hourLabel(WORKING_HOURS.closeMinutes)}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-white/65">{dictionary.home.hoursBody}</p>
+            <p className="mt-4 text-sm leading-7 text-white/65">
+              <BilingualText sq={sq.home.hoursBody} en={en.home.hoursBody} />
+            </p>
             <div className="mt-5 grid gap-3">
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
-                <span>{dictionary.home.mondaySaturday}</span>
+                <span>
+                  <BilingualText sq={sq.home.mondaySaturday} en={en.home.mondaySaturday} />
+                </span>
                 <span className="font-semibold text-white">
                   {hourLabel(WORKING_HOURS.openMinutes)}-{hourLabel(WORKING_HOURS.closeMinutes)}
                 </span>
               </div>
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
-                <span>{dictionary.home.lunchBreak}</span>
+                <span>
+                  <BilingualText sq={sq.home.lunchBreak} en={en.home.lunchBreak} />
+                </span>
                 <span className="font-semibold text-white">12:30-13:00</span>
               </div>
               <div className="glass-strip flex min-h-14 items-center justify-between rounded-2xl px-4">
-                <span>{dictionary.home.sunday}</span>
-                <span className="font-semibold text-rose-100">{dictionary.home.closed}</span>
+                <span>
+                  <BilingualText sq={sq.home.sunday} en={en.home.sunday} />
+                </span>
+                <span className="font-semibold text-rose-100">
+                  <BilingualText sq={sq.home.closed} en={en.home.closed} />
+                </span>
               </div>
             </div>
           </article>
 
           <article className="premium-card p-5 sm:p-6">
-            <p className="eyebrow text-[var(--color-accent)]">{dictionary.home.contactTitle}</p>
+            <p className="eyebrow text-[var(--color-accent)]">
+              <BilingualText sq={sq.home.contactTitle} en={en.home.contactTitle} />
+            </p>
             <h2 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
               {SHOP_CITY}
             </h2>
-            <p className="mt-4 text-sm leading-7 text-white/65">{dictionary.home.contactBody}</p>
+            <p className="mt-4 text-sm leading-7 text-white/65">
+              <BilingualText sq={sq.home.contactBody} en={en.home.contactBody} />
+            </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               <a className="tap-card" href={`tel:${CONTACT_DETAILS.primaryPhone}`}>
-                <span className="eyebrow text-white/42">{dictionary.contact.primaryPhone}</span>
+                <span className="eyebrow text-white/42">
+                  <BilingualText sq={sq.contact.primaryPhone} en={en.contact.primaryPhone} />
+                </span>
                 <span className="mt-2 block font-semibold text-white">{CONTACT_DETAILS.primaryPhone}</span>
               </a>
               <a className="tap-card" href={`tel:${CONTACT_DETAILS.secondaryPhone}`}>
-                <span className="eyebrow text-white/42">{dictionary.contact.secondaryPhone}</span>
+                <span className="eyebrow text-white/42">
+                  <BilingualText sq={sq.contact.secondaryPhone} en={en.contact.secondaryPhone} />
+                </span>
                 <span className="mt-2 block font-semibold text-white">{CONTACT_DETAILS.secondaryPhone}</span>
               </a>
               <a
@@ -205,22 +262,29 @@ export function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span className="eyebrow text-white/42">{dictionary.contact.instagram}</span>
+                <span className="eyebrow text-white/42">
+                  <BilingualText sq={sq.contact.instagram} en={en.contact.instagram} />
+                </span>
                 <span className="mt-2 block font-semibold text-white">@{CONTACT_DETAILS.instagramHandle}</span>
               </a>
               <a className="tap-card" href={CONTACT_DETAILS.mapsHref} target="_blank" rel="noopener noreferrer">
-                <span className="eyebrow text-white/42">{dictionary.contact.maps}</span>
-                <span className="mt-2 block font-semibold text-white">{dictionary.home.mapsCta}</span>
+                <span className="eyebrow text-white/42">
+                  <BilingualText sq={sq.contact.maps} en={en.contact.maps} />
+                </span>
+                <span className="mt-2 block font-semibold text-white">
+                  <BilingualText sq={sq.home.mapsCta} en={en.home.mapsCta} />
+                </span>
               </a>
             </div>
             <div className="mt-4 rounded-2xl border border-white/10 bg-black/25 p-4 text-sm text-white/62">
-              <p className="font-semibold text-white">{dictionary.home.contactCardTitle}</p>
+              <p className="font-semibold text-white">
+                <BilingualText sq={sq.home.contactCardTitle} en={en.home.contactCardTitle} />
+              </p>
               <p className="mt-2">{CONTACT_DETAILS.address}</p>
             </div>
           </article>
         </div>
       </section>
-
     </div>
   );
 }

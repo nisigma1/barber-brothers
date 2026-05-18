@@ -16,7 +16,13 @@ const LanguageContext = createContext<LanguageContextValue | null>(null);
 const STORAGE_KEY = "barber-brothers-language";
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguage] = useState<Language>("sq");
+  const [language, setLanguage] = useState<Language>(() => {
+    if (typeof window === "undefined") {
+      return "sq";
+    }
+
+    return window.localStorage.getItem(STORAGE_KEY) === "en" ? "en" : "sq";
+  });
 
   useEffect(() => {
     document.documentElement.lang = language;
