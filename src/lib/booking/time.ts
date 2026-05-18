@@ -2,13 +2,14 @@ import {
   BARBERS,
   BOOKING_CUTOFF_MINUTES,
   BOOKING_WINDOW_DAYS,
+  DEFAULT_SERVICE_ID,
   LUNCH_BREAK,
-  SERVICE,
+  getServiceById,
   SHOP_RUNTIME_TIMEZONE,
   SLOT_INTERVAL_MINUTES,
   WORKING_HOURS,
 } from "@/lib/constants";
-import type { AvailabilitySlot, BarberId, DateOption, Language } from "@/lib/booking/types";
+import type { AvailabilitySlot, BarberId, DateOption, Language, ServiceId } from "@/lib/booking/types";
 
 function pad(value: number) {
   return value.toString().padStart(2, "0");
@@ -19,17 +20,17 @@ function getUtcMidnight(localDate: string) {
   return Date.UTC(year, month - 1, day);
 }
 
-function minutesToTime(minutes: number) {
+export function minutesToTime(minutes: number) {
   return `${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`;
 }
 
-function timeToMinutes(localTime: string) {
+export function timeToMinutes(localTime: string) {
   const [hours, minutes] = localTime.split(":").map(Number);
   return hours * 60 + minutes;
 }
 
-function slotOverlapsLunchBreak(startMinutes: number) {
-  const endMinutes = startMinutes + SERVICE.durationMinutes;
+function slotOverlapsLunchBreak(startMinutes: number, durationMinutes: number) {
+  const endMinutes = startMinutes + durationMinutes;
 
   return startMinutes < LUNCH_BREAK.endMinutes && endMinutes > LUNCH_BREAK.startMinutes;
 }
@@ -181,15 +182,16 @@ export function isDateWithinBookingWindow(localDate: string, now = new Date()) {
   return difference >= 0 && difference <= BOOKING_WINDOW_DAYS;
 }
 
-export function generateDailySlotTimes() {
+export function generateDailySlotTimes(serviceId: ServiceId = DEFAULT_SERVICE_ID) {
+  const service = getServiceById(serviceId);
   const slots: string[] = [];
 
   for (
     let cursor = WORKING_HOURS.openMinutes;
-    cursor + SERVICE.durationMinutes <= WORKING_HOURS.closeMinutes;
+    cursor + service.durationMinutes <= WORKING_HOURS.closeMinutes;
     cursor += SLOT_INTERVAL_MINUTES
   ) {
-    if (!slotOverlapsLunchBreak(cursor)) {
+    if (!slotOverlapsLunchBreak(cursor, service.durationMinutes)) {
       slots.push(minutesToTime(cursor));
     }
   }
@@ -199,12 +201,14 @@ export function generateDailySlotTimes() {
 
 export const DAILY_SLOT_TIMES = generateDailySlotTimes();
 
-export function isValidSlotTime(localTime: string) {
-  return DAILY_SLOT_TIMES.includes(localTime);
+export function isValidSlotTime(localTime: string, serviceId: ServiceId = DEFAULT_SERVICE_ID) {
+  return generateDailySlotTimes(serviceId).includes(localTime);
 }
 
-export function getEndLocalTime(localTime: string) {
-  return minutesToTime(timeToMinutes(localTime) + SERVICE.durationMinutes);
+export function getEndLocalTime(localTime: string, serviceId: ServiceId = DEFAULT_SERVICE_ID) {
+  const service = getServiceById(serviceId);
+
+  return minutesToTime(timeToMinutes(localTime) + service.durationMinutes);
 }
 
 export function getSlotStartDate(localDate: string, localTime: string) {
@@ -222,8 +226,10 @@ export function getSlotStartDate(localDate: string, localTime: string) {
   return firstResult;
 }
 
-export function getSlotEndDate(localDate: string, localTime: string) {
-  return new Date(getSlotStartDate(localDate, localTime).getTime() + SERVICE.durationMinutes * 60000);
+export function getSlotEndDate(localDate: string, localTime: string, serviceId: ServiceId = DEFAULT_SERVICE_ID) {
+  const service = getServiceById(serviceId);
+
+  return new Date(getSlotStartDate(localDate, localTime).getTime() + service.durationMinutes * 60000);
 }
 
 export function isSlotAtLeastOneHourAhead(localDate: string, localTime: string, now = new Date()) {
@@ -234,6 +240,18 @@ export function isSlotAtLeastOneHourAhead(localDate: string, localTime: string, 
 
 export function buildSlotKey(barberId: BarberId, localDate: string, localTime: string) {
   return `${barberId}__${localDate}__${localTime.replace(":", "-")}`;
+}
+
+export function getRequiredSlotTimes(localTime: string, serviceId: ServiceId = DEFAULT_SERVICE_ID) {
+  const service = getServiceById(serviceId);
+  const startMinutes = timeToMinutes(localTime);
+  const slotCount = Math.ceil(service.durationMinutes / SLOT_INTERVAL_MINUTES);
+
+  return Array.from({ length: slotCount }, (_, index) => minutesToTime(startMinutes + index * SLOT_INTERVAL_MINUTES));
+}
+
+export function getRequiredSlotKeys(barberId: BarberId, localDate: string, localTime: string, serviceId: ServiceId) {
+  return getRequiredSlotTimes(localTime, serviceId).map((requiredTime) => buildSlotKey(barberId, localDate, requiredTime));
 }
 
 export function getBarberName(barberId: BarberId) {
@@ -286,18 +304,22 @@ export function getAvailabilitySlots(
   barberId: BarberId,
   localDate: string,
   activeSlotKeys: Set<string>,
+  serviceId: ServiceId = DEFAULT_SERVICE_ID,
   now = new Date(),
 ): AvailabilitySlot[] {
-  return DAILY_SLOT_TIMES.map((localTime) => {
+  return generateDailySlotTimes(serviceId).map((localTime) => {
     const key = buildSlotKey(barberId, localDate, localTime);
+    const requiredSlotKeys = getRequiredSlotKeys(barberId, localDate, localTime, serviceId);
+    const hasConflict = requiredSlotKeys.some((requiredKey) => activeSlotKeys.has(requiredKey));
+    const endLocalTime = getEndLocalTime(localTime, serviceId);
 
     return {
       key,
       localDate,
       localTime,
-      endLocalTime: getEndLocalTime(localTime),
-      label: `${localTime}-${getEndLocalTime(localTime)}`,
-      available: isSlotAtLeastOneHourAhead(localDate, localTime, now) && !activeSlotKeys.has(key),
+      endLocalTime,
+      label: `${localTime}-${endLocalTime}`,
+      available: isSlotAtLeastOneHourAhead(localDate, localTime, now) && !hasConflict,
     };
   });
 }

@@ -4,7 +4,7 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-import { BARBERS, SERVICE } from "@/lib/constants";
+import { ADD_ONS, BARBERS, DEFAULT_SERVICE_ID, SERVICES, getBookingService } from "@/lib/constants";
 import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
 import {
   formatConfirmationDate,
@@ -13,7 +13,7 @@ import {
   getFirstOpenBookableDate,
   isShopClosedOnDate,
 } from "@/lib/booking/time";
-import type { ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary } from "@/lib/booking/types";
+import type { AddOnId, ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary, ServiceId } from "@/lib/booking/types";
 import { normalizeKosovoPhone } from "@/lib/booking/phone";
 import { useLanguage } from "@/components/providers/language-provider";
 
@@ -43,6 +43,8 @@ function getSubmitErrorCode(error: unknown): ApiErrorCode {
 export function BookingForm() {
   const formId = useId();
   const { dictionary, language } = useLanguage();
+  const [serviceId, setServiceId] = useState<ServiceId>(DEFAULT_SERVICE_ID);
+  const [addOnIds, setAddOnIds] = useState<AddOnId[]>([]);
   const [barberId, setBarberId] = useState<BarberId | null>(null);
   const [localDate, setLocalDate] = useState(getFirstOpenBookableDate);
   const [selectedSlot, setSelectedSlot] = useState("");
@@ -60,6 +62,7 @@ export function BookingForm() {
   const submissionIdRef = useRef<string | null>(null);
 
   const dateOptions = getBookableDateOptions(language);
+  const bookingService = getBookingService(serviceId, addOnIds, language);
   const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
   const selectedDate = dateOptions.find((date) => date.localDate === localDate);
   const availabilityIsVerified = availabilityState === "ready";
@@ -77,18 +80,22 @@ export function BookingForm() {
   const availableSlotCount = slots.filter((slot) => slot.available).length;
   const summaryItems = hasCompleteSelection && detailsValid
     ? [
-        [dictionary.booking.summaryService, dictionary.booking.fixedService],
+        [dictionary.booking.summaryService, `${bookingService.name} - ${bookingService.durationMinutes} min`],
         [dictionary.booking.summaryBarber, selectedBarber?.name],
         [dictionary.booking.summaryDate, selectedDate?.label],
         [dictionary.booking.summaryTime, selectedSlotObject?.label],
         [dictionary.booking.summaryPhone, normalizedPhone],
-        [dictionary.booking.summaryPrice, `${SERVICE.price} ${SERVICE.currency}`],
+        [dictionary.booking.summaryPrice, `${bookingService.price} ${bookingService.currency}`],
       ]
     : [];
 
-  async function refreshAvailabilityAfterSubmitError(currentBarberId: BarberId, currentLocalDate: string) {
+  async function refreshAvailabilityAfterSubmitError(
+    currentBarberId: BarberId,
+    currentLocalDate: string,
+    currentServiceId: ServiceId,
+  ) {
     try {
-      const nextSlots = await getClientAvailability(currentBarberId, currentLocalDate);
+      const nextSlots = await getClientAvailability(currentBarberId, currentLocalDate, currentServiceId);
 
       setSlots(nextSlots);
       setAvailabilityState("ready");
@@ -116,7 +123,7 @@ export function BookingForm() {
     const currentBarberId = barberId;
 
     async function loadAvailability() {
-      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set()).map((slot) => ({
+      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set(), serviceId).map((slot) => ({
         ...slot,
         available: false,
       }));
@@ -127,7 +134,7 @@ export function BookingForm() {
       setSelectedSlot("");
 
       try {
-        const nextSlots = await getClientAvailability(currentBarberId, localDate);
+        const nextSlots = await getClientAvailability(currentBarberId, localDate, serviceId);
 
         if (ignore) {
           return;
@@ -150,7 +157,7 @@ export function BookingForm() {
     return () => {
       ignore = true;
     };
-  }, [barberId, isClosedDay, localDate]);
+  }, [barberId, isClosedDay, localDate, serviceId]);
 
   function validateDetails() {
     const nextErrors: Record<string, string> = {};
@@ -194,6 +201,8 @@ export function BookingForm() {
     try {
       const booking = await createClientBooking({
         submissionId: getSubmissionId(),
+        serviceId,
+        addOnIds,
         barberId,
         localDate,
         localTime: selectedSlotObject.localTime,
@@ -212,7 +221,7 @@ export function BookingForm() {
       setFormErrorCode(code);
 
       if (SHOULD_REFRESH_AVAILABILITY_AFTER_ERROR.includes(code)) {
-        await refreshAvailabilityAfterSubmitError(barberId, localDate);
+        await refreshAvailabilityAfterSubmitError(barberId, localDate, serviceId);
         resetSubmissionAttempt();
       }
     } finally {
@@ -222,6 +231,8 @@ export function BookingForm() {
   }
 
   function resetForm() {
+    setServiceId(DEFAULT_SERVICE_ID);
+    setAddOnIds([]);
     setBarberId(null);
     setLocalDate(getFirstOpenBookableDate());
     setSelectedSlot("");
@@ -250,7 +261,7 @@ export function BookingForm() {
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2">
           {[
-            [dictionary.booking.summaryService, dictionary.booking.fixedService],
+            [dictionary.booking.summaryService, `${successBooking.serviceName} - ${successBooking.serviceDurationMinutes} min`],
             [dictionary.booking.summaryBarber, successBooking.barberName],
             [dictionary.booking.summaryDate, formatConfirmationDate(successBooking.localDate, language)],
             [dictionary.booking.summaryTime, `${successBooking.localTime}-${successBooking.endLocalTime}`],
@@ -274,6 +285,81 @@ export function BookingForm() {
   return (
     <form onSubmit={handleSubmit} noValidate className="premium-card p-4 sm:p-6">
       <div className="space-y-6">
+        <section className="space-y-3">
+          <div className="flex items-end justify-between gap-3">
+            <div>
+              <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.stepService}</p>
+              <h2 className="mt-1 text-2xl font-semibold text-white">{dictionary.booking.serviceLabel}</h2>
+            </div>
+            <p className="text-xs font-semibold text-[var(--color-accent)]">{dictionary.booking.required}</p>
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-3">
+            {SERVICES.map((service) => {
+              const active = service.id === serviceId;
+
+              return (
+                <button
+                  key={service.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => {
+                    if (active) {
+                      return;
+                    }
+
+                    setServiceId(service.id);
+                    setSelectedSlot("");
+                    setSlots([]);
+                    setAvailabilityState("idle");
+                    resetSubmissionAttempt();
+                  }}
+                  className={`tap-card text-left ${active ? "selected-card" : ""}`}
+                >
+                  <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
+                  <span className="mt-3 block text-xl font-semibold text-white">{service.name[language]}</span>
+                  <span className="mt-2 block text-sm leading-6 text-white/58">{service.description[language]}</span>
+                  <span className="mt-4 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                    {service.durationMinutes} min / {service.price} {service.currency}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="grid gap-3">
+            {ADD_ONS.map((addOn) => {
+              const active = addOnIds.includes(addOn.id);
+
+              return (
+                <button
+                  key={addOn.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => {
+                    setAddOnIds((current) => (
+                      current.includes(addOn.id)
+                        ? current.filter((id) => id !== addOn.id)
+                        : [...current, addOn.id]
+                    ));
+                    resetSubmissionAttempt();
+                  }}
+                  className={`tap-card flex flex-col gap-2 text-left sm:flex-row sm:items-center sm:justify-between ${active ? "selected-card" : ""}`}
+                >
+                  <span>
+                    <span className="eyebrow text-white/42">{dictionary.booking.addOnLabel}</span>
+                    <span className="mt-2 block font-semibold text-white">{addOn.name[language]}</span>
+                    <span className="mt-1 block text-sm text-white/58">{addOn.description[language]}</span>
+                  </span>
+                  <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                    +{addOn.price} {addOn.currency}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
         <section className="space-y-3">
           <div className="flex items-end justify-between gap-3">
             <div>

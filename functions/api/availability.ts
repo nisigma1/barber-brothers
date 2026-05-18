@@ -8,6 +8,7 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
   const url = new URL(request.url);
   const parsed = availabilityQuerySchema.safeParse({
     barberId: url.searchParams.get("barberId"),
+    serviceId: url.searchParams.get("serviceId") ?? undefined,
     localDate: url.searchParams.get("localDate"),
   });
 
@@ -16,7 +17,7 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
   }
 
   try {
-    const slots = await getAvailability(env, parsed.data.barberId, parsed.data.localDate);
+    const slots = await getAvailability(env, parsed.data.barberId, parsed.data.localDate, parsed.data.serviceId);
 
     return jsonResponse({ slots });
   } catch (error) {

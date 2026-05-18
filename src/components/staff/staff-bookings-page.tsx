@@ -110,12 +110,16 @@ export function StaffBookingsPage() {
             {bookings.map((booking) => (
               <article key={booking.bookingId} className="premium-card p-5">
                 <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                  <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
                     {[
                       [dictionary.booking.summaryName, `${booking.customerFirstName} ${booking.customerLastName}`],
                       [dictionary.booking.summaryPhone, booking.customerPhone],
                       [dictionary.booking.summaryBarber, booking.barberName],
-                      [dictionary.booking.summaryTime, `${booking.localDate} - ${booking.localTime}`],
+                      [
+                        dictionary.booking.summaryService,
+                        `${booking.serviceName} - ${booking.serviceDurationMinutes} min - ${booking.servicePrice} ${booking.currency}`,
+                      ],
+                      [dictionary.booking.summaryTime, `${booking.localDate} - ${booking.localTime}-${booking.endLocalTime}`],
                     ].map(([label, value]) => (
                       <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
                         <p className="text-xs uppercase tracking-[0.2em] text-white/42">{label}</p>

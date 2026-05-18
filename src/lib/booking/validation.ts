@@ -1,6 +1,8 @@
 import { z } from "zod";
 
 const barberIdSchema = z.enum(["barber-1", "barber-2"]);
+const serviceIdSchema = z.enum(["haircut", "beard-trim", "all-in-one"]);
+const addOnIdSchema = z.enum(["premium-product"]);
 const customerNameSchema = z
   .string()
   .trim()
@@ -10,11 +12,14 @@ const customerNameSchema = z
 
 export const availabilityQuerySchema = z.object({
   barberId: barberIdSchema,
+  serviceId: serviceIdSchema.default("haircut"),
   localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });
 
 export const bookingRequestSchema = z.object({
   submissionId: z.uuid(),
+  serviceId: serviceIdSchema.default("haircut"),
+  addOnIds: z.array(addOnIdSchema).max(1).optional().default([]),
   barberId: barberIdSchema,
   localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   localTime: z.string().regex(/^\d{2}:\d{2}$/),

@@ -5,6 +5,7 @@ import type {
   AvailabilitySlot,
   BookingSummary,
   PublicBookingPayload,
+  ServiceId,
   StaffBookingItem,
 } from "@/lib/booking/types";
 
@@ -63,8 +64,12 @@ async function fetchJson<T>(input: RequestInfo | URL, init?: RequestInit) {
   return response.json() as Promise<T>;
 }
 
-export async function getClientAvailability(barberId: PublicBookingPayload["barberId"], localDate: string) {
-  const params = new URLSearchParams({ barberId, localDate });
+export async function getClientAvailability(
+  barberId: PublicBookingPayload["barberId"],
+  localDate: string,
+  serviceId: ServiceId,
+) {
+  const params = new URLSearchParams({ barberId, localDate, serviceId });
   const body = await fetchJson<{ slots: AvailabilitySlot[] }>(`/api/availability?${params.toString()}`);
 
   return body.slots;

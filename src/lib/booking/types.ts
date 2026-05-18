@@ -1,5 +1,7 @@
 export type Language = "sq" | "en";
 export type BarberId = "barber-1" | "barber-2";
+export type ServiceId = "haircut" | "beard-trim" | "all-in-one";
+export type AddOnId = "premium-product";
 export type BookingStatus = "confirmed" | "deleted";
 export type SlotLockStatus = "active" | "released";
 
@@ -35,6 +37,8 @@ export interface DateOption {
 
 export interface PublicBookingPayload {
   submissionId: string;
+  serviceId: ServiceId;
+  addOnIds?: AddOnId[];
   barberId: BarberId;
   localDate: string;
   localTime: string;
@@ -86,6 +90,9 @@ export interface BookingSummary {
   barberId: BarberId;
   barberName: string;
   serviceName: string;
+  serviceDurationMinutes: number;
+  servicePrice: number;
+  currency: string;
   localDate: string;
   localTime: string;
   endLocalTime: string;

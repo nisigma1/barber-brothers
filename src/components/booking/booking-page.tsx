@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 
-import { BRAND_NAME, CONTACT_DETAILS, SERVICE } from "@/lib/constants";
+import { ADD_ONS, BRAND_NAME, CONTACT_DETAILS, SERVICES } from "@/lib/constants";
 import { BookingForm } from "@/components/booking/booking-form";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function BookingPage() {
-  const { dictionary } = useLanguage();
+  const { dictionary, language } = useLanguage();
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 lg:px-8 lg:py-6">
@@ -23,7 +23,7 @@ export function BookingPage() {
         </div>
         <div className="mt-4 flex flex-wrap gap-2 text-sm font-semibold text-white">
           <span className="rounded-full border border-[var(--color-accent)]/25 bg-[var(--color-accent)]/10 px-3 py-2">
-            {dictionary.common.serviceName}
+            {dictionary.booking.serviceLabel}
           </span>
           <span className="rounded-full border border-white/10 bg-black/24 px-3 py-2">
             {dictionary.home.fastBooking}
@@ -41,11 +41,22 @@ export function BookingPage() {
           <div className="premium-card p-5">
             <div className="rounded-[1.1rem] border border-[var(--color-accent)]/22 bg-[var(--color-accent)]/10 p-4">
               <p className="eyebrow text-[var(--color-accent)]">{dictionary.booking.serviceLabel}</p>
-              <h2 className="mt-2 text-2xl font-semibold text-white">{dictionary.common.serviceName}</h2>
+              <h2 className="mt-2 text-2xl font-semibold text-white">{dictionary.booking.serviceMenuTitle}</h2>
               <p className="mt-2 text-sm text-white/68">{dictionary.booking.serviceIntro}</p>
-              <p className="mt-3 text-sm font-semibold text-white">
-                {SERVICE.durationMinutes} min - {SERVICE.price} {SERVICE.currency}
-              </p>
+              <div className="mt-4 space-y-2">
+                {SERVICES.map((service) => (
+                  <div key={service.id} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/18 px-3 py-2 text-sm">
+                    <span className="font-semibold text-white">{service.name[language]}</span>
+                    <span className="text-white/62">{service.durationMinutes} min / {service.price} {service.currency}</span>
+                  </div>
+                ))}
+                {ADD_ONS.map((addOn) => (
+                  <div key={addOn.id} className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/18 px-3 py-2 text-sm">
+                    <span className="font-semibold text-white">{addOn.name[language]}</span>
+                    <span className="text-white/62">+{addOn.price} {addOn.currency}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 

@@ -1,9 +1,11 @@
-import { SERVICE, SHOP_TIMEZONE } from "../../src/lib/constants";
+import { DEFAULT_SERVICE_ID, SLOT_INTERVAL_MINUTES, SHOP_TIMEZONE, getBookingService } from "../../src/lib/constants";
 import {
   buildSlotKey,
   getAvailabilitySlots,
   getBarberName,
   getEndLocalTime,
+  getRequiredSlotKeys,
+  getRequiredSlotTimes,
   getSlotEndDate,
   getSlotStartDate,
   isDateWithinBookingWindow,
@@ -17,6 +19,7 @@ import type {
   BookingRecord,
   BookingSummary,
   PublicBookingPayload,
+  ServiceId,
   StaffBookingItem,
 } from "../../src/lib/booking/types";
 import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
@@ -43,6 +46,8 @@ function getDatabase(env: CloudflareEnv) {
 }
 
 function getSlotContext(payload: PublicBookingPayload) {
+  const serviceId = payload.serviceId ?? DEFAULT_SERVICE_ID;
+
   if (!isDateWithinBookingWindow(payload.localDate)) {
     throw new ApiBookingError("BOOKING_WINDOW");
   }
@@ -51,7 +56,7 @@ function getSlotContext(payload: PublicBookingPayload) {
     throw new ApiBookingError("SHOP_CLOSED");
   }
 
-  if (!isValidSlotTime(payload.localTime)) {
+  if (!isValidSlotTime(payload.localTime, serviceId)) {
     throw new ApiBookingError("INVALID_SLOT");
   }
 
@@ -59,11 +64,16 @@ function getSlotContext(payload: PublicBookingPayload) {
     throw new ApiBookingError("BOOKING_CUTOFF");
   }
 
+  const requiredSlotTimes = getRequiredSlotTimes(payload.localTime, serviceId);
+  const requiredSlotKeys = getRequiredSlotKeys(payload.barberId, payload.localDate, payload.localTime, serviceId);
+
   return {
     slotKey: buildSlotKey(payload.barberId, payload.localDate, payload.localTime),
+    requiredSlotKeys,
+    requiredSlotTimes,
     startUtc: getSlotStartDate(payload.localDate, payload.localTime).toISOString(),
-    endUtc: getSlotEndDate(payload.localDate, payload.localTime).toISOString(),
-    endLocalTime: getEndLocalTime(payload.localTime),
+    endUtc: getSlotEndDate(payload.localDate, payload.localTime, serviceId).toISOString(),
+    endLocalTime: getEndLocalTime(payload.localTime, serviceId),
   };
 }
 
@@ -73,6 +83,9 @@ export function summaryFromRow(row: BookingRow): BookingSummary {
     barberId: row.barber_id,
     barberName: row.barber_name,
     serviceName: row.service_name,
+    serviceDurationMinutes: row.service_duration_minutes,
+    servicePrice: row.service_price,
+    currency: row.currency,
     localDate: row.local_date,
     localTime: row.local_time,
     endLocalTime: row.end_local_time,
@@ -94,7 +107,12 @@ export function staffItemFromRow(row: BookingRow): StaffBookingItem {
   };
 }
 
-export async function getAvailability(env: CloudflareEnv, barberId: PublicBookingPayload["barberId"], localDate: string) {
+export async function getAvailability(
+  env: CloudflareEnv,
+  barberId: PublicBookingPayload["barberId"],
+  localDate: string,
+  serviceId: ServiceId = DEFAULT_SERVICE_ID,
+) {
   if (!isDateWithinBookingWindow(localDate) || isShopClosedOnDate(localDate)) {
     return [] as AvailabilitySlot[];
   }
@@ -107,7 +125,7 @@ export async function getAvailability(env: CloudflareEnv, barberId: PublicBookin
     .all<{ slot_key: string }>();
   const activeSlotKeys = new Set((rows.results ?? []).map((row) => row.slot_key));
 
-  return getAvailabilitySlots(barberId, localDate, activeSlotKeys);
+  return getAvailabilitySlots(barberId, localDate, activeSlotKeys, serviceId);
 }
 
 export async function createBooking(env: CloudflareEnv, payload: unknown) {
@@ -149,6 +167,7 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
 
   const bookingId = cleanPayload.submissionId;
   const slotContext = getSlotContext(cleanPayload);
+  const bookingService = getBookingService(cleanPayload.serviceId, cleanPayload.addOnIds, "sq");
   const nowIso = new Date().toISOString();
   const bookingRecord: BookingRecord = {
     bookingId,
@@ -156,10 +175,10 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     slotKey: slotContext.slotKey,
     barberId: cleanPayload.barberId,
     barberName: getBarberName(cleanPayload.barberId),
-    serviceName: SERVICE.name,
-    serviceDurationMinutes: SERVICE.durationMinutes,
-    servicePrice: SERVICE.price,
-    currency: SERVICE.currency,
+    serviceName: bookingService.name,
+    serviceDurationMinutes: bookingService.durationMinutes,
+    servicePrice: bookingService.price,
+    currency: bookingService.currency,
     localDate: cleanPayload.localDate,
     localTime: cleanPayload.localTime,
     endLocalTime: slotContext.endLocalTime,
@@ -176,20 +195,26 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
 
   try {
     await db.batch([
-      db.prepare(
-        `INSERT INTO slot_locks (
+      ...slotContext.requiredSlotKeys.map((slotKey, index) => {
+        const lockedLocalTime = slotContext.requiredSlotTimes[index] ?? cleanPayload.localTime;
+        const lockStartDate = getSlotStartDate(cleanPayload.localDate, lockedLocalTime);
+        const lockEndDate = new Date(lockStartDate.getTime() + SLOT_INTERVAL_MINUTES * 60000);
+
+        return db.prepare(
+          `INSERT INTO slot_locks (
           slot_key, barber_id, local_date, local_time, booking_id, status, start_utc, end_utc, created_at
         ) VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?)`,
-      ).bind(
-        bookingRecord.slotKey,
-        bookingRecord.barberId,
-        bookingRecord.localDate,
-        bookingRecord.localTime,
-        bookingRecord.bookingId,
-        bookingRecord.startUtc,
-        bookingRecord.endUtc,
-        bookingRecord.createdAt,
-      ),
+        ).bind(
+          slotKey,
+          bookingRecord.barberId,
+          bookingRecord.localDate,
+          lockedLocalTime,
+          bookingRecord.bookingId,
+          lockStartDate.toISOString(),
+          lockEndDate.toISOString(),
+          bookingRecord.createdAt,
+        );
+      }),
       db.prepare(
         `INSERT INTO bookings (
           booking_id, submission_id, slot_key, barber_id, barber_name, service_name, service_duration_minutes,
@@ -243,6 +268,9 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     barberId: bookingRecord.barberId,
     barberName: bookingRecord.barberName,
     serviceName: bookingRecord.serviceName,
+    serviceDurationMinutes: bookingRecord.serviceDurationMinutes,
+    servicePrice: bookingRecord.servicePrice,
+    currency: bookingRecord.currency,
     localDate: bookingRecord.localDate,
     localTime: bookingRecord.localTime,
     endLocalTime: bookingRecord.endLocalTime,
@@ -274,10 +302,10 @@ export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBook
 export async function softDeleteBooking(env: CloudflareEnv, bookingId: string, barberId: PublicBookingPayload["barberId"]) {
   const db = getDatabase(env);
   const booking = await db.prepare(
-    "SELECT slot_key FROM bookings WHERE booking_id = ? AND barber_id = ? AND status = 'confirmed'",
+    "SELECT booking_id FROM bookings WHERE booking_id = ? AND barber_id = ? AND status = 'confirmed'",
   )
     .bind(bookingId, barberId)
-    .first<{ slot_key: string }>();
+    .first<{ booking_id: string }>();
 
   if (!booking) {
     throw new ApiBookingError("NOT_FOUND", 404);
@@ -288,6 +316,6 @@ export async function softDeleteBooking(env: CloudflareEnv, bookingId: string, b
   await db.batch([
     db.prepare("UPDATE bookings SET status = 'deleted', deleted_at = ? WHERE booking_id = ? AND status = 'confirmed'")
       .bind(deletedAt, bookingId),
-    db.prepare("DELETE FROM slot_locks WHERE slot_key = ?").bind(booking.slot_key),
+    db.prepare("DELETE FROM slot_locks WHERE booking_id = ?").bind(booking.booking_id),
   ]);
 }
