@@ -67,9 +67,10 @@ async function fetchJson<T>(input: RequestInfo | URL, init?: RequestInit) {
 export async function getClientAvailability(
   barberId: PublicBookingPayload["barberId"],
   localDate: string,
-  serviceId: ServiceId,
+  serviceIds: ServiceId[],
 ) {
-  const params = new URLSearchParams({ barberId, localDate, serviceId });
+  const params = new URLSearchParams({ barberId, localDate });
+  serviceIds.forEach((serviceId) => params.append("serviceIds", serviceId));
   const body = await fetchJson<{ slots: AvailabilitySlot[] }>(`/api/availability?${params.toString()}`);
 
   return body.slots;

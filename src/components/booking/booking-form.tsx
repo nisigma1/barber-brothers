@@ -4,7 +4,14 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 
-import { ADD_ONS, BARBERS, DEFAULT_SERVICE_ID, SERVICES, getBookingService } from "@/lib/constants";
+import {
+  ADD_ONS,
+  BARBERS,
+  DEFAULT_SERVICE_IDS,
+  SERVICES,
+  getBookingService,
+  isAllInOneSelection,
+} from "@/lib/constants";
 import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
 import {
   formatConfirmationDate,
@@ -43,7 +50,7 @@ function getSubmitErrorCode(error: unknown): ApiErrorCode {
 export function BookingForm() {
   const formId = useId();
   const { dictionary, language } = useLanguage();
-  const [serviceId, setServiceId] = useState<ServiceId>(DEFAULT_SERVICE_ID);
+  const [serviceIds, setServiceIds] = useState<ServiceId[]>(DEFAULT_SERVICE_IDS);
   const [addOnIds, setAddOnIds] = useState<AddOnId[]>([]);
   const [barberId, setBarberId] = useState<BarberId | null>(null);
   const [localDate, setLocalDate] = useState(getFirstOpenBookableDate);
@@ -62,7 +69,8 @@ export function BookingForm() {
   const submissionIdRef = useRef<string | null>(null);
 
   const dateOptions = getBookableDateOptions(language);
-  const bookingService = getBookingService(serviceId, addOnIds, language);
+  const bookingService = getBookingService({ serviceIds, addOnIds }, language);
+  const allInOneSelected = isAllInOneSelection(serviceIds);
   const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
   const selectedDate = dateOptions.find((date) => date.localDate === localDate);
   const availabilityIsVerified = availabilityState === "ready";
@@ -92,10 +100,10 @@ export function BookingForm() {
   async function refreshAvailabilityAfterSubmitError(
     currentBarberId: BarberId,
     currentLocalDate: string,
-    currentServiceId: ServiceId,
+    currentServiceIds: ServiceId[],
   ) {
     try {
-      const nextSlots = await getClientAvailability(currentBarberId, currentLocalDate, currentServiceId);
+      const nextSlots = await getClientAvailability(currentBarberId, currentLocalDate, currentServiceIds);
 
       setSlots(nextSlots);
       setAvailabilityState("ready");
@@ -114,6 +122,40 @@ export function BookingForm() {
     submissionIdRef.current = null;
   }
 
+  function resetAvailabilityForServiceChange() {
+    setSelectedSlot("");
+    setSlots([]);
+    setAvailabilityState("idle");
+    resetSubmissionAttempt();
+  }
+
+  function toggleNormalService(nextServiceId: ServiceId) {
+    const nextServiceIds = allInOneSelected
+      ? [nextServiceId]
+      : serviceIds.includes(nextServiceId)
+        ? serviceIds.length > 1
+          ? serviceIds.filter((currentServiceId) => currentServiceId !== nextServiceId)
+          : serviceIds
+        : [...serviceIds, nextServiceId];
+
+    if (nextServiceIds === serviceIds) {
+      return;
+    }
+
+    setServiceIds(nextServiceIds);
+    resetAvailabilityForServiceChange();
+  }
+
+  function selectPackageService(nextServiceId: ServiceId) {
+    if (serviceIds.length === 1 && serviceIds[0] === nextServiceId) {
+      return;
+    }
+
+    setServiceIds([nextServiceId]);
+    setAddOnIds([]);
+    resetAvailabilityForServiceChange();
+  }
+
   useEffect(() => {
     if (!barberId || isClosedDay) {
       return;
@@ -123,7 +165,7 @@ export function BookingForm() {
     const currentBarberId = barberId;
 
     async function loadAvailability() {
-      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set(), serviceId).map((slot) => ({
+      const fallbackSlots = getAvailabilitySlots(currentBarberId, localDate, new Set(), serviceIds).map((slot) => ({
         ...slot,
         available: false,
       }));
@@ -134,7 +176,7 @@ export function BookingForm() {
       setSelectedSlot("");
 
       try {
-        const nextSlots = await getClientAvailability(currentBarberId, localDate, serviceId);
+        const nextSlots = await getClientAvailability(currentBarberId, localDate, serviceIds);
 
         if (ignore) {
           return;
@@ -157,7 +199,7 @@ export function BookingForm() {
     return () => {
       ignore = true;
     };
-  }, [barberId, isClosedDay, localDate, serviceId]);
+  }, [barberId, isClosedDay, localDate, serviceIds]);
 
   function validateDetails() {
     const nextErrors: Record<string, string> = {};
@@ -201,7 +243,7 @@ export function BookingForm() {
     try {
       const booking = await createClientBooking({
         submissionId: getSubmissionId(),
-        serviceId,
+        serviceIds,
         addOnIds,
         barberId,
         localDate,
@@ -221,7 +263,7 @@ export function BookingForm() {
       setFormErrorCode(code);
 
       if (SHOULD_REFRESH_AVAILABILITY_AFTER_ERROR.includes(code)) {
-        await refreshAvailabilityAfterSubmitError(barberId, localDate, serviceId);
+        await refreshAvailabilityAfterSubmitError(barberId, localDate, serviceIds);
         resetSubmissionAttempt();
       }
     } finally {
@@ -231,7 +273,7 @@ export function BookingForm() {
   }
 
   function resetForm() {
-    setServiceId(DEFAULT_SERVICE_ID);
+    setServiceIds(DEFAULT_SERVICE_IDS);
     setAddOnIds([]);
     setBarberId(null);
     setLocalDate(getFirstOpenBookableDate());
@@ -294,26 +336,16 @@ export function BookingForm() {
             <p className="text-xs font-semibold text-[var(--color-accent)]">{dictionary.booking.required}</p>
           </div>
 
-          <div className="grid gap-3 md:grid-cols-3">
-            {SERVICES.map((service) => {
-              const active = service.id === serviceId;
+          <div className="grid gap-3 sm:grid-cols-2">
+            {SERVICES.filter((service) => service.type === "main").map((service) => {
+              const active = serviceIds.includes(service.id);
 
               return (
                 <button
                   key={service.id}
                   type="button"
                   aria-pressed={active}
-                  onClick={() => {
-                    if (active) {
-                      return;
-                    }
-
-                    setServiceId(service.id);
-                    setSelectedSlot("");
-                    setSlots([]);
-                    setAvailabilityState("idle");
-                    resetSubmissionAttempt();
-                  }}
+                  onClick={() => toggleNormalService(service.id)}
                   className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
                 >
                   <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
@@ -327,7 +359,28 @@ export function BookingForm() {
             })}
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-3 lg:grid-cols-[1fr_0.72fr]">
+            {SERVICES.filter((service) => service.type === "package").map((service) => {
+              const active = serviceIds.includes(service.id);
+
+              return (
+                <button
+                  key={service.id}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => selectPackageService(service.id)}
+                  className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
+                >
+                  <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
+                  <span className="mt-2 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
+                  <span className="mt-1.5 block text-sm leading-5 text-white/58">{service.description[language]}</span>
+                  <span className="mt-3 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                    {service.durationMinutes} min / {service.price} {service.currency}
+                  </span>
+                </button>
+              );
+            })}
+
             {ADD_ONS.map((addOn) => {
               const active = addOnIds.includes(addOn.id);
 
@@ -336,7 +389,12 @@ export function BookingForm() {
                   key={addOn.id}
                   type="button"
                   aria-pressed={active}
+                  disabled={allInOneSelected}
                   onClick={() => {
+                    if (allInOneSelected) {
+                      return;
+                    }
+
                     setAddOnIds((current) => (
                       current.includes(addOn.id)
                         ? current.filter((id) => id !== addOn.id)
@@ -344,7 +402,7 @@ export function BookingForm() {
                     ));
                     resetSubmissionAttempt();
                   }}
-                  className={`tap-card flex flex-col gap-2 text-left sm:flex-row sm:items-center sm:justify-between ${active ? "selected-card" : ""}`}
+                  className={`tap-card service-card-compact flex flex-col gap-2 text-left disabled:cursor-not-allowed disabled:opacity-45 ${active ? "selected-card" : ""}`}
                 >
                   <span>
                     <span className="eyebrow text-white/42">{dictionary.booking.addOnLabel}</span>
@@ -357,6 +415,11 @@ export function BookingForm() {
                 </button>
               );
             })}
+          </div>
+
+          <div className="rounded-[1rem] border border-white/10 bg-black/20 px-4 py-3 text-sm font-semibold text-white/72">
+            {dictionary.booking.duration}: {bookingService.durationMinutes} min · {dictionary.booking.price}:{" "}
+            {bookingService.price} {bookingService.currency}
           </div>
         </section>
 

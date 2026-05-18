@@ -37,7 +37,8 @@ export interface DateOption {
 
 export interface PublicBookingPayload {
   submissionId: string;
-  serviceId: ServiceId;
+  serviceId?: ServiceId;
+  serviceIds?: ServiceId[];
   addOnIds?: AddOnId[];
   barberId: BarberId;
   localDate: string;

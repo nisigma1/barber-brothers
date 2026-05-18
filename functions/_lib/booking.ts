@@ -1,4 +1,4 @@
-import { DEFAULT_SERVICE_ID, SLOT_INTERVAL_MINUTES, SHOP_TIMEZONE, getBookingService } from "../../src/lib/constants";
+import { DEFAULT_SERVICE_IDS, SLOT_INTERVAL_MINUTES, SHOP_TIMEZONE, getBookingService } from "../../src/lib/constants";
 import {
   buildSlotKey,
   getAvailabilitySlots,
@@ -46,7 +46,11 @@ function getDatabase(env: CloudflareEnv) {
 }
 
 function getSlotContext(payload: PublicBookingPayload) {
-  const serviceId = payload.serviceId ?? DEFAULT_SERVICE_ID;
+  const serviceSelection = {
+    serviceId: payload.serviceId,
+    serviceIds: payload.serviceIds?.length ? payload.serviceIds : undefined,
+    addOnIds: payload.addOnIds,
+  };
 
   if (!isDateWithinBookingWindow(payload.localDate)) {
     throw new ApiBookingError("BOOKING_WINDOW");
@@ -56,7 +60,7 @@ function getSlotContext(payload: PublicBookingPayload) {
     throw new ApiBookingError("SHOP_CLOSED");
   }
 
-  if (!isValidSlotTime(payload.localTime, serviceId)) {
+  if (!isValidSlotTime(payload.localTime, serviceSelection)) {
     throw new ApiBookingError("INVALID_SLOT");
   }
 
@@ -64,16 +68,16 @@ function getSlotContext(payload: PublicBookingPayload) {
     throw new ApiBookingError("BOOKING_CUTOFF");
   }
 
-  const requiredSlotTimes = getRequiredSlotTimes(payload.localTime, serviceId);
-  const requiredSlotKeys = getRequiredSlotKeys(payload.barberId, payload.localDate, payload.localTime, serviceId);
+  const requiredSlotTimes = getRequiredSlotTimes(payload.localTime, serviceSelection);
+  const requiredSlotKeys = getRequiredSlotKeys(payload.barberId, payload.localDate, payload.localTime, serviceSelection);
 
   return {
     slotKey: buildSlotKey(payload.barberId, payload.localDate, payload.localTime),
     requiredSlotKeys,
     requiredSlotTimes,
     startUtc: getSlotStartDate(payload.localDate, payload.localTime).toISOString(),
-    endUtc: getSlotEndDate(payload.localDate, payload.localTime, serviceId).toISOString(),
-    endLocalTime: getEndLocalTime(payload.localTime, serviceId),
+    endUtc: getSlotEndDate(payload.localDate, payload.localTime, serviceSelection).toISOString(),
+    endLocalTime: getEndLocalTime(payload.localTime, serviceSelection),
   };
 }
 
@@ -111,7 +115,7 @@ export async function getAvailability(
   env: CloudflareEnv,
   barberId: PublicBookingPayload["barberId"],
   localDate: string,
-  serviceId: ServiceId = DEFAULT_SERVICE_ID,
+  serviceIds: ServiceId[] | undefined = DEFAULT_SERVICE_IDS,
 ) {
   if (!isDateWithinBookingWindow(localDate) || isShopClosedOnDate(localDate)) {
     return [] as AvailabilitySlot[];
@@ -125,7 +129,7 @@ export async function getAvailability(
     .all<{ slot_key: string }>();
   const activeSlotKeys = new Set((rows.results ?? []).map((row) => row.slot_key));
 
-  return getAvailabilitySlots(barberId, localDate, activeSlotKeys, serviceId);
+  return getAvailabilitySlots(barberId, localDate, activeSlotKeys, serviceIds ?? DEFAULT_SERVICE_IDS);
 }
 
 export async function createBooking(env: CloudflareEnv, payload: unknown) {
@@ -165,9 +169,13 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     throw new ApiBookingError("RATE_LIMITED", 429);
   }
 
+  const bookingService = getBookingService({
+    serviceId: cleanPayload.serviceId,
+    serviceIds: cleanPayload.serviceIds,
+    addOnIds: cleanPayload.addOnIds,
+  }, "sq");
   const bookingId = cleanPayload.submissionId;
   const slotContext = getSlotContext(cleanPayload);
-  const bookingService = getBookingService(cleanPayload.serviceId, cleanPayload.addOnIds, "sq");
   const nowIso = new Date().toISOString();
   const bookingRecord: BookingRecord = {
     bookingId,

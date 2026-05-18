@@ -40,6 +40,7 @@ export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image
 
 export type ServiceDefinition = {
   id: ServiceId;
+  type: "main" | "package";
   name: Record<Language, string>;
   description: Record<Language, string>;
   durationMinutes: number;
@@ -59,6 +60,7 @@ export type AddOnDefinition = {
 export const SERVICES: ServiceDefinition[] = [
   {
     id: "haircut",
+    type: "main",
     name: {
       sq: "Qethje flokesh",
       en: "Haircut",
@@ -73,6 +75,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: "beard-trim",
+    type: "main",
     name: {
       sq: "Rregullim mjekrre",
       en: "Beard trim",
@@ -87,6 +90,7 @@ export const SERVICES: ServiceDefinition[] = [
   },
   {
     id: "all-in-one",
+    type: "package",
     name: {
       sq: "All-in-One",
       en: "All-in-One",
@@ -119,6 +123,15 @@ export const ADD_ONS: AddOnDefinition[] = [
 ];
 
 export const DEFAULT_SERVICE_ID: ServiceId = "haircut";
+export const DEFAULT_SERVICE_IDS: ServiceId[] = ["haircut"];
+export const NORMAL_SERVICE_IDS: ServiceId[] = ["haircut", "beard-trim"];
+export const ALL_IN_ONE_SERVICE_ID: ServiceId = "all-in-one";
+
+export type ServiceSelectionInput = {
+  serviceId?: ServiceId;
+  serviceIds?: ServiceId[];
+  addOnIds?: AddOnId[];
+};
 
 export function getServiceById(serviceId: ServiceId) {
   return SERVICES.find((service) => service.id === serviceId) ?? SERVICES[0];
@@ -128,20 +141,90 @@ export function getAddOnsByIds(addOnIds: AddOnId[] = []) {
   return ADD_ONS.filter((addOn) => addOnIds.includes(addOn.id));
 }
 
-export function getBookingService(serviceId: ServiceId, addOnIds: AddOnId[] = [], language: Language = "sq") {
-  const service = getServiceById(serviceId);
+export function getSelectedServiceIds(selection: ServiceSelectionInput = {}) {
+  const rawServiceIds = selection.serviceIds?.length
+    ? selection.serviceIds
+    : selection.serviceId
+      ? [selection.serviceId]
+      : DEFAULT_SERVICE_IDS;
+
+  return SERVICES
+    .filter((service) => rawServiceIds.includes(service.id))
+    .map((service) => service.id);
+}
+
+export function getSelectedAddOnIds(addOnIds: AddOnId[] = []) {
+  return ADD_ONS
+    .filter((addOn) => addOnIds.includes(addOn.id))
+    .map((addOn) => addOn.id);
+}
+
+export function isAllInOneSelection(serviceIds: ServiceId[]) {
+  return serviceIds.includes(ALL_IN_ONE_SERVICE_ID);
+}
+
+export function isValidServiceSelection(selection: ServiceSelectionInput = {}) {
+  const serviceIds = getSelectedServiceIds(selection);
+  const addOnIds = getSelectedAddOnIds(selection.addOnIds);
+  const hasAllInOne = isAllInOneSelection(serviceIds);
+  const hasOnlyNormalServices = serviceIds.every((serviceId) => NORMAL_SERVICE_IDS.includes(serviceId));
+
+  if (serviceIds.length === 0) {
+    return false;
+  }
+
+  if (hasAllInOne) {
+    return serviceIds.length === 1 && addOnIds.length === 0;
+  }
+
+  return hasOnlyNormalServices;
+}
+
+export function getBookingService(
+  selection: ServiceSelectionInput | ServiceId = DEFAULT_SERVICE_ID,
+  addOnIdsOrLanguage: AddOnId[] | Language = [],
+  maybeLanguage: Language = "sq",
+) {
+  const selectionInput: ServiceSelectionInput = typeof selection === "string"
+    ? {
+        serviceId: selection,
+        addOnIds: Array.isArray(addOnIdsOrLanguage) ? addOnIdsOrLanguage : [],
+      }
+    : selection;
+  const language = typeof addOnIdsOrLanguage === "string" ? addOnIdsOrLanguage : maybeLanguage;
+  const serviceIds = getSelectedServiceIds(selectionInput);
+  const addOnIds = getSelectedAddOnIds(selectionInput.addOnIds);
+
+  if (!isValidServiceSelection({ serviceIds, addOnIds })) {
+    throw new Error("INVALID_SERVICE_SELECTION");
+  }
+
+  const services = SERVICES.filter((service) => serviceIds.includes(service.id));
   const addOns = getAddOnsByIds(addOnIds);
-  const price = service.price + addOns.reduce((total, addOn) => total + addOn.price, 0);
+  const isPackage = services.some((service) => service.type === "package");
+  const durationMinutes = isPackage
+    ? Math.max(...services.map((service) => service.durationMinutes))
+    : Math.max(...services.map((service) => service.durationMinutes));
+  const price = services.reduce((total, service) => total + service.price, 0)
+    + addOns.reduce((total, addOn) => total + addOn.price, 0);
+  const serviceLabel = services.map((service) => service.name[language]).join(" + ");
   const addOnLabel = addOns.map((addOn) => addOn.name[language]).join(" + ");
 
   return {
-    id: service.id,
-    name: addOnLabel ? `${service.name[language]} + ${addOnLabel}` : service.name[language],
-    durationMinutes: service.durationMinutes,
+    id: services[0].id,
+    serviceIds,
+    addOnIds,
+    name: addOnLabel ? `${serviceLabel} + ${addOnLabel}` : serviceLabel,
+    durationMinutes,
     price,
-    currency: service.currency,
+    currency: services[0].currency,
+    services,
     addOns,
   };
+}
+
+export function getServiceDurationMinutes(selection: ServiceSelectionInput | ServiceId = DEFAULT_SERVICE_ID) {
+  return getBookingService(selection).durationMinutes;
 }
 
 export const SERVICE = {

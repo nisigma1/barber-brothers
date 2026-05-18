@@ -6,9 +6,11 @@ import type { ApiErrorCode } from "../../src/lib/booking/types";
 
 export const onRequestGet = async ({ env, request }: PagesContext) => {
   const url = new URL(request.url);
+  const serviceIds = url.searchParams.getAll("serviceIds");
   const parsed = availabilityQuerySchema.safeParse({
     barberId: url.searchParams.get("barberId"),
     serviceId: url.searchParams.get("serviceId") ?? undefined,
+    serviceIds: serviceIds.length > 0 ? serviceIds : undefined,
     localDate: url.searchParams.get("localDate"),
   });
 
@@ -17,7 +19,12 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
   }
 
   try {
-    const slots = await getAvailability(env, parsed.data.barberId, parsed.data.localDate, parsed.data.serviceId);
+    const slots = await getAvailability(
+      env,
+      parsed.data.barberId,
+      parsed.data.localDate,
+      parsed.data.serviceIds ?? (parsed.data.serviceId ? [parsed.data.serviceId] : undefined),
+    );
 
     return jsonResponse({ slots });
   } catch (error) {
