@@ -314,12 +314,12 @@ export function BookingForm() {
                     setAvailabilityState("idle");
                     resetSubmissionAttempt();
                   }}
-                  className={`tap-card text-left ${active ? "selected-card" : ""}`}
+                  className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
                 >
                   <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
-                  <span className="mt-3 block text-xl font-semibold text-white">{service.name[language]}</span>
-                  <span className="mt-2 block text-sm leading-6 text-white/58">{service.description[language]}</span>
-                  <span className="mt-4 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                  <span className="mt-2 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
+                  <span className="mt-1.5 block text-sm leading-5 text-white/58">{service.description[language]}</span>
+                  <span className="mt-3 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
                     {service.durationMinutes} min / {service.price} {service.currency}
                   </span>
                 </button>
