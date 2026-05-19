@@ -10,6 +10,7 @@ import {
 } from "@/lib/constants";
 import { translations } from "@/lib/i18n/translations";
 import { ScissorsEmblem } from "@/components/home/scissors-emblem";
+import { ClipperEmblem } from "@/components/home/clipper-emblem";
 
 function hourLabel(minutes: number) {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -103,16 +104,21 @@ export function HomePage() {
           <span className="section-index">N°02</span>
         </div>
 
-        <div className="manifesto-stack mt-10">
-          <span className="manifesto-line">
-            <BilingualText sq={sq.home.manifestoLine1} en={en.home.manifestoLine1} />
-          </span>
-          <span className="manifesto-line">
-            <BilingualText sq={sq.home.manifestoLine2} en={en.home.manifestoLine2} />
-          </span>
-          <span className="manifesto-line manifesto-line-accent">
-            <BilingualText sq={sq.home.manifestoLine3} en={en.home.manifestoLine3} />
-          </span>
+        <div className="manifesto-layout mt-10">
+          <div className="manifesto-stack">
+            <span className="manifesto-line">
+              <BilingualText sq={sq.home.manifestoLine1} en={en.home.manifestoLine1} />
+            </span>
+            <span className="manifesto-line">
+              <BilingualText sq={sq.home.manifestoLine2} en={en.home.manifestoLine2} />
+            </span>
+            <span className="manifesto-line manifesto-line-accent">
+              <BilingualText sq={sq.home.manifestoLine3} en={en.home.manifestoLine3} />
+            </span>
+          </div>
+          <div className="manifesto-tool" aria-hidden>
+            <ClipperEmblem className="manifesto-tool-svg" />
+          </div>
         </div>
       </section>
 

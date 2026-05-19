@@ -44,6 +44,12 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   manifest: "/site.webmanifest",
+  formatDetection: {
+    telephone: false,
+    date: false,
+    email: false,
+    address: false,
+  },
   robots: {
     index: true,
     follow: true,

@@ -104,18 +104,34 @@ textarea {
 
 button,
 a,
-input {
+input,
+[role="button"] {
   -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+}
+
+button:focus,
+a:focus,
+input:focus,
+[role="button"]:focus {
+  outline: none;
 }
 
 button:focus-visible,
 a:focus-visible,
-input:focus-visible {
+input:focus-visible,
+[role="button"]:focus-visible {
   outline: 2px solid var(--accent-strong);
   outline-offset: 3px;
 }
 
 ::selection {
+  background: rgba(217, 173, 114, 0.32);
+  color: var(--foreground);
+}
+
+::-moz-selection {
   background: rgba(217, 173, 114, 0.32);
   color: var(--foreground);
 }
@@ -775,10 +791,56 @@ html[data-theme="light"] .site-footer-statement {
   position: relative;
 }
 
+.manifesto-layout {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 900px) {
+  .manifesto-layout {
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.55fr);
+    gap: 3rem;
+    align-items: center;
+  }
+}
+
 .manifesto-stack {
   display: flex;
   flex-direction: column;
   gap: 0;
+}
+
+.manifesto-tool {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 12rem;
+  color: var(--foreground);
+}
+
+.manifesto-tool-svg {
+  width: 100%;
+  max-width: 24rem;
+  height: auto;
+  filter: drop-shadow(0 22px 38px rgba(0, 0, 0, 0.18));
+}
+
+html[data-theme="dark"] .manifesto-tool-svg {
+  filter:
+    drop-shadow(0 26px 50px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 1px rgba(247, 239, 226, 0.1));
+}
+
+@media (max-width: 900px) {
+  .manifesto-tool {
+    min-height: 0;
+    margin-top: 1.25rem;
+  }
+  .manifesto-tool-svg {
+    max-width: 16rem;
+  }
 }
 
 .manifesto-line {
