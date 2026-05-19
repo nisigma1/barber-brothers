@@ -1,18 +1,66 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ClientBookingError, listClientStaffBookings, softDeleteClientBooking, staffLogout } from "@/lib/booking/client";
 import type { StaffBookingItem } from "@/lib/booking/types";
+import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
+
+type StaffGroup = {
+  key: string;
+  label: string;
+  items: StaffBookingItem[];
+};
+
+function groupBookingsByDate(
+  bookings: StaffBookingItem[],
+  language: "sq" | "en",
+  dictionary: ReturnType<typeof useLanguage>["dictionary"],
+): StaffGroup[] {
+  const today = getTodayLocalDate();
+  const tomorrow = addDaysToLocalDate(today, 1);
+  const groups = new Map<string, StaffBookingItem[]>();
+
+  const sorted = [...bookings].sort((a, b) => {
+    if (a.localDate === b.localDate) {
+      return a.localTime.localeCompare(b.localTime);
+    }
+    return a.localDate.localeCompare(b.localDate);
+  });
+
+  for (const booking of sorted) {
+    const existing = groups.get(booking.localDate);
+    if (existing) {
+      existing.push(booking);
+    } else {
+      groups.set(booking.localDate, [booking]);
+    }
+  }
+
+  return Array.from(groups.entries()).map(([localDate, items]) => {
+    let label: string;
+    if (localDate === today) {
+      label = dictionary.staff.groupToday;
+    } else if (localDate === tomorrow) {
+      label = dictionary.staff.groupTomorrow;
+    } else {
+      label = formatConfirmationDate(localDate, language);
+    }
+    return { key: localDate, label, items };
+  });
+}
 
 export function StaffBookingsPage() {
   const router = useRouter();
-  const { dictionary } = useLanguage();
+  const { dictionary, language } = useLanguage();
   const [bookings, setBookings] = useState<StaffBookingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState("");
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
@@ -50,23 +98,29 @@ export function StaffBookingsPage() {
     };
   }, [dictionary.staff.authRequired, router]);
 
+  const groups = useMemo(
+    () => groupBookingsByDate(bookings, language, dictionary),
+    [bookings, language, dictionary],
+  );
+
   async function handleDelete(booking: StaffBookingItem) {
-    const confirmed = window.confirm(dictionary.staff.deleteConfirm);
-
-    if (!confirmed) {
-      return;
-    }
-
+    setDeletingId(booking.bookingId);
     try {
       await softDeleteClientBooking(booking);
       setBookings((current) => current.filter((item) => item.bookingId !== booking.bookingId));
       setMessage(dictionary.staff.deleted);
+      setConfirmingId(null);
+      if (expandedId === booking.bookingId) {
+        setExpandedId(null);
+      }
     } catch (error) {
       if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
         router.replace("/staff/login");
       }
 
       setMessage(dictionary.staff.authRequired);
+    } finally {
+      setDeletingId(null);
     }
   }
 
@@ -78,19 +132,27 @@ export function StaffBookingsPage() {
     }
   }
 
+  function toggleExpand(bookingId: string) {
+    setExpandedId((current) => (current === bookingId ? null : bookingId));
+    setConfirmingId(null);
+  }
+
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <div className="w-full space-y-5">
-        <div className="premium-card flex flex-col gap-4 p-5 sm:flex-row sm:items-end sm:justify-between sm:p-6">
-          <div>
+    <div className="mx-auto flex w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+      <div className="w-full space-y-4">
+        <div className="premium-card flex flex-row items-center justify-between gap-3 p-3 sm:p-4">
+          <div className="min-w-0">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.panelEyebrow}</p>
-            <h1 className="mt-3 font-display text-5xl uppercase leading-none tracking-[0.06em] text-white">
+            <h1 className="mt-0.5 font-display text-2xl uppercase leading-none tracking-[0.04em] text-white sm:text-3xl">
               {dictionary.staff.bookingsTitle}
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-white/62">{dictionary.staff.bookingsBody}</p>
+            <p className="mt-1 text-xs text-white/58 sm:text-sm">
+              {bookings.length}{" "}
+              {bookings.length === 1 ? dictionary.staff.bookingCountOne : dictionary.staff.bookingCount}
+            </p>
           </div>
 
-          <button type="button" onClick={handleSignOut} className="btn-secondary">
+          <button type="button" onClick={handleSignOut} className="btn-secondary shrink-0">
             {dictionary.common.signOut}
           </button>
         </div>
@@ -102,41 +164,114 @@ export function StaffBookingsPage() {
         ) : null}
 
         {isLoading ? (
-          <div className="premium-card p-6 text-white/62">{dictionary.staff.loading}</div>
+          <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.loading}</div>
         ) : bookings.length === 0 ? (
-          <div className="premium-card p-6 text-white/62">{dictionary.staff.empty}</div>
+          <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.empty}</div>
         ) : (
-          <div className="grid gap-4">
-            {bookings.map((booking) => (
-              <article key={booking.bookingId} className="premium-card p-5">
-                <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                  <div className="grid flex-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
-                    {[
-                      [dictionary.booking.summaryName, `${booking.customerFirstName} ${booking.customerLastName}`],
-                      [dictionary.booking.summaryPhone, booking.customerPhone],
-                      [dictionary.booking.summaryBarber, booking.barberName],
-                      [
-                        dictionary.booking.summaryService,
-                        `${booking.serviceName} - ${booking.serviceDurationMinutes} min - ${booking.servicePrice} ${booking.currency}`,
-                      ],
-                      [dictionary.booking.summaryTime, `${booking.localDate} - ${booking.localTime}-${booking.endLocalTime}`],
-                    ].map(([label, value]) => (
-                      <div key={label} className="rounded-2xl border border-white/10 bg-black/25 p-4">
-                        <p className="text-xs uppercase tracking-[0.2em] text-white/42">{label}</p>
-                        <p className="mt-2 font-semibold text-white">{value}</p>
-                      </div>
-                    ))}
-                  </div>
-
-                  <button
-                    type="button"
-                    onClick={() => void handleDelete(booking)}
-                    className="min-h-12 rounded-full border border-rose-400/25 bg-rose-500/10 px-5 text-sm font-bold uppercase tracking-[0.18em] text-rose-100 transition hover:bg-rose-500/18"
-                  >
-                    {dictionary.common.delete}
-                  </button>
+          <div className="flex flex-col gap-4">
+            {groups.map((group) => (
+              <section key={group.key} className="flex flex-col">
+                <div className="staff-group-heading">
+                  <span>{group.label}</span>
+                  <span className="staff-group-count">
+                    {group.items.length}{" "}
+                    {group.items.length === 1 ? dictionary.staff.bookingCountOne : dictionary.staff.bookingCount}
+                  </span>
                 </div>
-              </article>
+
+                <div className="staff-group-list">
+                  {group.items.map((booking) => {
+                    const expanded = expandedId === booking.bookingId;
+                    const confirming = confirmingId === booking.bookingId;
+                    const isDeleting = deletingId === booking.bookingId;
+
+                    return (
+                      <div key={booking.bookingId}>
+                        <button
+                          type="button"
+                          aria-expanded={expanded}
+                          onClick={() => toggleExpand(booking.bookingId)}
+                          className="staff-row"
+                        >
+                          <span className="staff-row-time">
+                            <span className="staff-row-time-start">{booking.localTime}</span>
+                            <span className="staff-row-time-end">→ {booking.endLocalTime}</span>
+                          </span>
+                          <span className="staff-row-body">
+                            <span className="staff-row-name">
+                              {booking.customerFirstName} {booking.customerLastName}
+                            </span>
+                            <span className="staff-row-meta">
+                              {booking.barberName} · {booking.serviceName} ·{" "}
+                              {booking.servicePrice} {booking.currency === "euro" ? "€" : booking.currency}
+                            </span>
+                          </span>
+                          <span className="staff-row-chevron" aria-hidden>
+                            ▾
+                          </span>
+                        </button>
+
+                        {expanded ? (
+                          <div className="staff-row-details">
+                            <div className="staff-row-detail-line">
+                              <span>{dictionary.booking.summaryPhone}</span>
+                              <strong>{booking.customerPhone}</strong>
+                            </div>
+                            <div className="staff-row-detail-line">
+                              <span>{dictionary.booking.summaryService}</span>
+                              <strong>
+                                {booking.serviceName} · {booking.serviceDurationMinutes} min
+                              </strong>
+                            </div>
+                            <div className="staff-row-detail-line">
+                              <span>{dictionary.booking.summaryBarber}</span>
+                              <strong>{booking.barberName}</strong>
+                            </div>
+
+                            <div className="staff-row-detail-actions">
+                              <a
+                                href={`tel:${booking.customerPhone}`}
+                                className="btn-ghost"
+                              >
+                                {dictionary.staff.callClient}
+                              </a>
+
+                              {confirming ? (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => setConfirmingId(null)}
+                                    className="btn-ghost"
+                                    disabled={isDeleting}
+                                  >
+                                    {dictionary.staff.keepBooking}
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => void handleDelete(booking)}
+                                    className="btn-danger-ghost"
+                                    disabled={isDeleting}
+                                  >
+                                    {isDeleting ? dictionary.staff.loading : dictionary.staff.cancelConfirm}
+                                  </button>
+                                </>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => setConfirmingId(booking.bookingId)}
+                                  className="btn-danger-ghost"
+                                >
+                                  {dictionary.staff.cancelShort}
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    );
+                  })}
+                </div>
+              </section>
             ))}
           </div>
         )}
