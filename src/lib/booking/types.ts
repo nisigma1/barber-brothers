@@ -1,6 +1,6 @@
 export type Language = "sq" | "en";
 export type BarberId = "barber-1" | "barber-2";
-export type ServiceId = "haircut" | "beard-trim" | "all-in-one";
+export type ServiceId = "haircut" | "beard-trim" | "face-treatment" | "all-in-one";
 export type AddOnId = "premium-product";
 export type BookingStatus = "confirmed" | "deleted";
 export type SlotLockStatus = "active" | "released";

@@ -1,13 +1,13 @@
-import { PreviewLock } from "@/components/preview/preview-lock";
+import { redirect } from "next/navigation";
 
 export const metadata = {
   robots: {
     index: false,
     follow: false,
   },
-  title: "Private Preview - Barber Brothers",
+  title: "Barber Brothers",
 };
 
 export default function PreviewPage() {
-  return <PreviewLock />;
+  redirect("/");
 }

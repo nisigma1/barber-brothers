@@ -38,6 +38,8 @@ export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image
   },
 ];
 
+export const FACE_TREATMENT_SERVICE_ID = "face-treatment" as const;
+
 export type ServiceDefinition = {
   id: ServiceId;
   type: "main" | "package";
@@ -86,6 +88,21 @@ export const SERVICES: ServiceDefinition[] = [
     },
     durationMinutes: 30,
     price: 2,
+    currency: "euro",
+  },
+  {
+    id: "face-treatment",
+    type: "main",
+    name: {
+      sq: "Tretman i fytyres",
+      en: "Face treatment",
+    },
+    description: {
+      sq: "Trajtim i qete me finish premium.",
+      en: "Calm facial treatment with a premium finish.",
+    },
+    durationMinutes: 60,
+    price: 15,
     currency: "euro",
   },
   {
@@ -163,11 +180,19 @@ export function isAllInOneSelection(serviceIds: ServiceId[]) {
   return serviceIds.includes(ALL_IN_ONE_SERVICE_ID);
 }
 
+export function isFaceTreatmentSelection(serviceIds: ServiceId[]) {
+  return serviceIds.includes(FACE_TREATMENT_SERVICE_ID);
+}
+
 export function isValidServiceSelection(selection: ServiceSelectionInput = {}) {
   const serviceIds = getSelectedServiceIds(selection);
   const addOnIds = getSelectedAddOnIds(selection.addOnIds);
   const hasAllInOne = isAllInOneSelection(serviceIds);
+  const hasFaceTreatment = isFaceTreatmentSelection(serviceIds);
   const hasOnlyNormalServices = serviceIds.every((serviceId) => NORMAL_SERVICE_IDS.includes(serviceId));
+  const hasValidFaceTreatmentCombo = serviceIds.every((serviceId) =>
+    [FACE_TREATMENT_SERVICE_ID, "haircut"].includes(serviceId),
+  );
 
   if (serviceIds.length === 0) {
     return false;
@@ -175,6 +200,10 @@ export function isValidServiceSelection(selection: ServiceSelectionInput = {}) {
 
   if (hasAllInOne) {
     return serviceIds.length === 1 && addOnIds.length === 0;
+  }
+
+  if (hasFaceTreatment) {
+    return hasValidFaceTreatmentCombo && serviceIds.length <= 2 && addOnIds.length === 0;
   }
 
   return hasOnlyNormalServices;

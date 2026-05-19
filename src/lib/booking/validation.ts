@@ -3,7 +3,7 @@ import { z } from "zod";
 import { isValidServiceSelection } from "@/lib/constants";
 
 const barberIdSchema = z.enum(["barber-1", "barber-2"]);
-const serviceIdSchema = z.enum(["haircut", "beard-trim", "all-in-one"]);
+const serviceIdSchema = z.enum(["haircut", "beard-trim", "face-treatment", "all-in-one"]);
 const addOnIdSchema = z.enum(["premium-product"]);
 const customerNameSchema = z
   .string()

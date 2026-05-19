@@ -8,8 +8,10 @@ import {
   ADD_ONS,
   BARBERS,
   DEFAULT_SERVICE_IDS,
+  FACE_TREATMENT_SERVICE_ID,
   SERVICES,
   getBookingService,
+  isFaceTreatmentSelection,
   isAllInOneSelection,
 } from "@/lib/constants";
 import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
@@ -71,6 +73,7 @@ export function BookingForm() {
   const dateOptions = getBookableDateOptions(language);
   const bookingService = getBookingService({ serviceIds, addOnIds }, language);
   const allInOneSelected = isAllInOneSelection(serviceIds);
+  const faceTreatmentSelected = isFaceTreatmentSelection(serviceIds);
   const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
   const selectedDate = dateOptions.find((date) => date.localDate === localDate);
   const availabilityIsVerified = availabilityState === "ready";
@@ -130,6 +133,40 @@ export function BookingForm() {
   }
 
   function toggleNormalService(nextServiceId: ServiceId) {
+    if (nextServiceId === FACE_TREATMENT_SERVICE_ID) {
+      const nextServiceIds: ServiceId[] = serviceIds.includes(FACE_TREATMENT_SERVICE_ID)
+        ? serviceIds.filter((serviceId) => serviceId !== FACE_TREATMENT_SERVICE_ID)
+        : serviceIds.includes("haircut")
+          ? ["haircut", FACE_TREATMENT_SERVICE_ID]
+          : [FACE_TREATMENT_SERVICE_ID];
+
+      if (nextServiceIds.length === 0) {
+        return;
+      }
+
+      setServiceIds(nextServiceIds);
+      setAddOnIds([]);
+      resetAvailabilityForServiceChange();
+      return;
+    }
+
+    if (faceTreatmentSelected && nextServiceId === "haircut") {
+      const nextServiceIds: ServiceId[] = serviceIds.includes("haircut")
+        ? serviceIds.filter((serviceId) => serviceId !== "haircut")
+        : [FACE_TREATMENT_SERVICE_ID, "haircut"];
+
+      setServiceIds(nextServiceIds);
+      setAddOnIds([]);
+      resetAvailabilityForServiceChange();
+      return;
+    }
+
+    if (faceTreatmentSelected) {
+      setServiceIds([nextServiceId]);
+      resetAvailabilityForServiceChange();
+      return;
+    }
+
     const nextServiceIds = allInOneSelected
       ? [nextServiceId]
       : serviceIds.includes(nextServiceId)
@@ -346,12 +383,12 @@ export function BookingForm() {
                   type="button"
                   aria-pressed={active}
                   onClick={() => toggleNormalService(service.id)}
-                  className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
+                    className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
                 >
                   <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
-                  <span className="mt-1.5 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
+                  <span className="mt-1 block text-lg font-semibold leading-tight text-white">{service.name[language]}</span>
                   <span className="mt-1 block text-sm leading-5 text-white/58">{service.description[language]}</span>
-                  <span className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                  <span className="mt-1.5 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
                     {service.durationMinutes} min / {service.price} {service.currency}
                   </span>
                 </button>
@@ -372,9 +409,9 @@ export function BookingForm() {
                   className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
                 >
                   <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
-                  <span className="mt-1.5 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
+                  <span className="mt-1 block text-lg font-semibold leading-tight text-white">{service.name[language]}</span>
                   <span className="mt-1 block text-sm leading-5 text-white/58">{service.description[language]}</span>
-                  <span className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                  <span className="mt-1.5 inline-flex rounded-full border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
                     {service.durationMinutes} min / {service.price} {service.currency}
                   </span>
                 </button>
@@ -389,9 +426,9 @@ export function BookingForm() {
                   key={addOn.id}
                   type="button"
                   aria-pressed={active}
-                  disabled={allInOneSelected}
+                  disabled={allInOneSelected || faceTreatmentSelected}
                   onClick={() => {
-                    if (allInOneSelected) {
+                    if (allInOneSelected || faceTreatmentSelected) {
                       return;
                     }
 
@@ -406,10 +443,10 @@ export function BookingForm() {
                 >
                   <span>
                     <span className="eyebrow text-white/42">{dictionary.booking.addOnLabel}</span>
-                    <span className="mt-1.5 block font-semibold text-white">{addOn.name[language]}</span>
+                    <span className="mt-1 block font-semibold text-white">{addOn.name[language]}</span>
                     <span className="mt-1 block text-sm text-white/58">{addOn.description[language]}</span>
                   </span>
-                  <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                  <span className="rounded-full border border-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
                     +{addOn.price} {addOn.currency}
                   </span>
                 </button>

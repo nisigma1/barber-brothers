@@ -488,12 +488,12 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
 }
 
 .service-card-compact {
-  padding: 0.72rem;
+  padding: 0.6rem;
 }
 
 @media (min-width: 640px) {
   .service-card-compact {
-    padding: 0.88rem;
+    padding: 0.78rem;
   }
 }
 
