@@ -349,9 +349,9 @@ export function BookingForm() {
                   className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
                 >
                   <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
-                  <span className="mt-2 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
-                  <span className="mt-1.5 block text-sm leading-5 text-white/58">{service.description[language]}</span>
-                  <span className="mt-3 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                  <span className="mt-1.5 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
+                  <span className="mt-1 block text-sm leading-5 text-white/58">{service.description[language]}</span>
+                  <span className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
                     {service.durationMinutes} min / {service.price} {service.currency}
                   </span>
                 </button>
@@ -372,9 +372,9 @@ export function BookingForm() {
                   className={`tap-card service-card-compact text-left ${active ? "selected-card" : ""}`}
                 >
                   <span className="eyebrow text-white/42">{dictionary.booking.serviceCardLabel}</span>
-                  <span className="mt-2 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
-                  <span className="mt-1.5 block text-sm leading-5 text-white/58">{service.description[language]}</span>
-                  <span className="mt-3 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
+                  <span className="mt-1.5 block text-xl font-semibold leading-tight text-white">{service.name[language]}</span>
+                  <span className="mt-1 block text-sm leading-5 text-white/58">{service.description[language]}</span>
+                  <span className="mt-2 inline-flex rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
                     {service.durationMinutes} min / {service.price} {service.currency}
                   </span>
                 </button>
@@ -406,7 +406,7 @@ export function BookingForm() {
                 >
                   <span>
                     <span className="eyebrow text-white/42">{dictionary.booking.addOnLabel}</span>
-                    <span className="mt-2 block font-semibold text-white">{addOn.name[language]}</span>
+                    <span className="mt-1.5 block font-semibold text-white">{addOn.name[language]}</span>
                     <span className="mt-1 block text-sm text-white/58">{addOn.description[language]}</span>
                   </span>
                   <span className="rounded-full border border-white/10 px-3 py-1.5 text-xs font-bold uppercase tracking-[0.14em] text-white/66">
@@ -417,8 +417,8 @@ export function BookingForm() {
             })}
           </div>
 
-          <div className="rounded-[1rem] border border-white/10 bg-black/20 px-4 py-3 text-sm font-semibold text-white/72">
-            {dictionary.booking.duration}: {bookingService.durationMinutes} min · {dictionary.booking.price}:{" "}
+          <div className="rounded-[1rem] border border-white/10 bg-black/20 px-4 py-2.5 text-sm font-semibold text-white/72">
+            {dictionary.booking.duration}: {bookingService.durationMinutes} min - {dictionary.booking.price}:{" "}
             {bookingService.price} {bookingService.currency}
           </div>
         </section>

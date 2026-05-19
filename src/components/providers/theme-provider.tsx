@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useSyncExternalStore } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
 type Theme = "dark" | "light";
 
@@ -11,7 +11,6 @@ type ThemeContextValue = {
 };
 
 const STORAGE_KEY = "barber-brothers-theme";
-const THEME_CHANGE_EVENT = "barber-brothers-theme-change";
 const DEFAULT_THEME: Theme = "light";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
@@ -30,23 +29,21 @@ function getStoredTheme(): Theme {
   return isTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
 }
 
-function subscribeToThemeChanges(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener(THEME_CHANGE_EVENT, onStoreChange);
-
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener(THEME_CHANGE_EVENT, onStoreChange);
-  };
-}
-
 function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
   document.documentElement.style.colorScheme = theme;
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const theme = useSyncExternalStore<Theme>(subscribeToThemeChanges, getStoredTheme, () => DEFAULT_THEME);
+  const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      setThemeState(getStoredTheme());
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   useEffect(() => {
     applyTheme(theme);
@@ -55,12 +52,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const setTheme = useCallback((nextTheme: Theme) => {
     applyTheme(nextTheme);
     window.localStorage.setItem(STORAGE_KEY, nextTheme);
-    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
+    setThemeState(nextTheme);
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(getStoredTheme() === "dark" ? "light" : "dark");
-  }, [setTheme]);
+    setTheme(theme === "dark" ? "light" : "dark");
+  }, [setTheme, theme]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({

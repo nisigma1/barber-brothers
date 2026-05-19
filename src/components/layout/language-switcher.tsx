@@ -16,7 +16,7 @@ export function LanguageSwitcher() {
             key={item}
             type="button"
             onClick={() => setLanguage(item)}
-            className={`language-option min-h-10 rounded-full px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] transition ${
+            className={`language-option rounded-full px-3 py-2 text-xs font-bold uppercase tracking-[0.2em] transition ${
               active
                 ? "bg-[var(--color-accent)] text-[var(--color-ink)]"
                 : "text-white/65 hover:text-white"

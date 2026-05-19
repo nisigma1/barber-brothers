@@ -117,3 +117,6 @@
 - Made booking submit attempts idempotent across retries by reusing the same `submissionId` until the user changes details or the booking succeeds.
 - Refreshes availability and clears the selected slot when the backend reports `SLOT_TAKEN`, `INVALID_SLOT`, or `BOOKING_CUTOFF`.
 - Corrected Albanian working-hours copy from `Hene - Shtune` to `E Hene - E Shtune`.
+- Final QA polish tightened service-card height on mobile, enforced 44px language/theme tap targets, and stabilized language/theme hydration to remove fresh React mismatch errors.
+- Verified Cloudflare local runtime after the final rebuild: service-combo booking saves, duplicate booking returns `409`, lunch `12:30` is rejected, All-in-One `20:00` is rejected, and All-in-One blocks two consecutive slots.
+- Final browser route audit passed for `/`, `/booking`, `/ourwork`, `/brotherspace`, and `/staff`: no horizontal overflow, no broken images, no undersized visible tap targets, and no fresh console errors after the hydration fix.
