@@ -47,7 +47,7 @@ export function SiteHeader() {
             <p className="brand-title font-display text-base uppercase tracking-[0.18em] text-white sm:text-lg">
               {BRAND_NAME}
             </p>
-            <p className="brand-location hidden text-xs uppercase tracking-[0.16em] text-white/42 sm:block">
+            <p className="brand-location hidden text-[0.62rem] uppercase tracking-[0.22em] text-white/45 sm:block">
               Fushe Kosove
             </p>
           </div>

@@ -18,21 +18,29 @@ export function OurworkPage() {
   const en = translations.en.home;
 
   return (
-    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
-      <section className="ourwork-showcase premium-card overflow-hidden p-5 sm:p-7">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-8 px-4 py-8 sm:px-6 sm:py-10 lg:gap-12 lg:px-8 lg:py-14">
+      <section>
+        <div className="section-eyebrow-row">
+          <p className="eyebrow text-[var(--color-accent)]">
+            <BilingualText sq={sq.galleryTitle} en={en.galleryTitle} />
+          </p>
+          <span className="section-index">
+            <BilingualText sq="01 - Editorial" en="01 - Editorial" />
+          </span>
+        </div>
+
+        <div className="mt-6 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <p className="eyebrow text-[var(--color-accent)]">
-              <BilingualText sq={sq.galleryTitle} en={en.galleryTitle} />
-            </p>
-            <h1 className="mt-3 font-display text-[clamp(3.4rem,11vw,7rem)] uppercase leading-[0.84] tracking-[0.045em] text-white">
+            <h1 className="editorial-title">
               <BilingualText sq={sq.galleryHeading} en={en.galleryHeading} />
             </h1>
-            <p className="mt-5 max-w-2xl text-sm leading-7 text-white/65 sm:text-base">
+            <p className="editorial-italic mt-3">
+              <BilingualText sq="Prerje precize. Sjellje e qete." en="Precise cuts. Quiet craft." />
+            </p>
+            <p className="section-sub">
               <BilingualText sq={sq.galleryBody} en={en.galleryBody} />
             </p>
           </div>
-
           <div className="flex flex-col gap-3 sm:flex-row lg:justify-end">
             <a
               href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
@@ -47,27 +55,30 @@ export function OurworkPage() {
             </Link>
           </div>
         </div>
+      </section>
 
-        <div className="ourwork-editorial-grid mt-8">
-          {BRAND_ASSETS.gallery.map((image, index) => (
-            <a
-              key={image}
-              href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`gallery-card ourwork-editorial-item ourwork-editorial-item-${index + 1}`}
-            >
-              <img
-                src={image}
-                alt={`Barber Brothers work image ${index + 1}`}
-                className="image-fill"
-                decoding="async"
-                fetchPriority={index === 0 ? "high" : undefined}
-                loading={index === 0 ? "eager" : "lazy"}
-              />
-            </a>
-          ))}
-        </div>
+      <section className="ourwork-editorial-grid">
+        {BRAND_ASSETS.gallery.map((image, index) => (
+          <a
+            key={image}
+            href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`gallery-card ourwork-editorial-item ourwork-editorial-item-${index + 1}`}
+          >
+            <img
+              src={image}
+              alt={`Barber Brothers work image ${index + 1}`}
+              className="image-fill"
+              decoding="async"
+              fetchPriority={index === 0 ? "high" : undefined}
+              loading={index === 0 ? "eager" : "lazy"}
+            />
+            <span className="editorial-caption">
+              <BilingualText sq="Prerje" en="Cut" /> · {(index + 1).toString().padStart(2, "0")}
+            </span>
+          </a>
+        ))}
       </section>
     </div>
   );

@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { CONTACT_DETAILS } from "@/lib/constants";
+import { CONTACT_DETAILS, SHOP_CITY } from "@/lib/constants";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function SiteFooter() {
@@ -13,30 +14,81 @@ export function SiteFooter() {
     return null;
   }
 
+  const year = new Date().getFullYear();
+
   return (
-    <footer className="border-t border-white/8 bg-black/25">
-      <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-6 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-        <div>
-          <p className="font-display text-2xl uppercase tracking-[0.16em] text-white">Barber Brothers</p>
-          <p className="mt-3 max-w-xl text-sm leading-7 text-white/55">{dictionary.footer.line}</p>
-          <p className="mt-2 text-sm text-white/42">{dictionary.footer.location}</p>
+    <footer className="site-footer-shell">
+      <div className="site-footer-inner mx-auto w-full max-w-7xl">
+        <div className="site-footer-brand">
+          <p className="site-footer-wordmark">
+            Barber<br />Brothers
+          </p>
+          <p className="site-footer-statement">{dictionary.home.footerStatement}</p>
+          <p className="site-footer-meta">
+            <strong>{SHOP_CITY}</strong>
+            <br />
+            {CONTACT_DETAILS.address}
+          </p>
         </div>
-        <div className="grid gap-3 sm:grid-cols-3">
-          <a className="tap-card" href={`tel:${CONTACT_DETAILS.primaryPhone}`}>
-            {CONTACT_DETAILS.primaryPhone}
-          </a>
-          <a
-            className="tap-card"
-            href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @{CONTACT_DETAILS.instagramHandle}
-          </a>
-          <a className="tap-card" href={CONTACT_DETAILS.mapsHref} target="_blank" rel="noopener noreferrer">
-            Google Maps
-          </a>
+
+        <div className="site-footer-col">
+          <p className="site-footer-col-title">{dictionary.home.footerNavigate}</p>
+          <div className="site-footer-list">
+            <Link href="/" prefetch={false} className="site-footer-link">
+              {dictionary.nav.home}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </Link>
+            <Link href="/ourwork" prefetch={false} className="site-footer-link">
+              {dictionary.nav.ourwork}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </Link>
+            <Link href="/brotherspace" prefetch={false} className="site-footer-link">
+              {dictionary.nav.brotherspace}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </Link>
+            <Link href="/booking" prefetch={false} className="site-footer-link">
+              {dictionary.nav.booking}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </Link>
+          </div>
         </div>
+
+        <div className="site-footer-col">
+          <p className="site-footer-col-title">{dictionary.home.footerVisit}</p>
+          <div className="site-footer-list">
+            <a
+              className="site-footer-link"
+              href={CONTACT_DETAILS.mapsHref}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {dictionary.home.mapsCta}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </a>
+            <a
+              className="site-footer-link"
+              href={`https://instagram.com/${CONTACT_DETAILS.instagramHandle}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              @{CONTACT_DETAILS.instagramHandle}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </a>
+            <a className="site-footer-link" href={`tel:${CONTACT_DETAILS.primaryPhone}`}>
+              {CONTACT_DETAILS.primaryPhone}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </a>
+            <a className="site-footer-link" href={`tel:${CONTACT_DETAILS.secondaryPhone}`}>
+              {CONTACT_DETAILS.secondaryPhone}
+              <span aria-hidden className="site-footer-link-arrow">→</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div className="site-footer-strip mx-auto w-full max-w-7xl">
+        <span className="site-footer-signature">{dictionary.home.footerSignature}</span>
+        <span className="site-footer-copy">© {year} {dictionary.home.footerCopyright}</span>
       </div>
     </footer>
   );
