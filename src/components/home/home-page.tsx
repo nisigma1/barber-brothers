@@ -82,10 +82,10 @@ export function HomePage() {
               </div>
             </div>
 
-            <div className="hero-visual">
+            <div className="hero-visual hero-visual-logo">
               <img
-                src={BRAND_ASSETS.gallery[1]}
-                alt={`${BARBERS[0].name} - Barber Brothers`}
+                src={BRAND_ASSETS.heroLogo}
+                alt="Barber Brothers"
                 decoding="async"
                 fetchPriority="high"
                 loading="eager"
