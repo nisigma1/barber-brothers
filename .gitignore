@@ -60,3 +60,9 @@ firebase-debug.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# wrangler preview logs
+.wrangler-preview.log
+.wrangler-preview.err
+.wrangler-preview-lock.log
+.wrangler-preview-lock.err
