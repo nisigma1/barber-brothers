@@ -421,27 +421,17 @@ html[data-theme="light"] .hero-grid {
 
 .hero-visual-logo {
   position: relative;
-  overflow: hidden;
+  overflow: visible !important;
   isolation: isolate;
-  border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
-  background: var(--soft-bg);
-  border-radius: 1.4rem;
-  box-shadow:
-    0 30px 60px rgba(54, 36, 18, 0.10),
-    0 2px 6px rgba(54, 36, 18, 0.04);
-  aspect-ratio: 1 / 1;
+  border: none !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  aspect-ratio: auto !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 1.25rem;
-}
-
-html[data-theme="dark"] .hero-visual-logo {
-  background: rgba(247, 239, 226, 0.04);
-  border-color: rgba(217, 173, 114, 0.28);
-  box-shadow:
-    0 30px 70px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px rgba(247, 239, 226, 0.04);
 }
 
 .hero-visual-logo::after,
@@ -451,26 +441,31 @@ html[data-theme="dark"] .hero-visual-logo {
 
 .hero-visual-logo img {
   width: 100%;
-  height: 100%;
+  height: auto;
+  max-width: 20rem;
   object-fit: contain !important;
   padding: 0 !important;
-  border-radius: 0;
+  border-radius: 0 !important;
   background: transparent;
   display: block;
-  filter: invert(1) hue-rotate(180deg) saturate(1.1) brightness(0.95);
+  filter: contrast(1.6) brightness(1.08) invert(1) hue-rotate(180deg) saturate(1.2);
   mix-blend-mode: multiply;
 }
 
 html[data-theme="dark"] .hero-visual-logo img {
   filter: none;
   mix-blend-mode: normal;
-  border-radius: 0.9rem;
 }
 
 @media (min-width: 768px) {
-  .hero-visual-logo {
-    aspect-ratio: 5 / 4;
-    padding: 1.5rem;
+  .hero-visual-logo img {
+    max-width: 26rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-visual-logo img {
+    max-width: 30rem;
   }
 }
 
