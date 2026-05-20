@@ -9,7 +9,7 @@ import {
   WORKING_HOURS,
 } from "@/lib/constants";
 import { translations } from "@/lib/i18n/translations";
-import { ScissorsEmblem } from "@/components/home/scissors-emblem";
+import { PortraitEmblem } from "@/components/home/portrait-emblem";
 
 function hourLabel(minutes: number) {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -49,7 +49,7 @@ export function HomePage() {
 
           <div className="hero-stage mt-10 sm:mt-12 lg:mt-16">
             <div className="hero-copy">
-              <ScissorsEmblem className="hero-emblem" />
+              <PortraitEmblem className="hero-emblem" />
               <h1 className="hero-headline-block mt-8 sm:mt-10">
 
                 <span className="hero-headline-line">
@@ -103,23 +103,13 @@ export function HomePage() {
           <span className="section-index">N°02</span>
         </div>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
-          <div className="manifesto-stack">
-            <span className="manifesto-line">
-              <BilingualText sq={sq.home.manifestoLine1} en={en.home.manifestoLine1} />
-            </span>
-            <span className="manifesto-line manifesto-line-accent">
-              <BilingualText sq={sq.home.manifestoLine2} en={en.home.manifestoLine2} />
-            </span>
-          </div>
-          <div className="manifesto-side lg:self-end">
-            <p className="manifesto-body">
-              <BilingualText sq={sq.home.manifestoBody} en={en.home.manifestoBody} />
-            </p>
-            <p className="manifesto-quote">
-              <BilingualText sq={sq.home.manifestoQuote} en={en.home.manifestoQuote} />
-            </p>
-          </div>
+        <div className="manifesto-stack mt-10">
+          <span className="manifesto-line">
+            <BilingualText sq={sq.home.manifestoLine1} en={en.home.manifestoLine1} />
+          </span>
+          <span className="manifesto-line manifesto-line-accent">
+            <BilingualText sq={sq.home.manifestoLine2} en={en.home.manifestoLine2} />
+          </span>
         </div>
       </section>
 
