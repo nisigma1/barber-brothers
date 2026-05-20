@@ -9,7 +9,7 @@ import {
   WORKING_HOURS,
 } from "@/lib/constants";
 import { translations } from "@/lib/i18n/translations";
-import { PortraitEmblem } from "@/components/home/portrait-emblem";
+import { ScissorsEmblem } from "@/components/home/scissors-emblem";
 
 function hourLabel(minutes: number) {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -49,7 +49,7 @@ export function HomePage() {
 
           <div className="hero-stage mt-10 sm:mt-12 lg:mt-16">
             <div className="hero-copy">
-              <PortraitEmblem className="hero-emblem" />
+              <ScissorsEmblem className="hero-emblem" />
               <h1 className="hero-headline-block mt-8 sm:mt-10">
 
                 <span className="hero-headline-line">

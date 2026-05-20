@@ -204,11 +204,18 @@ html[data-theme="light"] .hero-grid {
   align-items: stretch;
 }
 
-@media (min-width: 960px) {
+@media (min-width: 768px) {
+  .hero-stage {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    gap: 2.5rem;
+    align-items: end;
+  }
+}
+
+@media (min-width: 1024px) {
   .hero-stage {
     grid-template-columns: minmax(0, 1.06fr) minmax(0, 0.94fr);
     gap: 3rem;
-    align-items: end;
   }
 }
 
@@ -315,15 +322,15 @@ html[data-theme="light"] .hero-grid {
 
 .hero-emblem {
   display: block;
-  width: clamp(4.5rem, 8vw, 6rem);
+  width: clamp(6rem, 11vw, 8rem);
   height: auto;
   color: var(--foreground);
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 @media (max-width: 520px) {
   .hero-emblem {
-    width: 4.2rem;
+    width: 5.5rem;
   }
 }
 
