@@ -4,6 +4,7 @@ import { Barlow_Condensed, Manrope } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { LanguageProvider } from "@/components/providers/language-provider";
+import { ThemeProvider } from "@/components/providers/theme-provider";
 import { BRAND_NAME, CONTACT_DETAILS } from "@/lib/constants";
 
 import "./globals.css";
@@ -22,8 +23,10 @@ const barlow = Barlow_Condensed({
 
 const themeScript = `
 try {
-  document.documentElement.dataset.theme = "light";
-  document.documentElement.style.colorScheme = "light";
+  var theme = localStorage.getItem("barber-brothers-theme");
+  if (theme !== "dark" && theme !== "light") theme = "light";
+  document.documentElement.dataset.theme = theme;
+  document.documentElement.style.colorScheme = theme;
   var language = localStorage.getItem("barber-brothers-language");
   document.documentElement.lang = language === "en" ? "en" : "sq";
 } catch (_) {}
@@ -120,13 +123,15 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full">
-        <LanguageProvider>
-          <div className="flex min-h-full flex-col">
-            <SiteHeader />
-            <main className="flex flex-1 flex-col">{children}</main>
-            <SiteFooter />
-          </div>
-        </LanguageProvider>
+        <ThemeProvider>
+          <LanguageProvider>
+            <div className="flex min-h-full flex-col">
+              <SiteHeader />
+              <main className="flex flex-1 flex-col">{children}</main>
+              <SiteFooter />
+            </div>
+          </LanguageProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -8,7 +8,9 @@ import { useState } from "react";
 
 import { BRAND_ASSETS, BRAND_NAME } from "@/lib/constants";
 import { LanguageSwitcher } from "@/components/layout/language-switcher";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useTheme } from "@/components/providers/theme-provider";
 
 const navItems = [
   { href: "/", key: "home" as const },
@@ -20,7 +22,8 @@ const navItems = [
 export function SiteHeader() {
   const pathname = usePathname();
   const { dictionary } = useLanguage();
-  const logoSrc = BRAND_ASSETS.logoLight;
+  const { theme } = useTheme();
+  const logoSrc = theme === "light" ? BRAND_ASSETS.logoLight : BRAND_ASSETS.logoDark;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (pathname === "/preview") {
@@ -72,6 +75,7 @@ export function SiteHeader() {
             })}
           </nav>
           <LanguageSwitcher />
+          <ThemeToggle />
           <button
             type="button"
             className={`mobile-menu-button md:hidden ${mobileMenuOpen ? "mobile-menu-button-open" : ""}`}

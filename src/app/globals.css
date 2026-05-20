@@ -157,15 +157,18 @@ html[lang="en"] .i18n-en {
 
 .hero-section {
   position: relative;
-  border-bottom: 1px solid var(--line);
-  background: var(--hero-bg);
+  border-bottom: 1px solid rgba(247, 239, 226, 0.08);
+  background: #060503;
   isolation: isolate;
+  color: rgba(247, 239, 226, 0.92);
 }
 
 .hero-ambient {
   position: absolute;
   inset: 0;
-  background: var(--hero-ambient);
+  background:
+    radial-gradient(circle at 18% 12%, rgba(217, 173, 114, 0.16), transparent 55%),
+    radial-gradient(circle at 82% 88%, rgba(217, 173, 114, 0.08), transparent 60%);
   pointer-events: none;
 }
 
@@ -173,9 +176,49 @@ html[lang="en"] .i18n-en {
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  height: 10rem;
-  background: var(--hero-fade);
+  height: 8rem;
+  background: linear-gradient(180deg, transparent, rgba(6, 5, 3, 0.85));
   pointer-events: none;
+}
+
+.hero-section .hero-meta-row {
+  color: rgba(247, 239, 226, 0.62);
+  border-bottom-color: rgba(247, 239, 226, 0.12);
+}
+
+.hero-section .hero-meta-index,
+.hero-section .hero-meta-nums {
+  color: rgba(247, 239, 226, 0.92);
+}
+
+.hero-section .hero-meta-sep {
+  color: rgba(247, 239, 226, 0.2);
+}
+
+.hero-section .hero-emblem {
+  color: rgba(247, 239, 226, 0.95);
+}
+
+.hero-section .hero-headline-line {
+  color: rgba(247, 239, 226, 0.96);
+}
+
+.hero-section .hero-headline-line-accent-italic {
+  color: #f0c98b;
+}
+
+.hero-section .hero-promise {
+  color: rgba(247, 239, 226, 0.7);
+}
+
+.hero-section .btn-secondary {
+  border-color: rgba(247, 239, 226, 0.22);
+  color: rgba(247, 239, 226, 0.92);
+  background: transparent;
+}
+
+.hero-section .btn-secondary:hover {
+  background: rgba(247, 239, 226, 0.06);
 }
 
 .hero-grid {
