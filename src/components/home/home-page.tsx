@@ -121,6 +121,10 @@ export function HomePage() {
           <span className="section-index">N°03</span>
         </div>
 
+        <h2 className="mt-6 section-headline">
+          <BilingualText sq="Uraniku & Hysi" en="Uraniku & Hysi" />
+        </h2>
+
         <div className="mt-7 grid gap-4 md:grid-cols-2">
           {BARBERS.map((barber, index) => (
             <Link key={barber.id} href="/booking" prefetch={false} className="tap-card overflow-hidden p-0">
