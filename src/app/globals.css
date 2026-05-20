@@ -422,6 +422,7 @@ html[data-theme="light"] .hero-grid {
 .hero-visual-logo {
   position: relative;
   overflow: hidden;
+  isolation: isolate;
   border: 1px solid color-mix(in srgb, var(--accent) 22%, var(--line));
   background: var(--soft-bg);
   border-radius: 1.4rem;
@@ -453,9 +454,17 @@ html[data-theme="dark"] .hero-visual-logo {
   height: 100%;
   object-fit: contain !important;
   padding: 0 !important;
-  border-radius: 0.9rem;
+  border-radius: 0;
   background: transparent;
   display: block;
+  filter: invert(1) hue-rotate(180deg) saturate(1.1) brightness(0.95);
+  mix-blend-mode: multiply;
+}
+
+html[data-theme="dark"] .hero-visual-logo img {
+  filter: none;
+  mix-blend-mode: normal;
+  border-radius: 0.9rem;
 }
 
 @media (min-width: 768px) {
