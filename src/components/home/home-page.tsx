@@ -10,7 +10,6 @@ import {
 } from "@/lib/constants";
 import { translations } from "@/lib/i18n/translations";
 import { ScissorsEmblem } from "@/components/home/scissors-emblem";
-import { ClipperEmblem } from "@/components/home/clipper-emblem";
 
 function hourLabel(minutes: number) {
   const hours = Math.floor(minutes / 60).toString().padStart(2, "0");
@@ -104,20 +103,22 @@ export function HomePage() {
           <span className="section-index">N°02</span>
         </div>
 
-        <div className="manifesto-layout mt-10">
+        <div className="mt-10 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div className="manifesto-stack">
             <span className="manifesto-line">
               <BilingualText sq={sq.home.manifestoLine1} en={en.home.manifestoLine1} />
             </span>
-            <span className="manifesto-line">
+            <span className="manifesto-line manifesto-line-accent">
               <BilingualText sq={sq.home.manifestoLine2} en={en.home.manifestoLine2} />
             </span>
-            <span className="manifesto-line manifesto-line-accent">
-              <BilingualText sq={sq.home.manifestoLine3} en={en.home.manifestoLine3} />
-            </span>
           </div>
-          <div className="manifesto-tool" aria-hidden>
-            <ClipperEmblem className="manifesto-tool-svg" />
+          <div className="manifesto-side lg:self-end">
+            <p className="manifesto-body">
+              <BilingualText sq={sq.home.manifestoBody} en={en.home.manifestoBody} />
+            </p>
+            <p className="manifesto-quote">
+              <BilingualText sq={sq.home.manifestoQuote} en={en.home.manifestoQuote} />
+            </p>
           </div>
         </div>
       </section>
@@ -241,7 +242,7 @@ export function HomePage() {
               <span className="eyebrow text-white/45">
                 <BilingualText sq={sq.contact.maps} en={en.contact.maps} />
               </span>
-              <span className="mt-1.5 inline-flex items-center gap-1.5 font-semibold text-white">
+              <span className="mt-1.5 flex items-center gap-1.5 font-semibold text-white">
                 <BilingualText sq={sq.home.mapsCta} en={en.home.mapsCta} />
                 <span aria-hidden className="text-[var(--color-accent)]">→</span>
               </span>
