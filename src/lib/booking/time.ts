@@ -270,7 +270,7 @@ export function getRequiredSlotKeys(barberId: BarberId, localDate: string, local
 }
 
 export function getBarberName(barberId: BarberId) {
-  return BARBERS.find((barber) => barber.id === barberId)?.name ?? BARBERS[0].name;
+  return BARBERS.find((barber) => barber.id === barberId)?.displayName ?? BARBERS[0].displayName;
 }
 
 export function getBookableDateOptions(language: Language, now = new Date()): DateOption[] {

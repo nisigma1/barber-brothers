@@ -5,13 +5,17 @@ export type CloudflareEnv = {
   STAFF_SESSION_SECRET?: string;
   STAFF_PIN_BARBER_1?: string;
   STAFF_PIN_BARBER_2?: string;
+  STAFF_PIN_BARBER_3?: string;
+  STAFF_PIN_BARBER_4?: string;
+  STAFF_PIN_BARBER_5?: string;
+  [key: `STAFF_PIN_BARBER_${string}`]: string | undefined;
 };
 
 export type BookingRow = {
   booking_id: string;
   submission_id: string;
   slot_key: string;
-  barber_id: "barber-1" | "barber-2";
+  barber_id: string;
   barber_name: string;
   service_name: string;
   service_duration_minutes: number;

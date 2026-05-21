@@ -2,12 +2,13 @@
 import Link from "next/link";
 
 import {
-  BARBERS,
+  ACTIVE_BARBERS,
   BRAND_ASSETS,
   CONTACT_DETAILS,
   SHOP_CITY,
   WORKING_HOURS,
 } from "@/lib/constants";
+import { BarberAvatar } from "@/components/booking/barber-avatar";
 import { translations } from "@/lib/i18n/translations";
 import { ScissorsEmblem } from "@/components/home/scissors-emblem";
 
@@ -122,35 +123,26 @@ export function HomePage() {
         </div>
 
         <h2 className="mt-6 section-headline">
-          <BilingualText sq="Uraniku & Hysi" en="Uraniku & Hysi" />
+          <BilingualText sq="Pesë berberë. Termine të pavarura." en="Five barbers. Independent slots." />
         </h2>
 
-        <div className="mt-7 grid gap-4 md:grid-cols-2">
-          {BARBERS.map((barber, index) => (
-            <Link key={barber.id} href="/booking" prefetch={false} className="tap-card overflow-hidden p-0">
-              <div className="image-panel aspect-[1.18] rounded-none border-0">
-                <img
-                  src={barber.image}
-                  alt={barber.name}
-                  className="h-full w-full image-fill"
-                  decoding="async"
+        <div className="barber-grid mt-7">
+          {ACTIVE_BARBERS.map((barber, index) => (
+            <Link key={barber.id} href="/booking" prefetch={false} className="barber-card">
+              <div className="barber-card-image">
+                <BarberAvatar
+                  barber={barber}
+                  imageClassName="h-full w-full image-fill"
+                  monogramClassName="barber-monogram-large"
                   loading="lazy"
                 />
               </div>
-              <div className="p-4 sm:p-5">
-                <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="font-display text-3xl uppercase tracking-[0.05em] text-white sm:text-4xl">
-                    {barber.name}
-                  </h3>
+              <div className="barber-card-body">
+                <div className="flex items-baseline justify-between gap-2">
+                  <h3 className="barber-card-name">{barber.displayName}</h3>
                   <span className="section-index">{(index + 1).toString().padStart(2, "0")}</span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-white/62">
-                  {barber.id === "barber-1" ? (
-                    <BilingualText sq={sq.home.barberOneTagline} en={en.home.barberOneTagline} />
-                  ) : (
-                    <BilingualText sq={sq.home.barberTwoTagline} en={en.home.barberTwoTagline} />
-                  )}
-                </p>
+                <p className="barber-card-role">{barber.role.sq}</p>
               </div>
             </Link>
           ))}

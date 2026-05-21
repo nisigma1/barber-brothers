@@ -2,11 +2,10 @@ import { ApiBookingError, listStaffBookings, softDeleteBooking } from "../../_li
 import type { PagesContext } from "../../_lib/context";
 import { errorResponse, jsonResponse, readJson } from "../../_lib/http";
 import { requireStaffSession } from "../../_lib/session";
-import type { ApiErrorCode, BarberId } from "../../../src/lib/booking/types";
+import { isActiveBarberId } from "../../../src/lib/barbers";
+import type { ApiErrorCode } from "../../../src/lib/booking/types";
 
-function isBarberId(value: unknown): value is BarberId {
-  return value === "barber-1" || value === "barber-2";
-}
+const isBarberId = isActiveBarberId;
 
 export const onRequestGet = async ({ env, request }: PagesContext) => {
   const session = await requireStaffSession(request, env);

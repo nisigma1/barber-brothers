@@ -1,4 +1,7 @@
-import type { AddOnId, BarberId, Language, ServiceId } from "@/lib/booking/types";
+import type { AddOnId, Language, ServiceId } from "@/lib/booking/types";
+
+export { BARBERS, ACTIVE_BARBERS, ACTIVE_BARBER_IDS, getBarberProfile, getBarberDisplayName, isActiveBarberId } from "@/lib/barbers";
+export type { BarberProfile } from "@/lib/barbers";
 
 export const BRAND_NAME = "Barber Brothers";
 export const SHOP_TIMEZONE = "Europe/Pristina";
@@ -23,21 +26,6 @@ export const BRAND_ASSETS = {
     "/brand/gallery-5.webp",
   ],
 } as const;
-
-export const BARBERS: Array<{ id: BarberId; name: string; tagline: string; image: string }> = [
-  {
-    id: "barber-1",
-    name: "Uraniku",
-    tagline: "10 years of experience. Unique style, precise detail.",
-    image: "/brand/gallery-2.webp",
-  },
-  {
-    id: "barber-2",
-    name: "Hysi",
-    tagline: "10 years of experience. Classic cuts, clean finish.",
-    image: "/brand/gallery-3.webp",
-  },
-];
 
 export const FACE_TREATMENT_SERVICE_ID = "face-treatment" as const;
 

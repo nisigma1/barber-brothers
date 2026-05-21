@@ -1,12 +1,10 @@
 "use client";
 
-/* eslint-disable @next/next/no-img-element */
-
 import { useEffect, useId, useRef, useState } from "react";
 
 import {
   ADD_ONS,
-  BARBERS,
+  ACTIVE_BARBERS,
   DEFAULT_SERVICE_IDS,
   FACE_TREATMENT_SERVICE_ID,
   SERVICES,
@@ -26,6 +24,7 @@ import type { AddOnId, ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary 
 import { normalizeKosovoPhone } from "@/lib/booking/phone";
 import { useLanguage } from "@/components/providers/language-provider";
 import { BookingSummary } from "@/components/booking/booking-summary";
+import { BarberAvatar } from "@/components/booking/barber-avatar";
 
 const LAST_BOOKING_KEY = "barber-brothers-last-booking";
 const SHOULD_REFRESH_AVAILABILITY_AFTER_ERROR: ApiErrorCode[] = [
@@ -75,7 +74,7 @@ export function BookingForm() {
   const bookingService = getBookingService({ serviceIds, addOnIds }, language);
   const allInOneSelected = isAllInOneSelection(serviceIds);
   const faceTreatmentSelected = isFaceTreatmentSelection(serviceIds);
-  const selectedBarber = BARBERS.find((barber) => barber.id === barberId);
+  const selectedBarber = ACTIVE_BARBERS.find((barber) => barber.id === barberId);
   const selectedDate = dateOptions.find((date) => date.localDate === localDate);
   const availabilityIsVerified = availabilityState === "ready";
   const selectedSlotObject = availabilityIsVerified
@@ -371,7 +370,7 @@ export function BookingForm() {
     durationMinutes: bookingService.durationMinutes,
     price: bookingService.price,
     currency: bookingService.currency,
-    barberName: selectedBarber?.name,
+    barberName: selectedBarber?.displayName,
     dateLabel: selectedDate?.label,
     slotLabel: selectedSlotObject?.label,
     customerLabel,
@@ -514,8 +513,8 @@ export function BookingForm() {
               {!barberId ? <p className="text-xs font-semibold text-[var(--color-accent)]">{dictionary.booking.required}</p> : null}
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
-              {BARBERS.map((barber) => {
+            <div className="barber-picker-grid">
+              {ACTIVE_BARBERS.map((barber) => {
                 const active = barber.id === barberId;
 
                 return (
@@ -534,29 +533,11 @@ export function BookingForm() {
                       setAvailabilityState("idle");
                       resetSubmissionAttempt();
                     }}
-                    className={`tap-card min-h-16 overflow-hidden p-0 text-left ${active ? "selected-card" : ""}`}
+                    className={`barber-pick ${active ? "barber-pick-active" : ""}`}
                   >
-                    <div className="grid h-full gap-0 grid-cols-[4.25rem_1fr] sm:grid-cols-[5rem_1fr]">
-                      <div className="image-panel min-h-16 rounded-none border-0">
-                        <img
-                          src={barber.image}
-                          alt={barber.name}
-                          className="h-full w-full image-fill"
-                          decoding="async"
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="flex flex-col justify-center px-3 py-2 sm:px-4 sm:py-2.5">
-                        <span className="font-display text-xl uppercase tracking-[0.04em] text-white sm:text-2xl">
-                          {barber.name}
-                        </span>
-                        <span className="mt-0.5 block text-[0.72rem] leading-4 text-white/55 sm:text-xs">
-                          {barber.id === "barber-1"
-                            ? dictionary.home.barberOneTagline
-                            : dictionary.home.barberTwoTagline}
-                        </span>
-                      </div>
-                    </div>
+                    <BarberAvatar barber={barber} className="barber-pick-avatar" />
+                    <span className="barber-pick-name">{barber.displayName}</span>
+                    <span className="barber-pick-role">{barber.role[language]}</span>
                   </button>
                 );
               })}

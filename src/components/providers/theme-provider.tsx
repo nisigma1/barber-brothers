@@ -11,7 +11,7 @@ type ThemeContextValue = {
 };
 
 const STORAGE_KEY = "barber-brothers-theme";
-const DEFAULT_THEME: Theme = "light";
+const DEFAULT_THEME: Theme = "dark";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 

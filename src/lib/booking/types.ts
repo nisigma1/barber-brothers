@@ -1,5 +1,5 @@
 export type Language = "sq" | "en";
-export type BarberId = "barber-1" | "barber-2";
+export type BarberId = string;
 export type ServiceId = "haircut" | "beard-trim" | "face-treatment" | "all-in-one";
 export type AddOnId = "premium-product";
 export type BookingStatus = "confirmed" | "deleted";

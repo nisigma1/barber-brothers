@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { BARBERS } from "@/lib/constants";
+import { ACTIVE_BARBERS } from "@/lib/constants";
 import { ClientBookingError, staffLogin } from "@/lib/booking/client";
 import type { BarberId } from "@/lib/booking/types";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -64,9 +64,9 @@ export function StaffLoginPage() {
               <option value="" disabled>
                 {dictionary.booking.barberLabel}
               </option>
-              {BARBERS.map((barber) => (
+              {ACTIVE_BARBERS.map((barber) => (
                 <option key={barber.id} value={barber.id}>
-                  {barber.name}
+                  {barber.displayName}
                 </option>
               ))}
             </select>

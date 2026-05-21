@@ -1,19 +1,19 @@
-import { BARBERS } from "../../src/lib/constants";
-import type { BarberId } from "../../src/lib/booking/types";
+import { ACTIVE_BARBERS, getBarberProfile, isActiveBarberId } from "../../src/lib/barbers";
 import { ApiBookingError } from "./booking";
 import type { CloudflareEnv } from "./types";
 
-const STAFF_PIN_ENV_KEY_BY_BARBER: Record<BarberId, keyof Pick<CloudflareEnv, "STAFF_PIN_BARBER_1" | "STAFF_PIN_BARBER_2">> = {
-  "barber-1": "STAFF_PIN_BARBER_1",
-  "barber-2": "STAFF_PIN_BARBER_2",
-};
+function getStaffPin(env: CloudflareEnv, barberId: string): string | undefined {
+  const profile = getBarberProfile(barberId);
 
-function isBarberId(value: unknown): value is BarberId {
-  return value === "barber-1" || value === "barber-2";
+  if (!profile) {
+    return undefined;
+  }
+
+  return (env as unknown as Record<string, string | undefined>)[profile.staffPinEnvKey];
 }
 
-function getBarberName(barberId: BarberId) {
-  return BARBERS.find((barber) => barber.id === barberId)?.name ?? "Staff";
+function getBarberName(barberId: string) {
+  return getBarberProfile(barberId)?.displayName ?? "Staff";
 }
 
 function constantTimeEqual(left: string, right: string) {
@@ -32,14 +32,14 @@ function constantTimeEqual(left: string, right: string) {
 
 export async function verifyStaffLogin(env: CloudflareEnv, payload: unknown) {
   const body = payload as { barberId?: unknown; pin?: unknown } | null;
-  const barberId = isBarberId(body?.barberId) ? body.barberId : null;
+  const barberId = isActiveBarberId(body?.barberId) ? body.barberId : null;
   const pin = typeof body?.pin === "string" ? body.pin.trim() : "";
 
   if (!barberId || !pin) {
     throw new ApiBookingError("UNAUTHORIZED", 401);
   }
 
-  const expectedPin = env[STAFF_PIN_ENV_KEY_BY_BARBER[barberId]];
+  const expectedPin = getStaffPin(env, barberId);
 
   if (!expectedPin) {
     throw new ApiBookingError("CONFIGURATION_ERROR", 500);
@@ -58,3 +58,5 @@ export async function verifyStaffLogin(env: CloudflareEnv, payload: unknown) {
     role: "staff" as const,
   };
 }
+
+export { ACTIVE_BARBERS };

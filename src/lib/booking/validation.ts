@@ -1,8 +1,11 @@
 import { z } from "zod";
 
+import { ACTIVE_BARBER_IDS } from "@/lib/barbers";
 import { isValidServiceSelection } from "@/lib/constants";
 
-const barberIdSchema = z.enum(["barber-1", "barber-2"]);
+const barberIdSchema = z
+  .string()
+  .refine((value) => ACTIVE_BARBER_IDS.includes(value), { message: "Invalid barber" });
 const serviceIdSchema = z.enum(["haircut", "beard-trim", "face-treatment", "all-in-one"]);
 const addOnIdSchema = z.enum(["premium-product"]);
 const customerNameSchema = z

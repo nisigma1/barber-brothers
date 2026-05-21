@@ -1397,6 +1397,188 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   transform: translateY(0);
 }
 
+.barber-monogram {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 3rem;
+  background: linear-gradient(135deg, #0c0905 0%, #1a130a 100%);
+  color: var(--accent-strong);
+  font-family: var(--font-barlow), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid rgba(217, 173, 114, 0.22);
+  box-shadow: inset 0 0 0 1px rgba(247, 239, 226, 0.04);
+}
+
+.barber-monogram span {
+  font-size: clamp(0.95rem, 2.2vw, 1.25rem);
+}
+
+.barber-monogram-large span {
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 0.08em;
+}
+
+.barber-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.6rem;
+}
+
+@media (min-width: 640px) {
+  .barber-picker-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.7rem;
+  }
+}
+
+.barber-pick {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.5rem;
+  padding: 0.55rem 0.55rem 0.7rem;
+  border-radius: 0.95rem;
+  border: 1px solid var(--line);
+  background: var(--soft-bg);
+  color: var(--muted);
+  text-align: center;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease,
+    color 140ms ease;
+  min-width: 0;
+}
+
+.barber-pick:hover {
+  border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+}
+
+.barber-pick-active {
+  border-color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 14%, var(--soft-bg));
+  color: var(--foreground);
+  transform: translateY(-1px);
+}
+
+.barber-pick-avatar {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.barber-monogram.barber-pick-avatar {
+  display: inline-flex;
+}
+
+.barber-pick-name {
+  display: block;
+  font-family: var(--font-barlow), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: clamp(0.86rem, 1.6vw, 1.02rem);
+  color: var(--foreground);
+  line-height: 1.05;
+}
+
+.barber-pick-role {
+  display: block;
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+.barber-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+@media (min-width: 640px) {
+  .barber-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .barber-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+  }
+}
+
+.barber-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  border: 1px solid var(--line);
+  background: var(--soft-bg);
+  overflow: hidden;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.barber-card:hover {
+  border-color: color-mix(in srgb, var(--accent) 32%, var(--line));
+  transform: translateY(-2px);
+}
+
+.barber-card-image {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: #0c0905;
+}
+
+.barber-card-image > img,
+.barber-card-image > .barber-monogram {
+  width: 100%;
+  height: 100%;
+}
+
+.barber-card-body {
+  padding: 0.7rem 0.85rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.barber-card-name {
+  font-family: var(--font-barlow), sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: clamp(1rem, 1.8vw, 1.2rem);
+  color: var(--foreground);
+  line-height: 1.05;
+  margin: 0;
+}
+
+.barber-card-role {
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0;
+}
+
 .tap-card {
   min-height: 3.25rem;
   border-radius: 1rem;
