@@ -36,10 +36,37 @@ const siteUrl = "https://barberbrothers.style";
 const brandLogoUrl = "/brand/barber-brothers-logo-512.png";
 const absoluteBrandLogoUrl = `${siteUrl}${brandLogoUrl}`;
 
+const ROOT_TITLE = "Barber Brothers — Premium Barber, Fushe Kosove";
+const ROOT_DESCRIPTION =
+  "Premium barber shop in Fushe Kosove, Kosovo. Book your appointment online with Uraniku or Hysi. Haircut, beard trim, face treatment and the All-in-One package.";
+
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: BRAND_NAME,
-  description: "Instant online booking for Barber Brothers in Fushe Kosove.",
+  title: {
+    default: ROOT_TITLE,
+    template: "%s — Barber Brothers",
+  },
+  description: ROOT_DESCRIPTION,
+  keywords: [
+    "barber",
+    "barber shop",
+    "Fushe Kosove",
+    "Kosova",
+    "Kosovo",
+    "haircut",
+    "beard trim",
+    "face treatment",
+    "online booking",
+    "Barber Brothers",
+    "premium barber",
+    "Uraniku",
+    "Hysi",
+  ],
+  applicationName: BRAND_NAME,
+  authors: [{ name: BRAND_NAME, url: siteUrl }],
+  creator: BRAND_NAME,
+  publisher: BRAND_NAME,
+  category: "barber shop",
   alternates: {
     canonical: "/",
   },
@@ -53,6 +80,12 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
   },
   icons: {
     icon: [
@@ -67,37 +100,51 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
-    title: BRAND_NAME,
-    description: "Rezervim i thjeshte online per Barber Brothers ne Fushe Kosove.",
+    title: ROOT_TITLE,
+    description: ROOT_DESCRIPTION,
     url: siteUrl,
     siteName: BRAND_NAME,
     type: "website",
+    locale: "en_US",
+    alternateLocale: ["sq_AL"],
     images: [{ url: brandLogoUrl, width: 512, height: 512, alt: "Barber Brothers logo" }],
   },
   twitter: {
     card: "summary_large_image",
-    title: BRAND_NAME,
-    description: "Rezervim i thjeshte online per Barber Brothers ne Fushe Kosove.",
+    title: ROOT_TITLE,
+    description: ROOT_DESCRIPTION,
     images: [{ url: brandLogoUrl, alt: "Barber Brothers logo" }],
   },
 };
 
 const businessJsonLd = {
   "@context": "https://schema.org",
-  "@type": "HairSalon",
+  "@type": "BarberShop",
   name: BRAND_NAME,
+  description: ROOT_DESCRIPTION,
   url: siteUrl,
   logo: absoluteBrandLogoUrl,
   image: absoluteBrandLogoUrl,
-  telephone: CONTACT_DETAILS.primaryPhone,
-  priceRange: "5 euro",
+  telephone: [CONTACT_DETAILS.primaryPhone, CONTACT_DETAILS.secondaryPhone],
+  priceRange: "€2 – €15",
+  currenciesAccepted: "EUR",
+  paymentAccepted: "Cash",
   address: {
     "@type": "PostalAddress",
     streetAddress: CONTACT_DETAILS.address,
     addressLocality: "Fushe Kosove",
+    addressRegion: "Pristina",
     addressCountry: "XK",
   },
   hasMap: CONTACT_DETAILS.mapsHref,
+  openingHoursSpecification: [
+    {
+      "@type": "OpeningHoursSpecification",
+      dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      opens: "09:30",
+      closes: "20:30",
+    },
+  ],
   sameAs: [
     `https://instagram.com/${CONTACT_DETAILS.instagramHandle}`,
     CONTACT_DETAILS.mapsHref,
