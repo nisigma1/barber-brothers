@@ -49,7 +49,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "ylli",
     displayName: "Ylli",
     initials: "YL",
-    photoUrl: null,
+    photoUrl: "/brand/gallery-1.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Prerje moderne dhe fades te kontrolluara.",
@@ -64,7 +64,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "edi",
     displayName: "Edi",
     initials: "ED",
-    photoUrl: null,
+    photoUrl: "/brand/gallery-4.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Mjekrra dhe konturim me dore te qete.",
@@ -79,7 +79,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "arti",
     displayName: "Arti",
     initials: "AR",
-    photoUrl: null,
+    photoUrl: "/brand/gallery-5.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Stil i ri, energji e qarte.",
