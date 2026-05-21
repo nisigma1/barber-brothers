@@ -36,29 +36,30 @@ const siteUrl = "https://barberbrothers.style";
 const brandLogoUrl = "/brand/barber-brothers-logo-512.png";
 const absoluteBrandLogoUrl = `${siteUrl}${brandLogoUrl}`;
 
-const ROOT_TITLE = "Barber Brothers — Premium Barber, Fushe Kosove";
+const ROOT_TITLE = "Barber Brothers | Rezervim Online për Berber në Fushë Kosovë";
 const ROOT_DESCRIPTION =
-  "Premium barber shop in Fushe Kosove, Kosovo. Book your appointment online with Uraniku or Hysi. Haircut, beard trim, face treatment and the All-in-One package.";
+  "Rezervo termin online te Barber Brothers në Fushë Kosovë. Shërbim premium, prerje të sakta, rregullim mjekrre dhe termin pa pritje.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: ROOT_TITLE,
-    template: "%s — Barber Brothers",
+    template: "%s | Barber Brothers",
   },
   description: ROOT_DESCRIPTION,
   keywords: [
-    "barber",
-    "barber shop",
-    "Fushe Kosove",
-    "Kosova",
-    "Kosovo",
-    "haircut",
-    "beard trim",
-    "face treatment",
-    "online booking",
+    "berber Fushë Kosovë",
+    "barber Fushë Kosovë",
+    "berber afër meje",
+    "rezervim berber online",
+    "qethje flokësh Fushë Kosovë",
+    "rregullim mjekrre Fushë Kosovë",
     "Barber Brothers",
-    "premium barber",
+    "Brothers Cuts",
+    "berber pa pritje",
+    "termin berberi online",
+    "barber shop Kosovë",
+    "barber Prishtinë",
     "Uraniku",
     "Hysi",
   ],
@@ -69,6 +70,11 @@ export const metadata: Metadata = {
   category: "barber shop",
   alternates: {
     canonical: "/",
+    languages: {
+      "sq-AL": "/",
+      "en-US": "/",
+      "x-default": "/",
+    },
   },
   manifest: "/site.webmanifest",
   formatDetection: {
@@ -85,6 +91,7 @@ export const metadata: Metadata = {
       follow: true,
       "max-image-preview": "large",
       "max-snippet": -1,
+      "max-video-preview": -1,
     },
   },
   icons: {
@@ -105,8 +112,8 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: BRAND_NAME,
     type: "website",
-    locale: "en_US",
-    alternateLocale: ["sq_AL"],
+    locale: "sq_AL",
+    alternateLocale: ["en_US"],
     images: [{ url: brandLogoUrl, width: 512, height: 512, alt: "Barber Brothers logo" }],
   },
   twitter: {
@@ -120,11 +127,13 @@ export const metadata: Metadata = {
 const businessJsonLd = {
   "@context": "https://schema.org",
   "@type": "BarberShop",
+  "@id": `${siteUrl}/#barbershop`,
   name: BRAND_NAME,
+  alternateName: "Brothers Cuts",
   description: ROOT_DESCRIPTION,
   url: siteUrl,
   logo: absoluteBrandLogoUrl,
-  image: absoluteBrandLogoUrl,
+  image: [absoluteBrandLogoUrl],
   telephone: [CONTACT_DETAILS.primaryPhone, CONTACT_DETAILS.secondaryPhone],
   priceRange: "€2 – €15",
   currenciesAccepted: "EUR",
@@ -132,11 +141,22 @@ const businessJsonLd = {
   address: {
     "@type": "PostalAddress",
     streetAddress: CONTACT_DETAILS.address,
-    addressLocality: "Fushe Kosove",
-    addressRegion: "Pristina",
+    addressLocality: "Fushë Kosovë",
+    addressRegion: "Prishtinë",
+    postalCode: "12000",
     addressCountry: "XK",
   },
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: 42.6388,
+    longitude: 21.0962,
+  },
   hasMap: CONTACT_DETAILS.mapsHref,
+  areaServed: [
+    { "@type": "City", name: "Fushë Kosovë" },
+    { "@type": "City", name: "Prishtinë" },
+    { "@type": "AdministrativeArea", name: "Kosovë" },
+  ],
   openingHoursSpecification: [
     {
       "@type": "OpeningHoursSpecification",
@@ -145,10 +165,63 @@ const businessJsonLd = {
       closes: "20:30",
     },
   ],
+  hasOfferCatalog: {
+    "@type": "OfferCatalog",
+    name: "Shërbime berberi",
+    itemListElement: [
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Qethje flokësh", description: "Prerje e pastër me finish preciz" },
+        price: "5",
+        priceCurrency: "EUR",
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Rregullim mjekrre", description: "Kontur i qartë dhe formë e kontrolluar" },
+        price: "2",
+        priceCurrency: "EUR",
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "Tretman i fytyrës", description: "Trajtim i qetë me finish premium" },
+        price: "15",
+        priceCurrency: "EUR",
+      },
+      {
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: "All-in-One", description: "Tretman fytyre, qethje dhe rregullim mjekrre" },
+        price: "15",
+        priceCurrency: "EUR",
+      },
+    ],
+  },
+  potentialAction: {
+    "@type": "ReserveAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${siteUrl}/booking`,
+      inLanguage: "sq-AL",
+      actionPlatform: [
+        "http://schema.org/DesktopWebPlatform",
+        "http://schema.org/MobileWebPlatform",
+      ],
+    },
+    result: { "@type": "Reservation", name: "Termin berberi" },
+  },
   sameAs: [
     `https://instagram.com/${CONTACT_DETAILS.instagramHandle}`,
     CONTACT_DETAILS.mapsHref,
   ],
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${siteUrl}/#website`,
+  url: siteUrl,
+  name: BRAND_NAME,
+  inLanguage: ["sq-AL", "en-US"],
+  publisher: { "@id": `${siteUrl}/#barbershop` },
 };
 
 export default function RootLayout({
@@ -167,6 +240,10 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(businessJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
       </head>
       <body className="min-h-full">

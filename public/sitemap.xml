@@ -1,27 +1,34 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://barberbrothers.style/</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="sq-AL" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://barberbrothers.style/"/>
   </url>
   <url>
     <loc>https://barberbrothers.style/booking</loc>
-    <lastmod>2026-05-13</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
+    <xhtml:link rel="alternate" hreflang="sq-AL" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://barberbrothers.style/booking"/>
   </url>
   <url>
     <loc>https://barberbrothers.style/ourwork</loc>
-    <lastmod>2026-05-17</lastmod>
+    <lastmod>2026-05-21</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://barberbrothers.style/brotherspace</loc>
-    <lastmod>2026-05-17</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-05-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
   </url>
 </urlset>

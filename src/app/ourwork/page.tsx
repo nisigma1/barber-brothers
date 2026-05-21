@@ -3,22 +3,23 @@ import type { Metadata } from "next";
 import { OurworkPage } from "@/components/ourwork/ourwork-page";
 
 export const metadata: Metadata = {
-  title: "Our work",
+  title: "Punët tona",
   description:
-    "Editorial gallery of recent cuts at Barber Brothers, Fushe Kosove. Precision fades, beard work, and styling by Uraniku and Hysi.",
+    "Galeri me prerje reale te Barber Brothers në Fushë Kosovë. Qethje precize, rregullim mjekrre dhe stil i kontrolluar nga Uraniku dhe Hysi.",
   alternates: { canonical: "/ourwork" },
   openGraph: {
-    title: "Our work — Barber Brothers",
+    title: "Punët tona | Barber Brothers",
     description:
-      "Editorial gallery of recent cuts at Barber Brothers, Fushe Kosove.",
+      "Galeri me prerje reale te Barber Brothers në Fushë Kosovë. Qethje precize dhe stil i kontrolluar.",
     url: "https://barberbrothers.style/ourwork",
     type: "website",
+    locale: "sq_AL",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Our work — Barber Brothers",
+    title: "Punët tona | Barber Brothers",
     description:
-      "Editorial gallery of recent cuts at Barber Brothers, Fushe Kosove.",
+      "Galeri me prerje reale te Barber Brothers në Fushë Kosovë.",
   },
 };
 

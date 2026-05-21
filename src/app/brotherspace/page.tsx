@@ -3,22 +3,23 @@ import type { Metadata } from "next";
 import { BrotherspacePage } from "@/components/brotherspace/brotherspace-page";
 
 export const metadata: Metadata = {
-  title: "The space",
+  title: "Ambienti — Barber Studio",
   description:
-    "A look inside Barber Brothers in Fushe Kosove — quiet light, controlled detail, and the atmosphere where every cut is delivered.",
+    "Hidhi nje sy ambientit te Barber Brothers ne Fushe Kosove. Dritë e qetë, detaj i kontrolluar dhe studio premium per berber.",
   alternates: { canonical: "/brotherspace" },
   openGraph: {
-    title: "The space — Barber Brothers",
+    title: "Ambienti | Barber Brothers",
     description:
-      "Inside the Barber Brothers shop in Fushe Kosove. Interior, detail, entrance.",
+      "Brenda studios Barber Brothers ne Fushe Kosove. Interier, detaj, hyrja.",
     url: "https://barberbrothers.style/brotherspace",
     type: "website",
+    locale: "sq_AL",
   },
   twitter: {
     card: "summary_large_image",
-    title: "The space — Barber Brothers",
+    title: "Ambienti | Barber Brothers",
     description:
-      "Inside the Barber Brothers shop in Fushe Kosove.",
+      "Brenda studios Barber Brothers ne Fushe Kosove.",
   },
 };
 

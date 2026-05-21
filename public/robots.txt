@@ -1,4 +1,39 @@
+# Barber Brothers — barberbrothers.style
+# Public site: indexable. Staff/private routes: blocked.
+
 User-agent: *
 Allow: /
+Allow: /booking
+Allow: /ourwork
+Allow: /brotherspace
+Allow: /brand/
+Allow: /_next/
+
+Disallow: /staff
+Disallow: /staff/
+Disallow: /staff/login
+Disallow: /staff/bookings
+Disallow: /preview
+Disallow: /api/
+Disallow: /_next/data/
+Disallow: /*.json$
+Disallow: /*?*
+
+# Allow Google to access CSS/JS assets needed for proper rendering
+User-agent: Googlebot
+Allow: /*.css$
+Allow: /*.js$
+Allow: /*.webp$
+Allow: /*.png$
+Allow: /*.svg$
+Disallow: /staff
+Disallow: /staff/
+Disallow: /preview
+
+# Disallow archive.org and other crawlers from staff routes
+User-agent: ia_archiver
+Disallow: /staff
+Disallow: /staff/
 
 Sitemap: https://barberbrothers.style/sitemap.xml
+Host: https://barberbrothers.style

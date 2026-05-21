@@ -3,22 +3,23 @@ import type { Metadata } from "next";
 import { BookingPage } from "@/components/booking/booking-page";
 
 export const metadata: Metadata = {
-  title: "Book online",
+  title: "Rezervo Termin Online",
   description:
-    "Book your appointment with Uraniku or Hysi at Barber Brothers in Fushe Kosove. Choose a service, pick a time slot, confirm in under a minute. No phone calls, no waiting.",
+    "Rezervo termin online te Barber Brothers në Fushë Kosovë. Zgjidh shërbimin, berberin dhe orarin. Konfirmim direkt, pa pritje dhe pa telefonata.",
   alternates: { canonical: "/booking" },
   openGraph: {
-    title: "Book online — Barber Brothers",
+    title: "Rezervo Termin Online | Barber Brothers",
     description:
-      "Reserve your slot at Barber Brothers, Fushe Kosove. Live availability, instant confirmation.",
+      "Rezervo termin online te Barber Brothers në Fushë Kosovë. Konfirmim direkt dhe pa pritje.",
     url: "https://barberbrothers.style/booking",
     type: "website",
+    locale: "sq_AL",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Book online — Barber Brothers",
+    title: "Rezervo Termin Online | Barber Brothers",
     description:
-      "Reserve your slot at Barber Brothers, Fushe Kosove. Live availability, instant confirmation.",
+      "Rezervo termin online te Barber Brothers në Fushë Kosovë. Konfirmim direkt dhe pa pritje.",
   },
 };
 
