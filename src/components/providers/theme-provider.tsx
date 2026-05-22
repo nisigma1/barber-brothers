@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useContext, useMemo, useState } from "react";
 
 type Theme = "dark" | "light";
 
@@ -10,24 +10,9 @@ type ThemeContextValue = {
   toggleTheme: () => void;
 };
 
-const STORAGE_KEY = "barber-brothers-theme";
 const DEFAULT_THEME: Theme = "dark";
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
-
-function isTheme(value: string | null): value is Theme {
-  return value === "dark" || value === "light";
-}
-
-function getStoredTheme(): Theme {
-  if (typeof window === "undefined") {
-    return DEFAULT_THEME;
-  }
-
-  const savedTheme = window.localStorage.getItem(STORAGE_KEY);
-
-  return isTheme(savedTheme) ? savedTheme : DEFAULT_THEME;
-}
 
 function applyTheme(theme: Theme) {
   document.documentElement.dataset.theme = theme;
@@ -37,21 +22,8 @@ function applyTheme(theme: Theme) {
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(DEFAULT_THEME);
 
-  useEffect(() => {
-    const frame = window.requestAnimationFrame(() => {
-      setThemeState(getStoredTheme());
-    });
-
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
-
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
   const setTheme = useCallback((nextTheme: Theme) => {
     applyTheme(nextTheme);
-    window.localStorage.setItem(STORAGE_KEY, nextTheme);
     setThemeState(nextTheme);
   }, []);
 

@@ -22,17 +22,12 @@ const barlow = Barlow_Condensed({
 });
 
 const themeScript = `
+document.documentElement.dataset.theme = "dark";
+document.documentElement.style.colorScheme = "dark";
 try {
-  var theme = localStorage.getItem("barber-brothers-theme");
-  if (theme !== "dark" && theme !== "light") theme = "dark";
-  document.documentElement.dataset.theme = theme;
-  document.documentElement.style.colorScheme = theme;
   var language = localStorage.getItem("barber-brothers-language");
   document.documentElement.lang = language === "en" ? "en" : "sq";
-} catch (_) {
-  document.documentElement.dataset.theme = "dark";
-  document.documentElement.style.colorScheme = "dark";
-}
+} catch (_) {}
 `;
 
 const siteUrl = "https://barberbrothers.style";
