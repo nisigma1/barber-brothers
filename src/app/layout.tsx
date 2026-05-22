@@ -26,17 +26,19 @@ document.documentElement.dataset.theme = "dark";
 document.documentElement.style.colorScheme = "dark";
 try {
   var language = localStorage.getItem("barber-brothers-language");
-  document.documentElement.lang = language === "en" ? "en" : "sq";
-} catch (_) {}
+  document.documentElement.lang = language === "sq" ? "sq" : "en";
+} catch (_) {
+  document.documentElement.lang = "en";
+}
 `;
 
 const siteUrl = "https://barberbrothers.style";
 const brandLogoUrl = "/brand/barber-brothers-logo-512.png";
 const absoluteBrandLogoUrl = `${siteUrl}${brandLogoUrl}`;
 
-const ROOT_TITLE = "Barber Brothers | Rezervim Online për Berber në Fushë Kosovë";
+const ROOT_TITLE = "Barber Brothers | Premium Barber Booking in Fushë Kosovë";
 const ROOT_DESCRIPTION =
-  "Rezervo termin online te Barber Brothers në Fushë Kosovë. Shërbim premium, prerje të sakta, rregullim mjekrre dhe termin pa pritje.";
+  "Book your appointment online at Barber Brothers in Fushë Kosovë. Premium haircuts, beard trims and no-wait barber service.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
@@ -46,20 +48,31 @@ export const metadata: Metadata = {
   },
   description: ROOT_DESCRIPTION,
   keywords: [
-    "berber Fushë Kosovë",
+    "Barber Brothers",
+    "barberbrothers",
+    "Brothers Cuts",
     "barber Fushë Kosovë",
+    "barber Fushe Kosove",
+    "barber Kosovo",
+    "barber near me",
+    "online barber booking",
+    "haircut Fushë Kosovë",
+    "beard trim Fushë Kosovë",
+    "premium barber Kosovo",
+    "berber Fushë Kosovë",
     "berber afër meje",
     "rezervim berber online",
     "qethje flokësh Fushë Kosovë",
     "rregullim mjekrre Fushë Kosovë",
-    "Barber Brothers",
-    "Brothers Cuts",
     "berber pa pritje",
     "termin berberi online",
     "barber shop Kosovë",
     "barber Prishtinë",
     "Uraniku",
     "Hysi",
+    "Ylli",
+    "Edi",
+    "Arti",
   ],
   applicationName: BRAND_NAME,
   authors: [{ name: BRAND_NAME, url: siteUrl }],
@@ -110,8 +123,8 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: BRAND_NAME,
     type: "website",
-    locale: "sq_AL",
-    alternateLocale: ["en_US"],
+    locale: "en_US",
+    alternateLocale: ["sq_AL"],
     images: [{ url: brandLogoUrl, width: 512, height: 512, alt: "Barber Brothers logo" }],
   },
   twitter: {
@@ -229,7 +242,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="sq"
+      lang="en"
       suppressHydrationWarning
       className={`${manrope.variable} ${barlow.variable} h-full antialiased`}
     >

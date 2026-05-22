@@ -14,14 +14,14 @@ type LanguageContextValue = {
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 
 const STORAGE_KEY = "barber-brothers-language";
-const DEFAULT_LANGUAGE: Language = "sq";
+const DEFAULT_LANGUAGE: Language = "en";
 
 function getStoredLanguage(): Language {
   if (typeof window === "undefined") {
     return DEFAULT_LANGUAGE;
   }
 
-  return window.localStorage.getItem(STORAGE_KEY) === "en" ? "en" : "sq";
+  return window.localStorage.getItem(STORAGE_KEY) === "sq" ? "sq" : "en";
 }
 
 function applyLanguage(language: Language) {

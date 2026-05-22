@@ -4,24 +4,25 @@ import { HomePage } from "@/components/home/home-page";
 
 export const metadata: Metadata = {
   title: {
-    absolute: "Barber Brothers | Rezervim Online për Berber në Fushë Kosovë",
+    absolute: "Barber Brothers | Premium Barber Booking in Fushë Kosovë",
   },
   description:
-    "Rezervo termin online te Barber Brothers në Fushë Kosovë. Shërbim premium, prerje të sakta, rregullim mjekrre dhe termin pa pritje.",
+    "Book your appointment online at Barber Brothers in Fushë Kosovë. Premium haircuts, beard trims and no-wait barber service.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Barber Brothers | Rezervim Online për Berber në Fushë Kosovë",
+    title: "Barber Brothers | Premium Barber Booking in Fushë Kosovë",
     description:
-      "Rezervo termin online te Barber Brothers në Fushë Kosovë. Shërbim premium dhe termin pa pritje.",
+      "Book your appointment online at Barber Brothers in Fushë Kosovë. Premium haircuts, beard trims and no-wait barber service.",
     url: "https://barberbrothers.style/",
     type: "website",
-    locale: "sq_AL",
+    locale: "en_US",
+    alternateLocale: ["sq_AL"],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Barber Brothers | Berber në Fushë Kosovë",
+    title: "Barber Brothers | Barber in Fushë Kosovë",
     description:
-      "Rezervo termin online te Barber Brothers në Fushë Kosovë. Shërbim premium dhe termin pa pritje.",
+      "Book your appointment online at Barber Brothers in Fushë Kosovë. Premium haircuts and no-wait service.",
   },
 };
 
