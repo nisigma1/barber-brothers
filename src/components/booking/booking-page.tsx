@@ -1,7 +1,10 @@
 "use client";
 
+import { Suspense } from "react";
+
 import { BRAND_NAME } from "@/lib/constants";
 import { BookingForm } from "@/components/booking/booking-form";
+import { CancelDialog } from "@/components/booking/cancel-dialog";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function BookingPage() {
@@ -19,6 +22,9 @@ export function BookingPage() {
         </p>
       </div>
 
+      <Suspense fallback={null}>
+        <CancelDialog />
+      </Suspense>
       <BookingForm />
     </div>
   );

@@ -357,6 +357,20 @@ export function BookingForm() {
           ))}
         </div>
 
+        {successBooking.cancellationToken ? (
+          <div className="mt-5 rounded-[1rem] border border-white/12 bg-black/35 p-4 text-sm text-white/72">
+            <p className="eyebrow text-white/55">{dictionary.booking.cancelEyebrow}</p>
+            <p className="mt-2 leading-6">{dictionary.booking.cancelBody}</p>
+            <a
+              href={`/booking?cancel=${successBooking.cancellationToken}`}
+              className="mt-3 inline-flex items-center gap-2 font-semibold text-[var(--color-accent)]"
+            >
+              {dictionary.booking.cancelLink}
+              <span aria-hidden>→</span>
+            </a>
+          </div>
+        ) : null}
+
         <button type="button" onClick={resetForm} className="btn-primary mt-6 w-full">
           {dictionary.booking.bookAnother}
         </button>

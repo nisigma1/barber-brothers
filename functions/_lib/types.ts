@@ -33,4 +33,5 @@ export type BookingRow = {
   status: "confirmed" | "deleted";
   created_at: string;
   deleted_at: string | null;
+  cancellation_token: string | null;
 };

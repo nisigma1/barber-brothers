@@ -26,6 +26,16 @@ import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
 import { bookingRequestSchema } from "../../src/lib/booking/validation";
 import type { BookingRow, CloudflareEnv } from "./types";
 
+function generateCancellationToken() {
+  const bytes = new Uint8Array(24);
+  crypto.getRandomValues(bytes);
+  let out = "";
+  for (const byte of bytes) {
+    out += byte.toString(16).padStart(2, "0");
+  }
+  return out;
+}
+
 export class ApiBookingError extends Error {
   code: ApiErrorCode;
   status: number;
@@ -175,6 +185,7 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     addOnIds: cleanPayload.addOnIds,
   }, "sq");
   const bookingId = cleanPayload.submissionId;
+  const cancellationToken = generateCancellationToken();
   const slotContext = getSlotContext(cleanPayload);
   const nowIso = new Date().toISOString();
   const bookingRecord: BookingRecord = {
@@ -197,6 +208,7 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     customerPhone: normalizedPhone,
     timezone: SHOP_TIMEZONE,
     status: "confirmed",
+    cancellationToken,
     createdAt: nowIso,
     deletedAt: null,
   };
@@ -227,8 +239,8 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
         `INSERT INTO bookings (
           booking_id, submission_id, slot_key, barber_id, barber_name, service_name, service_duration_minutes,
           service_price, currency, local_date, local_time, end_local_time, start_utc, end_utc,
-          customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at, cancellation_token
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       ).bind(
         bookingRecord.bookingId,
         bookingRecord.submissionId,
@@ -251,6 +263,7 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
         bookingRecord.status,
         bookingRecord.createdAt,
         bookingRecord.deletedAt,
+        bookingRecord.cancellationToken ?? null,
       ),
     ]);
   } catch (error) {
@@ -286,7 +299,45 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     customerLastName: bookingRecord.customerLastName,
     customerPhone: bookingRecord.customerPhone,
     priceLabel: `${bookingRecord.servicePrice} ${bookingRecord.currency}`,
+    cancellationToken,
   } satisfies BookingSummary;
+}
+
+export async function cancelBookingByToken(env: CloudflareEnv, token: string) {
+  if (!token || typeof token !== "string" || token.length < 16 || token.length > 96) {
+    throw new ApiBookingError("INVALID_REQUEST", 400);
+  }
+
+  const db = getDatabase(env);
+  const booking = await db.prepare(
+    "SELECT booking_id, start_utc, status FROM bookings WHERE cancellation_token = ? LIMIT 1",
+  )
+    .bind(token)
+    .first<{ booking_id: string; start_utc: string; status: string }>();
+
+  if (!booking) {
+    throw new ApiBookingError("NOT_FOUND", 404);
+  }
+
+  if (booking.status !== "confirmed") {
+    throw new ApiBookingError("ALREADY_CANCELLED", 410);
+  }
+
+  if (new Date(booking.start_utc).getTime() <= Date.now()) {
+    throw new ApiBookingError("CANCEL_WINDOW", 409);
+  }
+
+  const deletedAt = new Date().toISOString();
+
+  await db.batch([
+    db.prepare(
+      "UPDATE bookings SET status = 'deleted', deleted_at = ?, cancellation_token = NULL WHERE booking_id = ? AND status = 'confirmed'",
+    )
+      .bind(deletedAt, booking.booking_id),
+    db.prepare("DELETE FROM slot_locks WHERE booking_id = ?").bind(booking.booking_id),
+  ]);
+
+  return { ok: true as const, bookingId: booking.booking_id };
 }
 
 export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBookingPayload["barberId"]) {

@@ -66,3 +66,6 @@ next-env.d.ts
 .wrangler-preview.err
 .wrangler-preview-lock.log
 .wrangler-preview-lock.err
+
+# D1 backups (local copies, never commit)
+backups/

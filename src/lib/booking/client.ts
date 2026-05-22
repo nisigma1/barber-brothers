@@ -111,3 +111,12 @@ export async function softDeleteClientBooking(booking: StaffBookingItem) {
     body: JSON.stringify({ bookingId: booking.bookingId }),
   });
 }
+
+export async function cancelClientBooking(token: string) {
+  const body = await fetchJson<{ ok: true; bookingId: string }>("/api/bookings/cancel", {
+    method: "POST",
+    body: JSON.stringify({ token }),
+  });
+
+  return body;
+}

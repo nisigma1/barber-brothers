@@ -11,7 +11,11 @@
     "pages:preview": "npm run build && wrangler pages dev out",
     "pages:deploy": "npm run build && wrangler pages deploy out --project-name=barber-brothers",
     "db:migrate:local": "wrangler d1 migrations apply barber-brothers-db --local",
-    "db:migrate:remote": "wrangler d1 migrations apply barber-brothers-db --remote"
+    "db:migrate:remote": "wrangler d1 migrations apply barber-brothers-db --remote",
+    "db:export:remote": "wrangler d1 export barber-brothers-db --remote --output=./backups/d1-remote-$(date +%Y%m%d-%H%M%S).sql",
+    "db:export:local": "wrangler d1 export barber-brothers-db --local --output=./backups/d1-local-$(date +%Y%m%d-%H%M%S).sql",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "next": "^16.2.6",
@@ -28,10 +32,12 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.7",
     "eslint": "^9",
     "eslint-config-next": "^16.2.6",
     "tailwindcss": "^4",
     "typescript": "^5",
+    "vitest": "^4.1.7",
     "wrangler": "^4.87.0"
   }
 }

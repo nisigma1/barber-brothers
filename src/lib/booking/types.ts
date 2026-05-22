@@ -18,7 +18,9 @@ export type ApiErrorCode =
   | "RATE_LIMITED"
   | "UNAUTHORIZED"
   | "NOT_FOUND"
-  | "EMAIL_EXISTS";
+  | "EMAIL_EXISTS"
+  | "ALREADY_CANCELLED"
+  | "CANCEL_WINDOW";
 
 export interface AvailabilitySlot {
   key: string;
@@ -71,6 +73,7 @@ export interface BookingRecord {
   status: BookingStatus;
   createdAt: string;
   deletedAt: string | null;
+  cancellationToken: string | null;
 }
 
 export interface SlotLockRecord {
@@ -101,6 +104,7 @@ export interface BookingSummary {
   customerLastName: string;
   customerPhone: string;
   priceLabel: string;
+  cancellationToken?: string;
 }
 
 export interface StaffBookingItem extends BookingSummary {

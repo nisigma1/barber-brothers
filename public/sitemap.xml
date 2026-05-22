@@ -3,32 +3,60 @@
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://barberbrothers.style/</loc>
-    <lastmod>2026-05-21</lastmod>
+    <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
-    <xhtml:link rel="alternate" hreflang="sq-AL" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://barberbrothers.style/"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="en-CA" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="sq" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="sq-AL" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="sq-XK" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="sq-MK" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="de-AT" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="fr-CH" href="https://barberbrothers.style/"/>
+    <xhtml:link rel="alternate" hreflang="it-CH" href="https://barberbrothers.style/"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://barberbrothers.style/"/>
   </url>
   <url>
     <loc>https://barberbrothers.style/booking</loc>
-    <lastmod>2026-05-21</lastmod>
+    <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
-    <xhtml:link rel="alternate" hreflang="sq-AL" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://barberbrothers.style/booking"/>
     <xhtml:link rel="alternate" hreflang="en-US" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="sq" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="sq-AL" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="sq-XK" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="de-DE" href="https://barberbrothers.style/booking"/>
+    <xhtml:link rel="alternate" hreflang="de-CH" href="https://barberbrothers.style/booking"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://barberbrothers.style/booking"/>
   </url>
   <url>
     <loc>https://barberbrothers.style/ourwork</loc>
-    <lastmod>2026-05-21</lastmod>
+    <lastmod>2026-05-22</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://barberbrothers.style/ourwork"/>
+    <xhtml:link rel="alternate" hreflang="sq" href="https://barberbrothers.style/ourwork"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://barberbrothers.style/ourwork"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://barberbrothers.style/ourwork"/>
   </url>
   <url>
     <loc>https://barberbrothers.style/brotherspace</loc>
-    <lastmod>2026-05-21</lastmod>
+    <lastmod>2026-05-22</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://barberbrothers.style/brotherspace"/>
+    <xhtml:link rel="alternate" hreflang="sq" href="https://barberbrothers.style/brotherspace"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://barberbrothers.style/brotherspace"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://barberbrothers.style/brotherspace"/>
   </url>
 </urlset>
