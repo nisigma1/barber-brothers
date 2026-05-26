@@ -24,7 +24,8 @@ import type {
   StaffBookingItem,
 } from "../../src/lib/booking/types";
 import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
-import { bookingRequestSchema } from "../../src/lib/booking/validation";
+import { bookingRequestSchema, staffQuickBookingSchema } from "../../src/lib/booking/validation";
+import { getBarberProfile } from "../../src/lib/barbers";
 import type { BookingRow, CloudflareEnv } from "./types";
 
 function generateCancellationToken() {
@@ -310,6 +311,166 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     priceLabel: `${bookingRecord.servicePrice} ${bookingRecord.currency}`,
     cancellationToken,
   } satisfies BookingSummary;
+}
+
+const STAFF_QUICK_BOOK_PHONE = "+38300000000";
+
+export async function createStaffQuickBooking(
+  env: CloudflareEnv,
+  barberId: string,
+  payload: unknown,
+) {
+  const barberProfile = getBarberProfile(barberId);
+
+  if (!barberProfile) {
+    throw new ApiBookingError("UNAUTHORIZED", 401);
+  }
+
+  const db = getDatabase(env);
+  const parsed = staffQuickBookingSchema.safeParse(payload);
+
+  if (!parsed.success) {
+    throw new ApiBookingError("INVALID_REQUEST");
+  }
+
+  const cleanPayload = parsed.data;
+  const slotPayload = {
+    submissionId: crypto.randomUUID(),
+    serviceId: cleanPayload.serviceId,
+    serviceIds: cleanPayload.serviceIds,
+    addOnIds: cleanPayload.addOnIds,
+    barberId,
+    localDate: cleanPayload.localDate,
+    localTime: cleanPayload.localTime,
+    firstName: cleanPayload.firstName.trim(),
+    lastName: cleanPayload.lastName.trim(),
+    phoneNumber: STAFF_QUICK_BOOK_PHONE,
+    website: "",
+  };
+
+  const slotContext = getSlotContext(slotPayload);
+  const bookingService = getBookingService({
+    serviceId: cleanPayload.serviceId,
+    serviceIds: cleanPayload.serviceIds,
+    addOnIds: cleanPayload.addOnIds,
+  }, "sq");
+
+  const bookingId = slotPayload.submissionId;
+  const cancellationToken = null; // staff-created bookings cancel only through staff dashboard
+  const nowIso = new Date().toISOString();
+
+  const bookingRecord: BookingRecord = {
+    bookingId,
+    submissionId: bookingId,
+    slotKey: slotContext.slotKey,
+    barberId,
+    barberName: barberProfile.displayName,
+    serviceName: bookingService.name,
+    serviceDurationMinutes: bookingService.durationMinutes,
+    servicePrice: bookingService.price,
+    currency: bookingService.currency,
+    localDate: cleanPayload.localDate,
+    localTime: cleanPayload.localTime,
+    endLocalTime: slotContext.endLocalTime,
+    startUtc: slotContext.startUtc,
+    endUtc: slotContext.endUtc,
+    customerFirstName: slotPayload.firstName,
+    customerLastName: slotPayload.lastName,
+    customerPhone: STAFF_QUICK_BOOK_PHONE,
+    timezone: SHOP_TIMEZONE,
+    status: "confirmed",
+    createdAt: nowIso,
+    deletedAt: null,
+    cancellationToken,
+  };
+
+  try {
+    await db.batch([
+      ...slotContext.requiredSlotKeys.map((slotKey, index) => {
+        const lockedLocalTime = slotContext.requiredSlotTimes[index] ?? cleanPayload.localTime;
+        const lockStartDate = getSlotStartDate(cleanPayload.localDate, lockedLocalTime);
+        const lockEndDate = new Date(lockStartDate.getTime() + SLOT_INTERVAL_MINUTES * 60000);
+
+        return db.prepare(
+          `INSERT INTO slot_locks (
+            slot_key, barber_id, local_date, local_time, booking_id, status, start_utc, end_utc, created_at
+          ) VALUES (?, ?, ?, ?, ?, 'active', ?, ?, ?)`,
+        ).bind(
+          slotKey,
+          barberId,
+          bookingRecord.localDate,
+          lockedLocalTime,
+          bookingRecord.bookingId,
+          lockStartDate.toISOString(),
+          lockEndDate.toISOString(),
+          bookingRecord.createdAt,
+        );
+      }),
+      db.prepare(
+        `INSERT INTO bookings (
+          booking_id, submission_id, slot_key, barber_id, barber_name, service_name, service_duration_minutes,
+          service_price, currency, local_date, local_time, end_local_time, start_utc, end_utc,
+          customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at, cancellation_token
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ).bind(
+        bookingRecord.bookingId,
+        bookingRecord.submissionId,
+        bookingRecord.slotKey,
+        bookingRecord.barberId,
+        bookingRecord.barberName,
+        bookingRecord.serviceName,
+        bookingRecord.serviceDurationMinutes,
+        bookingRecord.servicePrice,
+        bookingRecord.currency,
+        bookingRecord.localDate,
+        bookingRecord.localTime,
+        bookingRecord.endLocalTime,
+        bookingRecord.startUtc,
+        bookingRecord.endUtc,
+        bookingRecord.customerFirstName,
+        bookingRecord.customerLastName,
+        bookingRecord.customerPhone,
+        bookingRecord.timezone,
+        bookingRecord.status,
+        bookingRecord.createdAt,
+        bookingRecord.deletedAt,
+        null,
+      ),
+    ]);
+  } catch (error) {
+    const message = error instanceof Error ? error.message.toLowerCase() : "";
+
+    if (message.includes("unique") || message.includes("constraint")) {
+      throw new ApiBookingError("SLOT_TAKEN", 409);
+    }
+
+    throw new ApiBookingError("BOOKING_SAVE_FAILED", 500);
+  }
+
+  return staffItemFromRow({
+    booking_id: bookingRecord.bookingId,
+    submission_id: bookingRecord.submissionId,
+    slot_key: bookingRecord.slotKey,
+    barber_id: bookingRecord.barberId,
+    barber_name: bookingRecord.barberName,
+    service_name: bookingRecord.serviceName,
+    service_duration_minutes: bookingRecord.serviceDurationMinutes,
+    service_price: bookingRecord.servicePrice,
+    currency: bookingRecord.currency,
+    local_date: bookingRecord.localDate,
+    local_time: bookingRecord.localTime,
+    end_local_time: bookingRecord.endLocalTime,
+    start_utc: bookingRecord.startUtc,
+    end_utc: bookingRecord.endUtc,
+    customer_first_name: bookingRecord.customerFirstName,
+    customer_last_name: bookingRecord.customerLastName,
+    customer_phone: bookingRecord.customerPhone,
+    timezone: bookingRecord.timezone,
+    status: bookingRecord.status,
+    created_at: bookingRecord.createdAt,
+    deleted_at: bookingRecord.deletedAt,
+    cancellation_token: null,
+  });
 }
 
 export async function cancelBookingByToken(env: CloudflareEnv, token: string) {

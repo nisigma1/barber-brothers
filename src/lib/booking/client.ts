@@ -112,6 +112,35 @@ export async function softDeleteClientBooking(booking: StaffBookingItem) {
   });
 }
 
+export interface StaffSession {
+  barberId: string;
+  displayName: string;
+}
+
+export async function getStaffSession() {
+  const body = await fetchJson<{ session: StaffSession }>("/api/staff/session");
+  return body.session;
+}
+
+export interface StaffQuickBookPayload {
+  localDate: string;
+  localTime: string;
+  firstName: string;
+  lastName: string;
+  serviceIds?: ServiceId[];
+  serviceId?: ServiceId;
+  addOnIds?: ("premium-product")[];
+}
+
+export async function staffQuickBook(payload: StaffQuickBookPayload) {
+  const body = await fetchJson<{ booking: StaffBookingItem }>("/api/staff/quick-booking", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  return body.booking;
+}
+
 export async function cancelClientBooking(token: string) {
   const body = await fetchJson<{ ok: true; bookingId: string }>("/api/bookings/cancel", {
     method: "POST",

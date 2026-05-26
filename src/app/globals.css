@@ -1939,6 +1939,65 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   font-weight: 700;
 }
 
+.staff-dashboard-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (min-width: 1024px) {
+  .staff-dashboard-grid {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 1.25rem;
+  }
+}
+
+.staff-dashboard-bookings {
+  min-width: 0;
+}
+
+.staff-dashboard-aside {
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .staff-dashboard-aside {
+    position: sticky;
+    top: 1rem;
+    align-self: start;
+  }
+}
+
+.quickbook-card {
+  display: flex;
+  flex-direction: column;
+}
+
+.quickbook-modal-shell {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.quickbook-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 5, 3, 0.74);
+  backdrop-filter: blur(8px);
+}
+
+.quickbook-modal {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 26rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
 .staff-group-heading {
   display: flex;
   align-items: baseline;

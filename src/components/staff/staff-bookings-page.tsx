@@ -3,10 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ClientBookingError, listClientStaffBookings, softDeleteClientBooking, staffLogout } from "@/lib/booking/client";
+import {
+  ClientBookingError,
+  getStaffSession,
+  listClientStaffBookings,
+  softDeleteClientBooking,
+  staffLogout,
+} from "@/lib/booking/client";
 import type { StaffBookingItem } from "@/lib/booking/types";
 import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
+import { QuickBookPanel } from "@/components/staff/quick-book-panel";
 
 type StaffGroup = {
   key: string;
@@ -61,23 +68,29 @@ export function StaffBookingsPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [barberId, setBarberId] = useState<string | null>(null);
 
   useEffect(() => {
     let ignore = false;
 
-    async function loadBookings() {
+    async function loadAll() {
       setIsLoading(true);
       setMessage("");
 
       try {
-        const nextBookings = await listClientStaffBookings();
+        const [session, nextBookings] = await Promise.all([
+          getStaffSession(),
+          listClientStaffBookings(),
+        ]);
 
         if (!ignore) {
+          setBarberId(session.barberId);
           setBookings(nextBookings);
         }
       } catch (error) {
         if (!ignore) {
           setBookings([]);
+          setBarberId(null);
           setMessage(dictionary.staff.authRequired);
 
           if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
@@ -91,12 +104,17 @@ export function StaffBookingsPage() {
       }
     }
 
-    void loadBookings();
+    void loadAll();
 
     return () => {
       ignore = true;
     };
   }, [dictionary.staff.authRequired, router]);
+
+  function handleQuickBookCreated(booking: StaffBookingItem) {
+    setBookings((current) => [...current, booking]);
+    setMessage(dictionary.staff.quickBookSuccess);
+  }
 
   const groups = useMemo(
     () => groupBookingsByDate(bookings, language, dictionary),
@@ -138,38 +156,39 @@ export function StaffBookingsPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
-      <div className="w-full space-y-4">
-        <div className="premium-card flex flex-row items-center justify-between gap-3 p-3 sm:p-4">
-          <div className="min-w-0">
-            <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.panelEyebrow}</p>
-            <h1 className="mt-0.5 font-display text-2xl uppercase leading-none tracking-[0.04em] text-white sm:text-3xl">
-              {dictionary.staff.bookingsTitle}
-            </h1>
-            <p className="mt-1 text-xs text-white/58 sm:text-sm">
-              {bookings.length}{" "}
-              {bookings.length === 1 ? dictionary.staff.bookingCountOne : dictionary.staff.bookingCount}
-            </p>
-          </div>
+    <div className="mx-auto flex w-full max-w-7xl flex-1 flex-col px-4 py-6 sm:px-6 lg:px-8 lg:py-10">
+      <div className="premium-card mb-4 flex flex-row items-center justify-between gap-3 p-3 sm:p-4">
+        <div className="min-w-0">
+          <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.panelEyebrow}</p>
+          <h1 className="mt-0.5 font-display text-2xl uppercase leading-none tracking-[0.04em] text-white sm:text-3xl">
+            {dictionary.staff.bookingsTitle}
+          </h1>
+          <p className="mt-1 text-xs text-white/58 sm:text-sm">
+            {bookings.length}{" "}
+            {bookings.length === 1 ? dictionary.staff.bookingCountOne : dictionary.staff.bookingCount}
+          </p>
+        </div>
 
-          <button type="button" onClick={handleSignOut} className="btn-secondary shrink-0">
-            {dictionary.common.signOut}
+        <button type="button" onClick={handleSignOut} className="btn-secondary shrink-0">
+          {dictionary.common.signOut}
           </button>
         </div>
 
-        {message ? (
-          <div className="rounded-[1rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/72">
-            {message}
-          </div>
-        ) : null}
+      {message ? (
+        <div className="mb-4 rounded-[1rem] border border-white/10 bg-white/[0.04] px-4 py-3 text-sm text-white/72">
+          {message}
+        </div>
+      ) : null}
 
-        {isLoading ? (
-          <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.loading}</div>
-        ) : bookings.length === 0 ? (
-          <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.empty}</div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {groups.map((group) => (
+      <div className="staff-dashboard-grid">
+        <div className="staff-dashboard-bookings">
+          {isLoading ? (
+            <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.loading}</div>
+          ) : bookings.length === 0 ? (
+            <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.empty}</div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {groups.map((group) => (
               <section key={group.key} className="flex flex-col">
                 <div className="staff-group-heading">
                   <span>{group.label}</span>
@@ -273,8 +292,15 @@ export function StaffBookingsPage() {
                 </div>
               </section>
             ))}
-          </div>
-        )}
+            </div>
+          )}
+        </div>
+
+        <div className="staff-dashboard-aside">
+          {barberId ? (
+            <QuickBookPanel barberId={barberId} onBookingCreated={handleQuickBookCreated} />
+          ) : null}
+        </div>
       </div>
     </div>
   );
