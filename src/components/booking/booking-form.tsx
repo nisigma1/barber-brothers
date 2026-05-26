@@ -363,7 +363,7 @@ export function BookingForm() {
             <p className="mt-2 leading-6">{dictionary.booking.cancelBody}</p>
             <a
               href={`/booking?cancel=${successBooking.cancellationToken}`}
-              className="mt-3 inline-flex items-center gap-2 font-semibold text-[var(--color-accent)]"
+              className="mt-3 inline-flex items-center gap-2 font-semibold text-rose-400 transition-colors hover:text-rose-300"
             >
               {dictionary.booking.cancelLink}
               <span aria-hidden>→</span>
