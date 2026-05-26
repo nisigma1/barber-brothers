@@ -209,7 +209,9 @@ export const translations = {
         EMAIL_EXISTS: "Ky email eshte regjistruar tashme.",
         ALREADY_CANCELLED: "Ky termin eshte anuluar tashme.",
         CANCEL_WINDOW: "Termini ka filluar tashme dhe nuk mund te anulohet online.",
+        BARBER_CLOSED: "Ky berber nuk pranon termine online ne kete dite.",
       },
+      barberClosedDayMessage: "{barber} nuk pranon termine online ne kete dite. Vizita drejtperdrejt ne lokal — pa rezervim.",
     },
     contact: {
       primaryPhone: "Telefoni kryesor",
@@ -472,7 +474,9 @@ export const translations = {
         EMAIL_EXISTS: "This email is already registered.",
         ALREADY_CANCELLED: "This appointment has already been cancelled.",
         CANCEL_WINDOW: "The appointment has already started and can't be cancelled online.",
+        BARBER_CLOSED: "This barber doesn't take online bookings on this day.",
       },
+      barberClosedDayMessage: "{barber} doesn't take online bookings on this day. Walk-in only at the shop.",
     },
     contact: {
       primaryPhone: "Primary phone",

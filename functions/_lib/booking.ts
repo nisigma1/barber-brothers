@@ -1,3 +1,4 @@
+import { isBarberClosedOnDate } from "../../src/lib/barbers";
 import { DEFAULT_SERVICE_IDS, SLOT_INTERVAL_MINUTES, SHOP_TIMEZONE, getBookingService } from "../../src/lib/constants";
 import {
   buildSlotKey,
@@ -70,6 +71,10 @@ function getSlotContext(payload: PublicBookingPayload) {
     throw new ApiBookingError("SHOP_CLOSED");
   }
 
+  if (isBarberClosedOnDate(payload.barberId, payload.localDate)) {
+    throw new ApiBookingError("BARBER_CLOSED");
+  }
+
   if (!isValidSlotTime(payload.localTime, serviceSelection)) {
     throw new ApiBookingError("INVALID_SLOT");
   }
@@ -128,6 +133,10 @@ export async function getAvailability(
   serviceIds: ServiceId[] | undefined = DEFAULT_SERVICE_IDS,
 ) {
   if (!isDateWithinBookingWindow(localDate) || isShopClosedOnDate(localDate)) {
+    return [] as AvailabilitySlot[];
+  }
+
+  if (isBarberClosedOnDate(barberId, localDate)) {
     return [] as AvailabilitySlot[];
   }
 

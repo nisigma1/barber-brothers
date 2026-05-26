@@ -7,6 +7,7 @@ import {
   getBarberDisplayName,
   getBarberProfile,
   isActiveBarberId,
+  isBarberClosedOnDate,
 } from "@/lib/barbers";
 
 describe("barbers central config", () => {
@@ -56,5 +57,38 @@ describe("barbers central config", () => {
 
   it("BARBERS source array matches active ids when all active", () => {
     expect(BARBERS.map((b) => b.id)).toEqual(ACTIVE_BARBER_IDS);
+  });
+});
+
+describe("isBarberClosedOnDate (per-barber off-days)", () => {
+  it("Hysi is closed on Tuesdays", () => {
+    // 2026-05-26 is a Tuesday
+    expect(isBarberClosedOnDate("barber-2", "2026-05-26")).toBe(true);
+  });
+
+  it("Hysi is open every other weekday", () => {
+    expect(isBarberClosedOnDate("barber-2", "2026-05-25")).toBe(false); // Mon
+    expect(isBarberClosedOnDate("barber-2", "2026-05-27")).toBe(false); // Wed
+    expect(isBarberClosedOnDate("barber-2", "2026-05-28")).toBe(false); // Thu
+    expect(isBarberClosedOnDate("barber-2", "2026-05-29")).toBe(false); // Fri
+    expect(isBarberClosedOnDate("barber-2", "2026-05-30")).toBe(false); // Sat
+  });
+
+  it("Uraniku has no per-barber off days", () => {
+    expect(isBarberClosedOnDate("barber-1", "2026-05-26")).toBe(false);
+  });
+
+  it("Ylli, Edi, Arti remain open on Tuesdays", () => {
+    expect(isBarberClosedOnDate("barber-3", "2026-05-26")).toBe(false);
+    expect(isBarberClosedOnDate("barber-4", "2026-05-26")).toBe(false);
+    expect(isBarberClosedOnDate("barber-5", "2026-05-26")).toBe(false);
+  });
+
+  it("unknown barber id is treated as open (handled elsewhere by validation)", () => {
+    expect(isBarberClosedOnDate("barber-99", "2026-05-26")).toBe(false);
+  });
+
+  it("malformed date returns false instead of throwing", () => {
+    expect(isBarberClosedOnDate("barber-2", "not-a-date")).toBe(false);
   });
 });

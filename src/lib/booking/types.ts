@@ -20,7 +20,8 @@ export type ApiErrorCode =
   | "NOT_FOUND"
   | "EMAIL_EXISTS"
   | "ALREADY_CANCELLED"
-  | "CANCEL_WINDOW";
+  | "CANCEL_WINDOW"
+  | "BARBER_CLOSED";
 
 export interface AvailabilitySlot {
   key: string;

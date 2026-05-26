@@ -11,6 +11,11 @@ export interface BarberProfile {
   active: boolean;
   order: number;
   staffPinEnvKey: string;
+  /**
+   * Weekdays (0=Sun .. 6=Sat) when the barber doesn't take online bookings.
+   * Walk-in only on these days.
+   */
+  unavailableWeekdays?: number[];
 }
 
 export const BARBERS: BarberProfile[] = [
@@ -43,6 +48,8 @@ export const BARBERS: BarberProfile[] = [
     active: true,
     order: 2,
     staffPinEnvKey: "STAFF_PIN_BARBER_2",
+    // Tuesday = walk-in only (no online bookings)
+    unavailableWeekdays: [2],
   },
   {
     id: "barber-3",
@@ -115,4 +122,28 @@ export function getBarberRole(id: string, language: Language): string {
 
 export function getBarberShortBio(id: string, language: Language): string {
   return getBarberProfile(id)?.shortBio[language] ?? "";
+}
+
+/**
+ * True if the barber doesn't accept online bookings on the local date's
+ * weekday. Walk-in only for those days.
+ */
+export function isBarberClosedOnDate(barberId: string, localDate: string): boolean {
+  const profile = getBarberProfile(barberId);
+
+  if (!profile?.unavailableWeekdays?.length) {
+    return false;
+  }
+
+  // localDate format YYYY-MM-DD; treat as UTC midnight to derive weekday.
+  // This mirrors how isShopClosedOnDate does it in src/lib/booking/time.ts.
+  const [year, month, day] = localDate.split("-").map((part) => Number(part));
+
+  if (!year || !month || !day) {
+    return false;
+  }
+
+  const weekday = new Date(Date.UTC(year, month - 1, day)).getUTCDay();
+
+  return profile.unavailableWeekdays.includes(weekday);
 }

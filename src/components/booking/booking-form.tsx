@@ -12,6 +12,7 @@ import {
   isFaceTreatmentSelection,
   isAllInOneSelection,
 } from "@/lib/constants";
+import { isBarberClosedOnDate } from "@/lib/barbers";
 import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
 import {
   formatConfirmationDate,
@@ -81,6 +82,10 @@ export function BookingForm() {
     ? slots.find((slot) => slot.localTime === selectedSlot && slot.available)
     : undefined;
   const isClosedDay = isShopClosedOnDate(localDate);
+  const isBarberClosedDay = barberId ? isBarberClosedOnDate(barberId, localDate) : false;
+  const barberClosedMessage = selectedBarber && isBarberClosedDay && !isClosedDay
+    ? dictionary.booking.barberClosedDayMessage.replace("{barber}", selectedBarber.displayName)
+    : "";
   const normalizedPhone = normalizeKosovoPhone(phoneNumber);
   const phoneIsValid = normalizedPhone !== null;
   const firstNameValid = firstName.trim().length >= 2;
@@ -621,6 +626,10 @@ export function BookingForm() {
                 </div>
               ) : isClosedDay ? (
                 <p className="rounded-[0.9rem] bg-white/5 p-4 text-sm text-white/65">{dictionary.booking.closedDay}</p>
+              ) : isBarberClosedDay ? (
+                <p className="rounded-[0.9rem] border border-[var(--color-accent)]/30 bg-[var(--color-accent)]/10 p-4 text-sm text-white/82">
+                  {barberClosedMessage}
+                </p>
               ) : !barberId ? (
                 <p className="rounded-[0.9rem] bg-white/5 p-4 text-sm text-white/65">{dictionary.booking.chooseBarberFirst}</p>
               ) : slots.length === 0 ? (
