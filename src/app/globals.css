@@ -16,10 +16,10 @@
   --soft-bg-strong: rgba(18, 14, 10, 0.9);
   --input-bg: rgba(0, 0, 0, 0.34);
   --input-bg-focus: rgba(0, 0, 0, 0.38);
-  --header-bg: rgba(8, 7, 5, 0.96);
+  --header-bg: #080705;
   --page-bg:
-    radial-gradient(circle at 12% 0%, rgba(217, 173, 114, 0.13), transparent 30rem),
-    linear-gradient(180deg, #0d0b08 0%, #080705 62%, #040403 100%);
+    radial-gradient(circle at 12% 0%, rgba(217, 173, 114, 0.08), transparent 26rem),
+    linear-gradient(180deg, #080705 0%, #060503 62%, #040403 100%);
   --hero-bg: linear-gradient(135deg, #050403 0%, #0b0906 48%, #050403 100%);
   --hero-ambient:
     radial-gradient(circle at 18% 8%, rgba(217, 173, 114, 0.14), transparent 26rem),
@@ -76,13 +76,18 @@ html[data-theme="light"] {
 html {
   min-width: 320px;
   scroll-behavior: smooth;
-  background: var(--page-bg);
+  background-color: #050403;
+  background-image: var(--page-bg);
+}
+
+html[data-theme="light"] {
+  background-color: #f5ecdd;
 }
 
 body {
   min-width: 320px;
   overflow-x: hidden;
-  background: transparent;
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-manrope), sans-serif;
 }
@@ -627,8 +632,7 @@ html[data-theme="light"] .hero-appointment-body {
   align-items: baseline;
   justify-content: space-between;
   gap: 1rem;
-  padding-bottom: 1.6rem;
-  border-bottom: 1px solid var(--line);
+  padding-bottom: 0.8rem;
 }
 
 .section-index {
@@ -1480,6 +1484,9 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   border-radius: 0.7rem;
   overflow: hidden;
   object-fit: cover;
+  /* Anchor toward the upper third so portraits where the face is high
+     in the original frame (Uraniku, Hysi) stay visible in the square crop. */
+  object-position: 50% 22%;
 }
 
 .barber-monogram.barber-pick-avatar {
