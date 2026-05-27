@@ -29,7 +29,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "uraniku",
     displayName: "Uraniku",
     initials: "UR",
-    photoUrl: "/brand/uraniku.webp",
+    photoUrl: "/brand/uraniku.jpeg",
     photoUrlFallback: "/brand/gallery-2.webp",
     role: { sq: "Senior Barber", en: "Senior Barber" },
     shortBio: {
@@ -45,7 +45,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "hysi",
     displayName: "Hysi",
     initials: "HY",
-    photoUrl: "/brand/hysi.webp",
+    photoUrl: "/brand/hysi.jpeg",
     photoUrlFallback: "/brand/gallery-3.webp",
     role: { sq: "Senior Barber", en: "Senior Barber" },
     shortBio: {
@@ -63,7 +63,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "ylli",
     displayName: "Ylli",
     initials: "YL",
-    photoUrl: "/brand/ylli.webp",
+    photoUrl: "/brand/ylli.jpeg",
     photoUrlFallback: "/brand/gallery-1.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
@@ -79,7 +79,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "edi",
     displayName: "Edi",
     initials: "ED",
-    photoUrl: "/brand/edi.webp",
+    photoUrl: "/brand/edi.jpeg",
     photoUrlFallback: "/brand/gallery-4.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
@@ -95,7 +95,7 @@ export const BARBERS: BarberProfile[] = [
     slug: "arti",
     displayName: "Arti",
     initials: "AR",
-    photoUrl: "/brand/arti.webp",
+    photoUrl: "/brand/arti.jpeg",
     photoUrlFallback: "/brand/gallery-5.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
