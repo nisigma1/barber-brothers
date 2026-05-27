@@ -4,6 +4,7 @@ import { StaffLoginPage } from "@/components/staff/staff-login-page";
 
 export const metadata: Metadata = {
   title: "Staff login",
+  manifest: "/staff-manifest.json",
   robots: {
     index: false,
     follow: false,

@@ -1998,6 +1998,57 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
 }
 
+.install-app-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.6rem;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, var(--line));
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  color: var(--foreground);
+  font-size: 0.84rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.install-app-button:hover {
+  border-color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 18%, transparent);
+  transform: translateY(-1px);
+}
+
+.install-app-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.install-app-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(6, 5, 3, 0.74);
+  backdrop-filter: blur(8px);
+}
+
+.install-app-modal-body {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 22rem;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+}
+
 .staff-group-heading {
   display: flex;
   align-items: baseline;

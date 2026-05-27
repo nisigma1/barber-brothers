@@ -4,6 +4,7 @@ import { StaffBookingsPage } from "@/components/staff/staff-bookings-page";
 
 export const metadata: Metadata = {
   title: "Staff bookings",
+  manifest: "/staff-manifest.json",
   robots: {
     index: false,
     follow: false,

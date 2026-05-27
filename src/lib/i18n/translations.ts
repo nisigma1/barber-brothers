@@ -275,6 +275,9 @@ export const translations = {
       quickBookCancel: "Anulo",
       quickBookPending: "Duke ruajtur...",
       quickBookSuccess: "Termini u rezervua.",
+      installApp: "Instalo si app",
+      installAppIOS: "Shto ne Home Screen",
+      installAppIOSGuide: "Trokit butonin Share ne Safari, pastaj zgjidh 'Add to Home Screen'. Ikona do shfaqet ne homescreen-in tend dhe hap si app standalone.",
     },
     footer: {
       line: "Barber Brothers - Fushe Kosove - Rezervime direkte online",
@@ -555,6 +558,9 @@ export const translations = {
       quickBookCancel: "Cancel",
       quickBookPending: "Saving...",
       quickBookSuccess: "Appointment reserved.",
+      installApp: "Install as app",
+      installAppIOS: "Add to Home Screen",
+      installAppIOSGuide: "Tap the Share button in Safari, then choose 'Add to Home Screen'. The icon will appear on your home screen and open as a standalone app.",
     },
     footer: {
       line: "Barber Brothers - Fushe Kosove - Direct online booking",

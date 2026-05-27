@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
   title: "Staff",
+  manifest: "/staff-manifest.json",
   robots: {
     index: false,
     follow: false,
