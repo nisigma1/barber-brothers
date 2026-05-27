@@ -42,6 +42,7 @@ export function BarberAvatar({ barber, className, imageClassName, monogramClassN
         decoding="async"
         loading={loading}
         onError={handleError}
+        style={barber.photoObjectPosition ? { objectPosition: barber.photoObjectPosition } : undefined}
       />
     );
   }

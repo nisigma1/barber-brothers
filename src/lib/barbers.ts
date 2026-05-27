@@ -11,6 +11,12 @@ export interface BarberProfile {
    * fails to load (e.g. before the new portrait file is uploaded).
    */
   photoUrlFallback?: string | null;
+  /**
+   * CSS object-position for the square avatar crop. Each portrait is
+   * framed differently in its original file (face high, low, off-center)
+   * so we tune per-barber rather than hoping a single global value works.
+   */
+  photoObjectPosition?: string;
   role: { sq: string; en: string };
   shortBio: { sq: string; en: string };
   active: boolean;
@@ -31,6 +37,7 @@ export const BARBERS: BarberProfile[] = [
     initials: "UR",
     photoUrl: "/brand/uraniku.jpeg",
     photoUrlFallback: "/brand/gallery-2.webp",
+    photoObjectPosition: "52% 28%",
     role: { sq: "Senior Barber", en: "Senior Barber" },
     shortBio: {
       sq: "10 vite eksperience. Stil unik, detaj preciz.",
@@ -47,6 +54,7 @@ export const BARBERS: BarberProfile[] = [
     initials: "HY",
     photoUrl: "/brand/hysi.jpeg",
     photoUrlFallback: "/brand/gallery-3.webp",
+    photoObjectPosition: "50% 22%",
     role: { sq: "Senior Barber", en: "Senior Barber" },
     shortBio: {
       sq: "10 vite eksperience. Prerje klasike, finish i paster.",
@@ -65,6 +73,7 @@ export const BARBERS: BarberProfile[] = [
     initials: "YL",
     photoUrl: "/brand/ylli.jpeg",
     photoUrlFallback: "/brand/gallery-1.webp",
+    photoObjectPosition: "53% 30%",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Prerje moderne dhe fades te kontrolluara.",
@@ -81,6 +90,7 @@ export const BARBERS: BarberProfile[] = [
     initials: "ED",
     photoUrl: "/brand/edi.jpeg",
     photoUrlFallback: "/brand/gallery-4.webp",
+    photoObjectPosition: "38% 36%",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Mjekrra dhe konturim me dore te qete.",
@@ -97,6 +107,7 @@ export const BARBERS: BarberProfile[] = [
     initials: "AR",
     photoUrl: "/brand/arti.jpeg",
     photoUrlFallback: "/brand/gallery-5.webp",
+    photoObjectPosition: "45% 25%",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Stil i ri, energji e qarte.",

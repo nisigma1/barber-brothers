@@ -1484,9 +1484,9 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   border-radius: 0.7rem;
   overflow: hidden;
   object-fit: cover;
-  /* Anchor toward the upper third so portraits where the face is high
-     in the original frame (Uraniku, Hysi) stay visible in the square crop. */
-  object-position: 50% 22%;
+  /* Per-barber object-position is set via inline style on BarberAvatar
+     since each portrait crops differently. This is just the default. */
+  object-position: 50% 30%;
 }
 
 .barber-monogram.barber-pick-avatar {
