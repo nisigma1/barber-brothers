@@ -6,6 +6,11 @@ export interface BarberProfile {
   displayName: string;
   initials: string;
   photoUrl: string | null;
+  /**
+   * Optional fallback used by BarberAvatar when the primary photoUrl
+   * fails to load (e.g. before the new portrait file is uploaded).
+   */
+  photoUrlFallback?: string | null;
   role: { sq: string; en: string };
   shortBio: { sq: string; en: string };
   active: boolean;
@@ -24,7 +29,8 @@ export const BARBERS: BarberProfile[] = [
     slug: "uraniku",
     displayName: "Uraniku",
     initials: "UR",
-    photoUrl: "/brand/gallery-2.webp",
+    photoUrl: "/brand/uraniku.webp",
+    photoUrlFallback: "/brand/gallery-2.webp",
     role: { sq: "Senior Barber", en: "Senior Barber" },
     shortBio: {
       sq: "10 vite eksperience. Stil unik, detaj preciz.",
@@ -39,7 +45,8 @@ export const BARBERS: BarberProfile[] = [
     slug: "hysi",
     displayName: "Hysi",
     initials: "HY",
-    photoUrl: "/brand/gallery-3.webp",
+    photoUrl: "/brand/hysi.webp",
+    photoUrlFallback: "/brand/gallery-3.webp",
     role: { sq: "Senior Barber", en: "Senior Barber" },
     shortBio: {
       sq: "10 vite eksperience. Prerje klasike, finish i paster.",
@@ -56,7 +63,8 @@ export const BARBERS: BarberProfile[] = [
     slug: "ylli",
     displayName: "Ylli",
     initials: "YL",
-    photoUrl: "/brand/gallery-1.webp",
+    photoUrl: "/brand/ylli.webp",
+    photoUrlFallback: "/brand/gallery-1.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Prerje moderne dhe fades te kontrolluara.",
@@ -71,7 +79,8 @@ export const BARBERS: BarberProfile[] = [
     slug: "edi",
     displayName: "Edi",
     initials: "ED",
-    photoUrl: "/brand/gallery-4.webp",
+    photoUrl: "/brand/edi.webp",
+    photoUrlFallback: "/brand/gallery-4.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Mjekrra dhe konturim me dore te qete.",
@@ -86,7 +95,8 @@ export const BARBERS: BarberProfile[] = [
     slug: "arti",
     displayName: "Arti",
     initials: "AR",
-    photoUrl: "/brand/gallery-5.webp",
+    photoUrl: "/brand/arti.webp",
+    photoUrlFallback: "/brand/gallery-5.webp",
     role: { sq: "Barber", en: "Barber" },
     shortBio: {
       sq: "Stil i ri, energji e qarte.",

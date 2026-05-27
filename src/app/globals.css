@@ -153,6 +153,13 @@ html[lang="en"] .i18n-en {
   z-index: 40;
   border-bottom: 1px solid var(--line);
   background: var(--header-bg);
+  /* PWA standalone: keep content clear of iOS notch and Dynamic Island */
+  padding-top: env(safe-area-inset-top);
+}
+
+/* PWA standalone: footer keeps above the iPhone home indicator */
+.site-footer-shell {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .hero-section {

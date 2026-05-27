@@ -3,7 +3,7 @@
 // fast on reopen from the homescreen without ever caching authed API
 // responses or user data.
 
-const CACHE_NAME = "bb-shell-v5";
+const CACHE_NAME = "bb-shell-v6";
 
 const SHELL_URLS = [
   "/",

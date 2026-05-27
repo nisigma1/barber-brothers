@@ -1,4 +1,8 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
+
+import { useState } from "react";
 
 import type { BarberProfile } from "@/lib/barbers";
 
@@ -11,14 +15,33 @@ interface Props {
 }
 
 export function BarberAvatar({ barber, className, imageClassName, monogramClassName, loading = "lazy" }: Props) {
-  if (barber.photoUrl) {
+  // Three-tier fallback: photoUrl -> photoUrlFallback -> monogram tile.
+  // Useful when the production portrait file is being uploaded but the
+  // previous gallery photo (or the monogram) should keep rendering in
+  // the meantime instead of a broken image.
+  const [stage, setStage] = useState<"primary" | "fallback" | "monogram">(
+    barber.photoUrl ? "primary" : barber.photoUrlFallback ? "fallback" : "monogram",
+  );
+
+  function handleError() {
+    if (stage === "primary" && barber.photoUrlFallback) {
+      setStage("fallback");
+      return;
+    }
+    setStage("monogram");
+  }
+
+  if (stage !== "monogram") {
+    const src = stage === "primary" ? barber.photoUrl ?? "" : barber.photoUrlFallback ?? "";
+
     return (
       <img
-        src={barber.photoUrl}
+        src={src}
         alt={barber.displayName}
         className={`${className ?? ""} ${imageClassName ?? ""}`.trim()}
         decoding="async"
         loading={loading}
+        onError={handleError}
       />
     );
   }
