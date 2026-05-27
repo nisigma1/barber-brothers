@@ -310,6 +310,19 @@ export default function RootLayout({
       className={`${manrope.variable} ${barlow.variable} h-full antialiased`}
     >
       <head>
+        {/* Apple/iOS standalone PWA. Next.js metadata generates only the
+            modern "mobile-web-app-capable" tag; older iOS Safari versions
+            still require the apple-prefixed alias to honor display:standalone
+            from the homescreen icon. Both are emitted defensively. */}
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-touch-fullscreen" content="yes" />
+        <meta name="application-name" content="Barber Brothers" />
+        <meta name="msapplication-TileColor" content="#0a0805" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" sizes="192x192" href="/brand/barber-brothers-logo-192.png" />
+        <link rel="apple-touch-icon" sizes="512x512" href="/brand/barber-brothers-logo-512.png" />
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script
           type="application/ld+json"
