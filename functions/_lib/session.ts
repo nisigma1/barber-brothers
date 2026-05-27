@@ -1,7 +1,10 @@
 import type { CloudflareEnv } from "./types";
 
 const COOKIE_NAME = "bb_staff_session";
-const SESSION_TTL_SECONDS = 60 * 60 * 8;
+// 30 days — staff installs the PWA on their own device, so a long-lived
+// HttpOnly + Secure + SameSite=Lax cookie keeps them signed in without
+// re-entering the PIN. The cookie is HMAC-signed; tampering invalidates it.
+const SESSION_TTL_SECONDS = 60 * 60 * 24 * 30;
 
 function bytesToHex(bytes: Uint8Array) {
   return Array.from(bytes, (byte) => byte.toString(16).padStart(2, "0")).join("");

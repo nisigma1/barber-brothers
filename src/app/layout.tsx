@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Barlow_Condensed, Manrope } from "next/font/google";
 
 import { SiteFooter } from "@/components/layout/site-footer";
@@ -32,9 +32,27 @@ try {
 }
 `;
 
+const swRegistrationScript = `
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () {});
+  });
+}
+`;
+
 const siteUrl = "https://barberbrothers.style";
 const brandLogoUrl = "/brand/barber-brothers-logo-512.png";
 const absoluteBrandLogoUrl = `${siteUrl}${brandLogoUrl}`;
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#0a0805" },
+    { media: "(prefers-color-scheme: light)", color: "#0a0805" },
+  ],
+};
 
 const ROOT_TITLE = "Barber Brothers | Premium Barber Booking in Fushë Kosovë";
 const ROOT_DESCRIPTION =
@@ -111,6 +129,11 @@ export const metadata: Metadata = {
     },
   },
   manifest: "/site.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Barber Brothers",
+    statusBarStyle: "black-translucent",
+  },
   formatDetection: {
     telephone: false,
     date: false,
@@ -296,6 +319,7 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
+        <script dangerouslySetInnerHTML={{ __html: swRegistrationScript }} defer />
       </head>
       <body className="min-h-full">
         <ThemeProvider>

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ACTIVE_BARBERS } from "@/lib/constants";
-import { ClientBookingError, staffLogin } from "@/lib/booking/client";
+import { ClientBookingError, getStaffSession, staffLogin } from "@/lib/booking/client";
 import type { BarberId } from "@/lib/booking/types";
 import { useLanguage } from "@/components/providers/language-provider";
 
@@ -15,6 +15,30 @@ export function StaffLoginPage() {
   const [pin, setPin] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [error, setError] = useState("");
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    let ignore = false;
+
+    async function checkExistingSession() {
+      try {
+        await getStaffSession();
+        if (!ignore) {
+          router.replace("/staff/bookings");
+        }
+      } catch {
+        if (!ignore) {
+          setCheckingSession(false);
+        }
+      }
+    }
+
+    void checkExistingSession();
+
+    return () => {
+      ignore = true;
+    };
+  }, [router]);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,6 +60,14 @@ export function StaffLoginPage() {
       setError(code === "CONFIGURATION_ERROR" ? dictionary.common.configuredRequired : dictionary.staff.invalidCredentials);
       setIsPending(false);
     }
+  }
+
+  if (checkingSession) {
+    return (
+      <div className="mx-auto flex w-full max-w-6xl flex-1 items-center justify-center px-4 py-8">
+        <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.loading}</div>
+      </div>
+    );
   }
 
   return (
