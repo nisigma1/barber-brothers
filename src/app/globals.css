@@ -2083,6 +2083,53 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   letter-spacing: 0.14em;
 }
 
+.staff-group-toggle {
+  appearance: none;
+  background: none;
+  border: 0;
+  font: inherit;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+}
+
+.staff-group-toggle:focus-visible {
+  outline: 1px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.staff-group-meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.staff-group-arrow {
+  display: inline-block;
+  color: var(--color-accent);
+  font-size: 0.6rem;
+  line-height: 1;
+  transition: transform 220ms ease;
+}
+
+.staff-group-arrow.is-open {
+  transform: rotate(180deg);
+}
+
+.staff-group-list-wrap {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 320ms ease, opacity 200ms ease;
+}
+
+.staff-group-list-wrap.is-open {
+  max-height: 6000px;
+  opacity: 1;
+}
+
 .staff-group-list {
   display: flex;
   flex-direction: column;

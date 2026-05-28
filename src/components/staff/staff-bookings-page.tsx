@@ -69,6 +69,11 @@ export function StaffBookingsPage() {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [barberId, setBarberId] = useState<string | null>(null);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
+
+  function toggleGroup(key: string) {
+    setOpenGroups((current) => ({ ...current, [key]: !current[key] }));
+  }
 
   useEffect(() => {
     let ignore = false;
@@ -188,16 +193,35 @@ export function StaffBookingsPage() {
             <div className="premium-card p-5 text-sm text-white/62">{dictionary.staff.empty}</div>
           ) : (
             <div className="flex flex-col gap-4">
-              {groups.map((group) => (
+              {groups.map((group) => {
+                const isGroupOpen = openGroups[group.key] === true;
+                return (
               <section key={group.key} className="flex flex-col">
-                <div className="staff-group-heading">
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.key)}
+                  aria-expanded={isGroupOpen}
+                  className="staff-group-heading staff-group-toggle"
+                >
                   <span>{group.label}</span>
-                  <span className="staff-group-count">
-                    {group.items.length}{" "}
-                    {group.items.length === 1 ? dictionary.staff.bookingCountOne : dictionary.staff.bookingCount}
+                  <span className="staff-group-meta">
+                    <span className="staff-group-count">
+                      {group.items.length}{" "}
+                      {group.items.length === 1 ? dictionary.staff.bookingCountOne : dictionary.staff.bookingCount}
+                    </span>
+                    <span
+                      className={`staff-group-arrow${isGroupOpen ? " is-open" : ""}`}
+                      aria-hidden
+                    >
+                      ▼
+                    </span>
                   </span>
-                </div>
+                </button>
 
+                <div
+                  className={`staff-group-list-wrap${isGroupOpen ? " is-open" : ""}`}
+                  aria-hidden={!isGroupOpen}
+                >
                 <div className="staff-group-list">
                   {group.items.map((booking) => {
                     const expanded = expandedId === booking.bookingId;
@@ -290,8 +314,10 @@ export function StaffBookingsPage() {
                     );
                   })}
                 </div>
+                </div>
               </section>
-            ))}
+                );
+              })}
             </div>
           )}
         </div>
