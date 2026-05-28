@@ -219,10 +219,7 @@ export function getBookingService(
 
   const services = SERVICES.filter((service) => serviceIds.includes(service.id));
   const addOns = getAddOnsByIds(addOnIds);
-  const isPackage = services.some((service) => service.type === "package");
-  const durationMinutes = isPackage
-    ? Math.max(...services.map((service) => service.durationMinutes))
-    : Math.max(...services.map((service) => service.durationMinutes));
+  const durationMinutes = Math.max(...services.map((service) => service.durationMinutes));
   const price = services.reduce((total, service) => total + service.price, 0)
     + addOns.reduce((total, addOn) => total + addOn.price, 0);
   const serviceLabel = services.map((service) => service.name[language]).join(" + ");
@@ -244,14 +241,6 @@ export function getBookingService(
 export function getServiceDurationMinutes(selection: ServiceSelectionInput | ServiceId = DEFAULT_SERVICE_ID) {
   return getBookingService(selection).durationMinutes;
 }
-
-export const SERVICE = {
-  id: SERVICES[0].id,
-  name: SERVICES[0].name.en,
-  durationMinutes: SERVICES[0].durationMinutes,
-  price: SERVICES[0].price,
-  currency: SERVICES[0].currency,
-} as const;
 
 export const WORKING_HOURS = {
   openMinutes: 9 * 60 + 30,

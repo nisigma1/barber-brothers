@@ -53,7 +53,7 @@ export function BookingSummary({
           <div className="mobile-summary-totals-left">
             <span className="mobile-summary-meta">{dictionary.booking.summaryTotal}</span>
             <span className="mobile-summary-value">
-              {price} {currency} · {durationMinutes} min
+              {price}{currency === "euro" ? "€" : ` ${currency}`} · {durationMinutes} min
             </span>
           </div>
           <p className={`mobile-summary-hint ${totalReady ? "mobile-summary-hint-ready" : ""}`}>
@@ -132,7 +132,7 @@ export function BookingSummary({
       <div className="summary-total-row">
         <span className="summary-total-label">{dictionary.booking.summaryTotal}</span>
         <span className="summary-total-value">
-          {price} {currency}
+          {price}{currency === "euro" ? "€" : ` ${currency}`}
         </span>
       </div>
 

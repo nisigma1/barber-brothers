@@ -3,12 +3,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { isBarberClosedOnDate } from "@/lib/barbers";
+import { SERVICES } from "@/lib/constants";
 import {
   ClientBookingError,
   getClientAvailability,
   staffQuickBook,
 } from "@/lib/booking/client";
 import {
+  formatConfirmationDate,
   getBookableDateOptions,
   getFirstOpenBookableDate,
   isShopClosedOnDate,
@@ -193,7 +195,7 @@ export function QuickBookPanel({ barberId, onBookingCreated }: Props) {
           <div className="quickbook-modal premium-card p-5 sm:p-6">
             <p className="eyebrow text-[var(--color-accent)]">{dictionary.staff.quickBookModalTitle}</p>
             <p className="mt-2 text-sm text-white/75">
-              {selectedDate} - {openSlot.localTime}
+              {formatConfirmationDate(selectedDate, language)} · {openSlot.localTime}
             </p>
 
             <label className="field-label mt-4">
@@ -228,10 +230,11 @@ export function QuickBookPanel({ barberId, onBookingCreated }: Props) {
                 onChange={(e) => setServiceId(e.target.value as ServiceId)}
                 className="field-input"
               >
-                <option value="haircut">Qethje flokesh - 30 min - 5€</option>
-                <option value="beard-trim">Rregullim mjekrre - 30 min - 2€</option>
-                <option value="face-treatment">Tretman fytyre - 60 min - 15€</option>
-                <option value="all-in-one">All-in-One - 60 min - 15€</option>
+                {SERVICES.map((service) => (
+                  <option key={service.id} value={service.id}>
+                    {service.name[language]} · {service.durationMinutes} min · {service.price}€
+                  </option>
+                ))}
               </select>
             </label>
 

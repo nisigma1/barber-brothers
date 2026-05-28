@@ -5,6 +5,7 @@ import {
   ACTIVE_BARBERS,
   BRAND_ASSETS,
   CONTACT_DETAILS,
+  LUNCH_BREAK,
   SHOP_CITY,
   WORKING_HOURS,
 } from "@/lib/constants";
@@ -32,6 +33,7 @@ export function HomePage() {
   const sq = translations.sq;
   const en = translations.en;
   const workingHoursLabel = `${hourLabel(WORKING_HOURS.openMinutes)}—${hourLabel(WORKING_HOURS.closeMinutes)}`;
+  const lunchBreakLabel = `${hourLabel(LUNCH_BREAK.startMinutes)}—${hourLabel(LUNCH_BREAK.endMinutes)}`;
 
   return (
     <div className="flex flex-1 flex-col">
@@ -177,7 +179,7 @@ export function HomePage() {
               <span>
                 <BilingualText sq={sq.home.lunchBreak} en={en.home.lunchBreak} />
               </span>
-              <span className="font-semibold text-white">12:30—13:00</span>
+              <span className="font-semibold text-white">{lunchBreakLabel}</span>
             </div>
             <div className="glass-strip flex min-h-12 items-center justify-between rounded-xl px-4 text-sm">
               <span>

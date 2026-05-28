@@ -2478,58 +2478,6 @@ html[data-theme="light"] select.field-input option {
     var(--card-bg);
 }
 
-.preview-lock {
-  display: flex;
-  min-height: 100svh;
-  align-items: center;
-  justify-content: center;
-  padding: 1.25rem;
-  background:
-    radial-gradient(circle at 50% 0%, rgba(217, 173, 114, 0.18), transparent 24rem),
-    var(--page-bg);
-}
-
-.preview-lock-card {
-  width: min(100%, 32rem);
-  border: 1px solid var(--panel-border);
-  border-radius: 1.6rem;
-  background: var(--card-grad), var(--card-bg);
-  box-shadow: var(--shadow-soft);
-  padding: clamp(1.25rem, 5vw, 2.25rem);
-}
-
-.preview-lock-card h1 {
-  margin-top: 0.9rem;
-  color: var(--foreground);
-  font-family: var(--font-barlow), sans-serif;
-  font-size: clamp(3.4rem, 13vw, 6rem);
-  font-weight: 400;
-  letter-spacing: 0.05em;
-  line-height: 0.86;
-  text-transform: uppercase;
-}
-
-.preview-lock-card p:not(.eyebrow) {
-  margin-top: 1rem;
-  color: var(--muted);
-  line-height: 1.75;
-}
-
-.preview-lock-form {
-  margin-top: 1.5rem;
-  display: grid;
-  gap: 1rem;
-}
-
-.preview-lock-error {
-  border: 1px solid rgba(244, 63, 94, 0.36);
-  border-radius: 1rem;
-  background: rgba(127, 29, 29, 0.22);
-  padding: 0.85rem 1rem;
-  color: #fecdd3 !important;
-  font-size: 0.9rem;
-}
-
 .brotherspace-hero {
   background:
     radial-gradient(circle at 12% 10%, rgba(217, 173, 114, 0.18), transparent 34%),
