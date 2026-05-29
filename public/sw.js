@@ -3,7 +3,7 @@
 // fast on reopen from the homescreen without ever caching authed API
 // responses or user data.
 
-const CACHE_NAME = "bb-shell-v6";
+const CACHE_NAME = "bb-shell-v7";
 
 const SHELL_URLS = [
   "/",
@@ -13,6 +13,7 @@ const SHELL_URLS = [
   "/staff/bookings",
   "/site.webmanifest",
   "/staff-manifest.json",
+  "/brand/hero-logo.webp",
   "/brand/barber-brothers-logo-192.png",
   "/brand/barber-brothers-logo-512.png",
   "/favicon.ico",

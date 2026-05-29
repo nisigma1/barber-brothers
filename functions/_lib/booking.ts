@@ -9,6 +9,7 @@ import {
   getRequiredSlotTimes,
   getSlotEndDate,
   getSlotStartDate,
+  getTodayLocalDate,
   isDateWithinBookingWindow,
   isShopClosedOnDate,
   isSlotAtLeastOneHourAhead,
@@ -512,17 +513,21 @@ export async function cancelBookingByToken(env: CloudflareEnv, token: string) {
 
 export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBookingPayload["barberId"]) {
   const db = getDatabase(env);
+  // Today and forward only. Past days are over — they only clutter the
+  // panel and slow the round-trip. Filtered in SQL so we don't pay for
+  // bandwidth + JSON-serialization of dead rows.
+  const today = getTodayLocalDate();
   const rows = await db.prepare(
     `SELECT
       booking_id, submission_id, slot_key, barber_id, barber_name, service_name, service_duration_minutes,
       service_price, currency, local_date, local_time, end_local_time, start_utc, end_utc,
       customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at
     FROM bookings
-    WHERE status = 'confirmed' AND barber_id = ?
+    WHERE status = 'confirmed' AND barber_id = ? AND local_date >= ?
     ORDER BY start_utc ASC
     LIMIT 300`,
   )
-    .bind(barberId)
+    .bind(barberId, today)
     .all<BookingRow>();
 
   return (rows.results ?? []).map(staffItemFromRow);

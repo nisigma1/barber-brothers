@@ -320,6 +320,10 @@ export default function RootLayout({
         <meta name="application-name" content="Barber Brothers" />
         <meta name="msapplication-TileColor" content="#0a0805" />
         <meta name="msapplication-tap-highlight" content="no" />
+        {/* Preload the LCP hero asset so the browser kicks off the fetch
+            before it parses the rest of the document. The webp is tiny
+            (~12KB) so this is cheap, and it visibly shortens LCP. */}
+        <link rel="preload" as="image" href="/brand/hero-logo.webp" fetchPriority="high" />
         <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
         <link rel="apple-touch-icon" sizes="192x192" href="/brand/barber-brothers-logo-192.png" />
         <link rel="apple-touch-icon" sizes="512x512" href="/brand/barber-brothers-logo-512.png" />

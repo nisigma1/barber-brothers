@@ -89,6 +89,8 @@ export function HomePage() {
               <img
                 src={BRAND_ASSETS.heroLogo}
                 alt="Barber Brothers"
+                width={720}
+                height={480}
                 decoding="async"
                 fetchPriority="high"
                 loading="eager"
