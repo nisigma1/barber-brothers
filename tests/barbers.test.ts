@@ -61,27 +61,16 @@ describe("barbers central config", () => {
 });
 
 describe("isBarberClosedOnDate (per-barber off-days)", () => {
-  it("Hysi is closed on Tuesdays", () => {
-    // 2026-05-26 is a Tuesday
-    expect(isBarberClosedOnDate("barber-2", "2026-05-26")).toBe(true);
-  });
+  it("every active barber is open every weekday (no per-barber off-days configured)", () => {
+    // 2026-05-25..30 covers Mon through Sat
+    const dates = ["2026-05-25", "2026-05-26", "2026-05-27", "2026-05-28", "2026-05-29", "2026-05-30"];
+    const barberIds = ["barber-1", "barber-2", "barber-3", "barber-4", "barber-5"];
 
-  it("Hysi is open every other weekday", () => {
-    expect(isBarberClosedOnDate("barber-2", "2026-05-25")).toBe(false); // Mon
-    expect(isBarberClosedOnDate("barber-2", "2026-05-27")).toBe(false); // Wed
-    expect(isBarberClosedOnDate("barber-2", "2026-05-28")).toBe(false); // Thu
-    expect(isBarberClosedOnDate("barber-2", "2026-05-29")).toBe(false); // Fri
-    expect(isBarberClosedOnDate("barber-2", "2026-05-30")).toBe(false); // Sat
-  });
-
-  it("Uraniku has no per-barber off days", () => {
-    expect(isBarberClosedOnDate("barber-1", "2026-05-26")).toBe(false);
-  });
-
-  it("Ylli, Edi, Arti remain open on Tuesdays", () => {
-    expect(isBarberClosedOnDate("barber-3", "2026-05-26")).toBe(false);
-    expect(isBarberClosedOnDate("barber-4", "2026-05-26")).toBe(false);
-    expect(isBarberClosedOnDate("barber-5", "2026-05-26")).toBe(false);
+    for (const barberId of barberIds) {
+      for (const date of dates) {
+        expect(isBarberClosedOnDate(barberId, date)).toBe(false);
+      }
+    }
   });
 
   it("unknown barber id is treated as open (handled elsewhere by validation)", () => {

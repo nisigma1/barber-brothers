@@ -63,8 +63,6 @@ export const BARBERS: BarberProfile[] = [
     active: true,
     order: 2,
     staffPinEnvKey: "STAFF_PIN_BARBER_2",
-    // Tuesday = walk-in only (no online bookings)
-    unavailableWeekdays: [2],
   },
   {
     id: "barber-3",
