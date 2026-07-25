@@ -5,12 +5,11 @@ import { useRouter } from "next/navigation";
 
 import {
   ClientBookingError,
-  getStaffSession,
-  listClientStaffBookings,
+  getStaffDashboardData,
   softDeleteClientBooking,
   staffLogout,
 } from "@/lib/booking/client";
-import type { StaffBookingItem } from "@/lib/booking/types";
+import type { BarberDayClosure, StaffBookingItem } from "@/lib/booking/types";
 import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
 import { QuickBookPanel } from "@/components/staff/quick-book-panel";
@@ -69,6 +68,7 @@ export function StaffBookingsPage() {
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [barberId, setBarberId] = useState<string | null>(null);
+  const [closures, setClosures] = useState<BarberDayClosure[]>([]);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   function toggleGroup(key: string) {
@@ -83,19 +83,18 @@ export function StaffBookingsPage() {
       setMessage("");
 
       try {
-        const [session, nextBookings] = await Promise.all([
-          getStaffSession(),
-          listClientStaffBookings(),
-        ]);
+        const dashboard = await getStaffDashboardData();
 
         if (!ignore) {
-          setBarberId(session.barberId);
-          setBookings(nextBookings);
+          setBarberId(dashboard.session.barberId);
+          setBookings(dashboard.bookings);
+          setClosures(dashboard.closures);
         }
       } catch (error) {
         if (!ignore) {
           setBookings([]);
           setBarberId(null);
+          setClosures([]);
           setMessage(dictionary.staff.authRequired);
 
           if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
@@ -324,7 +323,12 @@ export function StaffBookingsPage() {
 
         <div className="staff-dashboard-aside">
           {barberId ? (
-            <QuickBookPanel barberId={barberId} onBookingCreated={handleQuickBookCreated} />
+            <QuickBookPanel
+              barberId={barberId}
+              closures={closures}
+              onClosuresChange={setClosures}
+              onBookingCreated={handleQuickBookCreated}
+            />
           ) : null}
         </div>
       </div>

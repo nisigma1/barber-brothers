@@ -6,7 +6,7 @@ const validBookingPayload = {
   submissionId: "11111111-2222-4333-8444-555555555555",
   serviceIds: ["haircut"],
   addOnIds: [],
-  barberId: "barber-3",
+  barberId: "barber-1",
   localDate: "2026-06-01",
   localTime: "14:00",
   firstName: "Altin",

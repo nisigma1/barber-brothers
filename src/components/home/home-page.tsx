@@ -127,7 +127,7 @@ export function HomePage() {
         </div>
 
         <h2 className="mt-6 section-headline">
-          <BilingualText sq="Pesë berberë. Termine të pavarura." en="Five barbers. Independent slots." />
+          <BilingualText sq="Katër berberë. Termine të pavarura." en="Four barbers. Independent slots." />
         </h2>
 
         <div className="barber-grid mt-7">

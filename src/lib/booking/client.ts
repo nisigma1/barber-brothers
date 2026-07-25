@@ -3,6 +3,8 @@
 import type {
   ApiErrorCode,
   AvailabilitySlot,
+  BarberClosureReason,
+  BarberDayClosure,
   BookingSummary,
   PublicBookingPayload,
   ServiceId,
@@ -105,6 +107,16 @@ export async function listClientStaffBookings() {
   return body.bookings;
 }
 
+export interface StaffDashboardData {
+  session: StaffSession;
+  bookings: StaffBookingItem[];
+  closures: BarberDayClosure[];
+}
+
+export async function getStaffDashboardData() {
+  return fetchJson<StaffDashboardData>("/api/staff/bookings");
+}
+
 export async function softDeleteClientBooking(booking: StaffBookingItem) {
   await fetchJson<{ ok: true }>("/api/staff/bookings", {
     method: "POST",
@@ -120,6 +132,22 @@ export interface StaffSession {
 export async function getStaffSession() {
   const body = await fetchJson<{ session: StaffSession }>("/api/staff/session");
   return body.session;
+}
+
+export async function setBarberDayClosure(localDate: string, reason: BarberClosureReason) {
+  const body = await fetchJson<{ closure: BarberDayClosure }>("/api/staff/closures", {
+    method: "POST",
+    body: JSON.stringify({ localDate, reason }),
+  });
+
+  return body.closure;
+}
+
+export async function removeBarberDayClosure(localDate: string) {
+  await fetchJson<{ ok: true }>("/api/staff/closures", {
+    method: "DELETE",
+    body: JSON.stringify({ localDate }),
+  });
 }
 
 export interface StaffQuickBookPayload {

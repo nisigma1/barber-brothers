@@ -98,7 +98,6 @@ export const metadata: Metadata = {
     "Kosovo Albanian barber",
     "Uraniku",
     "Hysi",
-    "Ylli",
     "Edi",
     "Arti",
   ],

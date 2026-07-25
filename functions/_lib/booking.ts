@@ -18,6 +18,7 @@ import {
 import type {
   ApiErrorCode,
   AvailabilitySlot,
+  BarberDayClosure,
   BookingRecord,
   BookingSummary,
   PublicBookingPayload,
@@ -25,9 +26,14 @@ import type {
   StaffBookingItem,
 } from "../../src/lib/booking/types";
 import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
-import { bookingRequestSchema, staffQuickBookingSchema } from "../../src/lib/booking/validation";
+import {
+  barberClosureDeleteSchema,
+  barberClosureSchema,
+  bookingRequestSchema,
+  staffQuickBookingSchema,
+} from "../../src/lib/booking/validation";
 import { getBarberProfile } from "../../src/lib/barbers";
-import type { BookingRow, CloudflareEnv } from "./types";
+import type { BarberDayClosureRow, BookingRow, CloudflareEnv } from "./types";
 
 function generateCancellationToken() {
   const bytes = new Uint8Array(24);
@@ -58,7 +64,43 @@ function getDatabase(env: CloudflareEnv) {
   return env.DB;
 }
 
-function getSlotContext(payload: PublicBookingPayload) {
+function closureFromRow(row: BarberDayClosureRow): BarberDayClosure {
+  return {
+    barberId: row.barber_id,
+    localDate: row.local_date,
+    reason: row.reason,
+    createdAt: row.created_at,
+  };
+}
+
+async function getBarberDayClosure(
+  env: CloudflareEnv,
+  barberId: string,
+  localDate: string,
+) {
+  const db = getDatabase(env);
+  const row = await db.prepare(
+    "SELECT barber_id, local_date, reason, created_at FROM barber_day_closures WHERE barber_id = ? AND local_date = ? LIMIT 1",
+  )
+    .bind(barberId, localDate)
+    .first<BarberDayClosureRow>();
+
+  return row ? closureFromRow(row) : null;
+}
+
+async function isBarberUnavailableOnDate(
+  env: CloudflareEnv,
+  barberId: string,
+  localDate: string,
+) {
+  if (isBarberClosedOnDate(barberId, localDate)) {
+    return true;
+  }
+
+  return Boolean(await getBarberDayClosure(env, barberId, localDate));
+}
+
+async function getSlotContext(env: CloudflareEnv, payload: PublicBookingPayload) {
   const serviceSelection = {
     serviceId: payload.serviceId,
     serviceIds: payload.serviceIds?.length ? payload.serviceIds : undefined,
@@ -73,7 +115,7 @@ function getSlotContext(payload: PublicBookingPayload) {
     throw new ApiBookingError("SHOP_CLOSED");
   }
 
-  if (isBarberClosedOnDate(payload.barberId, payload.localDate)) {
+  if (await isBarberUnavailableOnDate(env, payload.barberId, payload.localDate)) {
     throw new ApiBookingError("BARBER_CLOSED");
   }
 
@@ -138,7 +180,7 @@ export async function getAvailability(
     return [] as AvailabilitySlot[];
   }
 
-  if (isBarberClosedOnDate(barberId, localDate)) {
+  if (await isBarberUnavailableOnDate(env, barberId, localDate)) {
     return [] as AvailabilitySlot[];
   }
 
@@ -197,7 +239,7 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
   }, "sq");
   const bookingId = cleanPayload.submissionId;
   const cancellationToken = generateCancellationToken();
-  const slotContext = getSlotContext(cleanPayload);
+  const slotContext = await getSlotContext(env, cleanPayload);
   const nowIso = new Date().toISOString();
   const bookingRecord: BookingRecord = {
     bookingId,
@@ -349,7 +391,7 @@ export async function createStaffQuickBooking(
     website: "",
   };
 
-  const slotContext = getSlotContext(slotPayload);
+  const slotContext = await getSlotContext(env, slotPayload);
   const bookingService = getBookingService({
     serviceId: cleanPayload.serviceId,
     serviceIds: cleanPayload.serviceIds,
@@ -531,6 +573,82 @@ export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBook
     .all<BookingRow>();
 
   return (rows.results ?? []).map(staffItemFromRow);
+}
+
+export async function listBarberDayClosures(
+  env: CloudflareEnv,
+  barberId: PublicBookingPayload["barberId"],
+) {
+  const db = getDatabase(env);
+  const today = getTodayLocalDate();
+  const rows = await db.prepare(
+    `SELECT barber_id, local_date, reason, created_at
+    FROM barber_day_closures
+    WHERE barber_id = ? AND local_date >= ?
+    ORDER BY local_date ASC`,
+  )
+    .bind(barberId, today)
+    .all<BarberDayClosureRow>();
+
+  return (rows.results ?? []).map(closureFromRow);
+}
+
+export async function upsertBarberDayClosure(
+  env: CloudflareEnv,
+  barberId: PublicBookingPayload["barberId"],
+  payload: unknown,
+) {
+  const parsed = barberClosureSchema.safeParse(payload);
+
+  if (!parsed.success) {
+    throw new ApiBookingError("INVALID_REQUEST");
+  }
+
+  const { localDate, reason } = parsed.data;
+
+  if (!isDateWithinBookingWindow(localDate)) {
+    throw new ApiBookingError("BOOKING_WINDOW");
+  }
+
+  const db = getDatabase(env);
+  const createdAt = new Date().toISOString();
+
+  await db.prepare(
+    `INSERT INTO barber_day_closures (barber_id, local_date, reason, created_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(barber_id, local_date)
+    DO UPDATE SET reason = excluded.reason, created_at = excluded.created_at`,
+  )
+    .bind(barberId, localDate, reason, createdAt)
+    .run();
+
+  return {
+    barberId,
+    localDate,
+    reason,
+    createdAt,
+  } satisfies BarberDayClosure;
+}
+
+export async function deleteBarberDayClosure(
+  env: CloudflareEnv,
+  barberId: PublicBookingPayload["barberId"],
+  payload: unknown,
+) {
+  const parsed = barberClosureDeleteSchema.safeParse(payload);
+
+  if (!parsed.success) {
+    throw new ApiBookingError("INVALID_REQUEST");
+  }
+
+  const { localDate } = parsed.data;
+
+  const db = getDatabase(env);
+  await db.prepare("DELETE FROM barber_day_closures WHERE barber_id = ? AND local_date = ?")
+    .bind(barberId, localDate)
+    .run();
+
+  return { ok: true as const };
 }
 
 export async function softDeleteBooking(env: CloudflareEnv, bookingId: string, barberId: PublicBookingPayload["barberId"]) {

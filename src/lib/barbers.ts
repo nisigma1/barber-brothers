@@ -65,23 +65,6 @@ export const BARBERS: BarberProfile[] = [
     staffPinEnvKey: "STAFF_PIN_BARBER_2",
   },
   {
-    id: "barber-3",
-    slug: "ylli",
-    displayName: "Ylli",
-    initials: "YL",
-    photoUrl: "/brand/ylli.webp",
-    photoUrlFallback: "/brand/ylli.jpeg",
-    photoObjectPosition: "53% 30%",
-    role: { sq: "Barber", en: "Barber" },
-    shortBio: {
-      sq: "Prerje moderne dhe fades te kontrolluara.",
-      en: "Modern cuts and controlled fades.",
-    },
-    active: true,
-    order: 3,
-    staffPinEnvKey: "STAFF_PIN_BARBER_3",
-  },
-  {
     id: "barber-4",
     slug: "edi",
     displayName: "Edi",
@@ -95,7 +78,7 @@ export const BARBERS: BarberProfile[] = [
       en: "Beard work and contouring with a steady hand.",
     },
     active: true,
-    order: 4,
+    order: 3,
     staffPinEnvKey: "STAFF_PIN_BARBER_4",
   },
   {
@@ -112,7 +95,7 @@ export const BARBERS: BarberProfile[] = [
       en: "Fresh style, clear energy.",
     },
     active: true,
-    order: 5,
+    order: 4,
     staffPinEnvKey: "STAFF_PIN_BARBER_5",
   },
 ];

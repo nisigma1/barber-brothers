@@ -8,6 +8,7 @@ const barberIdSchema = z
   .refine((value) => ACTIVE_BARBER_IDS.includes(value), { message: "Invalid barber" });
 const serviceIdSchema = z.enum(["haircut", "beard-trim", "face-treatment", "all-in-one"]);
 const addOnIdSchema = z.enum(["premium-product"]);
+const closureReasonSchema = z.enum(["time-off", "medical-leave"]);
 const customerNameSchema = z
   .string()
   .trim()
@@ -76,4 +77,13 @@ export const bookingRequestSchema = z.object({
       message: "Invalid service selection",
     });
   }
+});
+
+export const barberClosureSchema = z.object({
+  localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+  reason: closureReasonSchema,
+});
+
+export const barberClosureDeleteSchema = z.object({
+  localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
 });

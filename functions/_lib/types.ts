@@ -5,7 +5,6 @@ export type CloudflareEnv = {
   STAFF_SESSION_SECRET?: string;
   STAFF_PIN_BARBER_1?: string;
   STAFF_PIN_BARBER_2?: string;
-  STAFF_PIN_BARBER_3?: string;
   STAFF_PIN_BARBER_4?: string;
   STAFF_PIN_BARBER_5?: string;
   [key: `STAFF_PIN_BARBER_${string}`]: string | undefined;
@@ -34,4 +33,11 @@ export type BookingRow = {
   created_at: string;
   deleted_at: string | null;
   cancellation_token: string | null;
+};
+
+export type BarberDayClosureRow = {
+  barber_id: string;
+  local_date: string;
+  reason: "time-off" | "medical-leave";
+  created_at: string;
 };

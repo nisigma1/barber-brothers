@@ -4,6 +4,7 @@ export type ServiceId = "haircut" | "beard-trim" | "face-treatment" | "all-in-on
 export type AddOnId = "premium-product";
 export type BookingStatus = "confirmed" | "deleted";
 export type SlotLockStatus = "active" | "released";
+export type BarberClosureReason = "time-off" | "medical-leave";
 
 export type ApiErrorCode =
   | "CONFIGURATION_ERROR"
@@ -114,4 +115,11 @@ export interface StaffBookingItem extends BookingSummary {
   endUtc: string;
   createdAt: string;
   status: BookingStatus;
+}
+
+export interface BarberDayClosure {
+  barberId: BarberId;
+  localDate: string;
+  reason: BarberClosureReason;
+  createdAt: string;
 }

@@ -1,8 +1,13 @@
-import { ApiBookingError, listStaffBookings, softDeleteBooking } from "../../_lib/booking";
+import {
+  ApiBookingError,
+  listBarberDayClosures,
+  listStaffBookings,
+  softDeleteBooking,
+} from "../../_lib/booking";
 import type { PagesContext } from "../../_lib/context";
 import { errorResponse, jsonResponse, readJson } from "../../_lib/http";
 import { requireStaffSession } from "../../_lib/session";
-import { isActiveBarberId } from "../../../src/lib/barbers";
+import { getBarberProfile, isActiveBarberId } from "../../../src/lib/barbers";
 import type { ApiErrorCode } from "../../../src/lib/booking/types";
 
 const isBarberId = isActiveBarberId;
@@ -18,7 +23,20 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
     return errorResponse("UNAUTHORIZED", 401);
   }
 
-  return jsonResponse({ bookings: await listStaffBookings(env, session.barberId) });
+  const profile = getBarberProfile(session.barberId);
+  const [bookings, closures] = await Promise.all([
+    listStaffBookings(env, session.barberId),
+    listBarberDayClosures(env, session.barberId),
+  ]);
+
+  return jsonResponse({
+    session: {
+      barberId: session.barberId,
+      displayName: profile?.displayName ?? "Staff",
+    },
+    bookings,
+    closures,
+  });
 };
 
 export const onRequestPost = async ({ env, request }: PagesContext) => {
