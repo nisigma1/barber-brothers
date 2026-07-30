@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
+import { Tilt } from "@/components/core/tilt";
 import { BRAND_ASSETS } from "@/lib/constants";
 import { translations } from "@/lib/i18n/translations";
 
@@ -36,10 +37,7 @@ export function BrotherspacePage() {
               <BilingualText sq={sq.brotherspaceHeading} en={en.brotherspaceHeading} />
             </h1>
             <p className="editorial-italic mt-3">
-              <BilingualText
-                sq="Dritë e qetë. Detaje të kontrolluara."
-                en="Quiet light. Controlled detail."
-              />
+              <BilingualText sq="Drite e qete. Detaje te kontrolluara." en="Quiet light. Controlled detail." />
             </p>
             <p className="section-sub">
               <BilingualText sq={sq.brotherspaceBody} en={en.brotherspaceBody} />
@@ -50,45 +48,51 @@ export function BrotherspacePage() {
           </div>
 
           <div className="brotherspace-frame relative aspect-[4/5] overflow-hidden">
-            <img
-              src={mainImage}
-              alt="Barber Brothers interior with modern lighting"
-              className="image-fill"
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-            />
-            <span className="editorial-caption">
-              <BilingualText sq="Interier" en="Interior" /> · 01
-            </span>
+            <Tilt className="h-full w-full" innerClassName="h-full w-full" rotationFactor={4}>
+              <img
+                src={mainImage}
+                alt="Barber Brothers interior with modern lighting"
+                className="image-fill"
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+              />
+              <span className="editorial-caption">
+                <BilingualText sq="Interier" en="Interior" /> - 01
+              </span>
+            </Tilt>
           </div>
         </div>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:gap-6">
         <div className="brotherspace-frame relative aspect-[4/3.2] overflow-hidden">
-          <img
-            src={detailImage}
-            alt="Barber Brothers premium chair and wall detail"
-            loading="lazy"
-            decoding="async"
-            className="image-fill"
-          />
-          <span className="editorial-caption">
-            <BilingualText sq="Detaj" en="Detail" /> · 02
-          </span>
+          <Tilt className="h-full w-full" innerClassName="h-full w-full" rotationFactor={4}>
+            <img
+              src={detailImage}
+              alt="Barber Brothers premium chair and wall detail"
+              loading="lazy"
+              decoding="async"
+              className="image-fill"
+            />
+            <span className="editorial-caption">
+              <BilingualText sq="Detaj" en="Detail" /> - 02
+            </span>
+          </Tilt>
         </div>
         <div className="brotherspace-frame relative aspect-[4/3.2] overflow-hidden">
-          <img
-            src={exteriorImage}
-            alt="Barber Brothers exterior entrance"
-            loading="lazy"
-            decoding="async"
-            className="image-fill"
-          />
-          <span className="editorial-caption">
-            <BilingualText sq="Hyrja" en="Entrance" /> · 03
-          </span>
+          <Tilt className="h-full w-full" innerClassName="h-full w-full" rotationFactor={4}>
+            <img
+              src={exteriorImage}
+              alt="Barber Brothers exterior entrance"
+              loading="lazy"
+              decoding="async"
+              className="image-fill"
+            />
+            <span className="editorial-caption">
+              <BilingualText sq="Hyrja" en="Entrance" /> - 03
+            </span>
+          </Tilt>
         </div>
       </section>
     </div>

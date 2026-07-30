@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
 
+import { Tilt } from "@/components/core/tilt";
 import { BRAND_ASSETS, CONTACT_DETAILS } from "@/lib/constants";
 import { translations } from "@/lib/i18n/translations";
 
@@ -66,17 +67,19 @@ export function OurworkPage() {
             rel="noopener noreferrer"
             className={`gallery-card ourwork-editorial-item ourwork-editorial-item-${index + 1}`}
           >
-            <img
-              src={image}
-              alt={`Barber Brothers work image ${index + 1}`}
-              className="image-fill"
-              decoding="async"
-              fetchPriority={index === 0 ? "high" : undefined}
-              loading={index === 0 ? "eager" : "lazy"}
-            />
-            <span className="editorial-caption">
-              <BilingualText sq="Prerje" en="Cut" /> · {(index + 1).toString().padStart(2, "0")}
-            </span>
+            <Tilt className="h-full w-full" innerClassName="h-full w-full" rotationFactor={5}>
+              <img
+                src={image}
+                alt={`Barber Brothers work image ${index + 1}`}
+                className="image-fill"
+                decoding="async"
+                fetchPriority={index === 0 ? "high" : undefined}
+                loading={index === 0 ? "eager" : "lazy"}
+              />
+              <span className="editorial-caption">
+                <BilingualText sq="Prerje" en="Cut" /> - {(index + 1).toString().padStart(2, "0")}
+              </span>
+            </Tilt>
           </a>
         ))}
       </section>

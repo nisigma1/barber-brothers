@@ -10,6 +10,7 @@ import {
   WORKING_HOURS,
 } from "@/lib/constants";
 import { BarberAvatar } from "@/components/booking/barber-avatar";
+import { Tilt } from "@/components/core/tilt";
 import { translations } from "@/lib/i18n/translations";
 import { ScissorsEmblem } from "@/components/home/scissors-emblem";
 
@@ -86,15 +87,17 @@ export function HomePage() {
             </div>
 
             <div className="hero-visual hero-visual-logo">
-              <img
-                src={BRAND_ASSETS.heroLogo}
-                alt="Barber Brothers"
-                width={720}
-                height={480}
-                decoding="async"
-                fetchPriority="high"
-                loading="eager"
-              />
+              <Tilt className="hero-logo-tilt" innerClassName="h-full w-full" rotationFactor={3}>
+                <img
+                  src={BRAND_ASSETS.heroLogo}
+                  alt="Barber Brothers"
+                  width={720}
+                  height={480}
+                  decoding="async"
+                  fetchPriority="high"
+                  loading="eager"
+                />
+              </Tilt>
             </div>
           </div>
         </div>

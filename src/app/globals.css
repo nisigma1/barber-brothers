@@ -96,6 +96,40 @@ img {
   display: block;
 }
 
+.tilt-root {
+  display: block;
+  perspective: 900px;
+  transform-style: preserve-3d;
+  contain: layout paint;
+}
+
+.tilt-inner {
+  position: relative;
+  display: block;
+  min-height: inherit;
+  overflow: inherit;
+  border-radius: inherit;
+  transform:
+    rotateX(var(--tilt-rotate-x, 0deg))
+    rotateY(var(--tilt-rotate-y, 0deg))
+    scale(var(--tilt-scale, 1));
+  transform-style: preserve-3d;
+  transition: transform 180ms ease;
+  will-change: transform;
+}
+
+.tilt-root:hover .tilt-inner {
+  transition-duration: 90ms;
+}
+
+.tilt-photo-img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
 a {
   color: inherit;
   text-decoration: none;
@@ -451,10 +485,14 @@ html[data-theme="light"] .hero-grid {
   display: none !important;
 }
 
+.hero-logo-tilt {
+  width: 100%;
+  max-width: 20rem;
+}
+
 .hero-visual-logo img {
   width: 100%;
   height: auto;
-  max-width: 20rem;
   object-fit: contain !important;
   padding: 0 !important;
   border-radius: 0 !important;
@@ -470,13 +508,13 @@ html[data-theme="dark"] .hero-visual-logo img {
 }
 
 @media (min-width: 768px) {
-  .hero-visual-logo img {
+  .hero-logo-tilt {
     max-width: 26rem;
   }
 }
 
 @media (min-width: 1024px) {
-  .hero-visual-logo img {
+  .hero-logo-tilt {
     max-width: 30rem;
   }
 }
@@ -1483,6 +1521,12 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   aspect-ratio: 1 / 1;
   border-radius: 0.7rem;
   overflow: hidden;
+  background: #0c0905;
+}
+
+.barber-pick-avatar img {
+  height: 100%;
+  width: 100%;
   object-fit: cover;
   /* Per-barber object-position is set via inline style on BarberAvatar
      since each portrait crops differently. This is just the default. */
@@ -1561,6 +1605,7 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
 }
 
 .barber-card-image > img,
+.barber-card-image > .tilt-root,
 .barber-card-image > .barber-monogram {
   width: 100%;
   height: 100%;
@@ -2463,6 +2508,12 @@ html[data-theme="light"] select.field-input option {
   background: var(--soft-bg);
 }
 
+.gallery-card > .tilt-root,
+.gallery-card > .tilt-root > .tilt-inner {
+  height: 100%;
+  min-height: inherit;
+}
+
 .gallery-card img {
   transition: transform 260ms ease;
 }
@@ -2910,6 +2961,11 @@ html[data-theme="light"] .slot-button:disabled {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .tilt-inner {
+    transform: none !important;
+    will-change: auto;
   }
 
   *,

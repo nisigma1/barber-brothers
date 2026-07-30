@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 
+import { Tilt } from "@/components/core/tilt";
 import type { BarberProfile } from "@/lib/barbers";
 
 interface Props {
@@ -35,15 +36,17 @@ export function BarberAvatar({ barber, className, imageClassName, monogramClassN
     const src = stage === "primary" ? barber.photoUrl ?? "" : barber.photoUrlFallback ?? "";
 
     return (
-      <img
-        src={src}
-        alt={barber.displayName}
-        className={`${className ?? ""} ${imageClassName ?? ""}`.trim()}
-        decoding="async"
-        loading={loading}
-        onError={handleError}
-        style={barber.photoObjectPosition ? { objectPosition: barber.photoObjectPosition } : undefined}
-      />
+      <Tilt className={`h-full w-full ${className ?? ""}`.trim()} innerClassName="h-full w-full" rotationFactor={5}>
+        <img
+          src={src}
+          alt={barber.displayName}
+          className={`tilt-photo-img ${imageClassName ?? ""}`.trim()}
+          decoding="async"
+          loading={loading}
+          onError={handleError}
+          style={barber.photoObjectPosition ? { objectPosition: barber.photoObjectPosition } : undefined}
+        />
+      </Tilt>
     );
   }
 
