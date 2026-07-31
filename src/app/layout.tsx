@@ -98,7 +98,6 @@ export const metadata: Metadata = {
     "Kosovo Albanian barber",
     "Uraniku",
     "Hysi",
-    "Edi",
     "Arti",
   ],
   applicationName: BRAND_NAME,
@@ -191,7 +190,7 @@ const businessJsonLd = {
   logo: absoluteBrandLogoUrl,
   image: [absoluteBrandLogoUrl],
   telephone: [CONTACT_DETAILS.primaryPhone, CONTACT_DETAILS.secondaryPhone],
-  priceRange: "€2 – €15",
+  priceRange: "€2 – €20",
   currenciesAccepted: "EUR",
   paymentAccepted: "Cash",
   address: {
@@ -263,7 +262,7 @@ const businessJsonLd = {
       {
         "@type": "Offer",
         itemOffered: { "@type": "Service", name: "All-in-One", description: "Tretman fytyre, qethje dhe rregullim mjekrre" },
-        price: "15",
+        price: "20",
         priceCurrency: "EUR",
       },
     ],

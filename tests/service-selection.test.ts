@@ -32,7 +32,7 @@ describe("service catalogue", () => {
     expect(face.durationMinutes).toBe(60);
     expect(face.price).toBe(15);
     expect(allInOne.durationMinutes).toBe(60);
-    expect(allInOne.price).toBe(15);
+    expect(allInOne.price).toBe(20);
   });
 
   it("premium product add-on is 0 min / 6 EUR", () => {
@@ -144,10 +144,10 @@ describe("getBookingService duration and pricing", () => {
     expect(service.price).toBe(13);
   });
 
-  it("all-in-one is 60 min / 15 EUR", () => {
+  it("all-in-one is 60 min / 20 EUR", () => {
     const service = getBookingService({ serviceIds: [ALL_IN_ONE_SERVICE_ID] });
     expect(service.durationMinutes).toBe(60);
-    expect(service.price).toBe(15);
+    expect(service.price).toBe(20);
   });
 
   it("face-treatment + haircut is 60 min / 20 EUR", () => {

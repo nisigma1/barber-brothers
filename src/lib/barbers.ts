@@ -65,23 +65,6 @@ export const BARBERS: BarberProfile[] = [
     staffPinEnvKey: "STAFF_PIN_BARBER_2",
   },
   {
-    id: "barber-4",
-    slug: "edi",
-    displayName: "Edi",
-    initials: "ED",
-    photoUrl: "/brand/edi.jpeg",
-    photoUrlFallback: null,
-    photoObjectPosition: "50% 31%",
-    role: { sq: "Barber", en: "Barber" },
-    shortBio: {
-      sq: "Mjekrra dhe konturim me dore te qete.",
-      en: "Beard work and contouring with a steady hand.",
-    },
-    active: true,
-    order: 3,
-    staffPinEnvKey: "STAFF_PIN_BARBER_4",
-  },
-  {
     id: "barber-5",
     slug: "arti",
     displayName: "Arti",
@@ -95,7 +78,7 @@ export const BARBERS: BarberProfile[] = [
       en: "Fresh style, clear energy.",
     },
     active: true,
-    order: 4,
+    order: 3,
     staffPinEnvKey: "STAFF_PIN_BARBER_5",
   },
 ];

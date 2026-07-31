@@ -1,5 +1,5 @@
 -- Relax staff_users.barber_id CHECK constraint so the table accepts any
--- active barber id from the central config (barber-3, barber-4, barber-5 ...)
+-- active barber id from the central config (for example barber-1, barber-2, barber-5)
 -- SQLite does not support ALTER COLUMN, so recreate the table.
 
 CREATE TABLE IF NOT EXISTS staff_users_new (

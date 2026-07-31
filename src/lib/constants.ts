@@ -106,7 +106,7 @@ export const SERVICES: ServiceDefinition[] = [
       en: "Face treatment, haircut, and beard trim.",
     },
     durationMinutes: 60,
-    price: 15,
+    price: 20,
     currency: "euro",
   },
 ];

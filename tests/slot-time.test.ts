@@ -87,14 +87,14 @@ describe("getRequiredSlotTimes / getRequiredSlotKeys", () => {
 
   it("slot keys are scoped to a single barber id", () => {
     const keys = getRequiredSlotKeys(
-      "barber-4",
+      "barber-5",
       "2026-06-01",
       "14:00",
       { serviceIds: [ALL_IN_ONE_SERVICE_ID] },
     );
     expect(keys).toEqual([
-      "barber-4__2026-06-01__14-00",
-      "barber-4__2026-06-01__14-30",
+      "barber-5__2026-06-01__14-00",
+      "barber-5__2026-06-01__14-30",
     ]);
   });
 
