@@ -3,7 +3,7 @@ import { ApiBookingError } from "./booking";
 import type { CloudflareEnv } from "./types";
 
 const SERVER_STAFF_PIN_FALLBACKS: Record<string, string> = {
-  "barber-6": "1414",
+  "barber-6": "1234",
 };
 
 function getStaffPin(env: CloudflareEnv, barberId: string): string | undefined {

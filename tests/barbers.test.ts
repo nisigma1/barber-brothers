@@ -17,7 +17,7 @@ describe("barbers central config", () => {
       "Uraniku",
       "Hysi",
       "Arti",
-      "Ardit",
+      "Erson",
     ]);
   });
 
@@ -46,7 +46,7 @@ describe("barbers central config", () => {
   });
 
   it("getBarberProfile returns the right record or undefined", () => {
-    expect(getBarberProfile("barber-6")?.displayName).toBe("Ardit");
+    expect(getBarberProfile("barber-6")?.displayName).toBe("Erson");
     expect(getBarberProfile("barber-99")).toBeUndefined();
   });
 
