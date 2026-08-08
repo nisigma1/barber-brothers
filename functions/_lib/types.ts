@@ -7,6 +7,7 @@ export type CloudflareEnv = {
   STAFF_PIN_BARBER_2?: string;
   STAFF_PIN_BARBER_4?: string;
   STAFF_PIN_BARBER_5?: string;
+  STAFF_PIN_BARBER_6?: string;
   [key: `STAFF_PIN_BARBER_${string}`]: string | undefined;
 };
 

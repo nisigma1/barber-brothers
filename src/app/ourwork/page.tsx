@@ -5,7 +5,7 @@ import { OurworkPage } from "@/components/ourwork/ourwork-page";
 export const metadata: Metadata = {
   title: "Our Work",
   description:
-    "Editorial gallery of recent cuts at Barber Brothers in Fushë Kosovë. Precision fades, beard work and controlled styling by Uraniku, Hysi and Arti.",
+    "Editorial gallery of recent cuts at Barber Brothers in Fushë Kosovë. Precision fades, beard work and controlled styling by Uraniku, Hysi, Arti and Ardit.",
   alternates: { canonical: "/ourwork" },
   openGraph: {
     title: "Our Work | Barber Brothers",

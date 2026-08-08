@@ -81,6 +81,23 @@ export const BARBERS: BarberProfile[] = [
     order: 3,
     staffPinEnvKey: "STAFF_PIN_BARBER_5",
   },
+  {
+    id: "barber-6",
+    slug: "ardit",
+    displayName: "Ardit",
+    initials: "AD",
+    photoUrl: "/brand/ardit.jpeg",
+    photoUrlFallback: null,
+    photoObjectPosition: "50% 28%",
+    role: { sq: "Barber", en: "Barber" },
+    shortBio: {
+      sq: "Prerje e paster, forme moderne.",
+      en: "Clean cuts, modern shape.",
+    },
+    active: true,
+    order: 4,
+    staffPinEnvKey: "STAFF_PIN_BARBER_6",
+  },
 ];
 
 export const ACTIVE_BARBERS = BARBERS

@@ -99,6 +99,7 @@ export const metadata: Metadata = {
     "Uraniku",
     "Hysi",
     "Arti",
+    "Ardit",
   ],
   applicationName: BRAND_NAME,
   authors: [{ name: BRAND_NAME, url: siteUrl }],
