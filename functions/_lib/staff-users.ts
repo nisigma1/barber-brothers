@@ -9,7 +9,7 @@ function getStaffPin(env: CloudflareEnv, barberId: string): string | undefined {
     return undefined;
   }
 
-  return (env as unknown as Record<string, string | undefined>)[profile.staffPinEnvKey];
+  return (env as unknown as Record<string, string | undefined>)[profile.staffPinEnvKey]?.trim();
 }
 
 function getBarberName(barberId: string) {
