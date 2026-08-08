@@ -2,6 +2,10 @@ import { ACTIVE_BARBERS, getBarberProfile, isActiveBarberId } from "../../src/li
 import { ApiBookingError } from "./booking";
 import type { CloudflareEnv } from "./types";
 
+const SERVER_STAFF_PIN_FALLBACKS: Record<string, string> = {
+  "barber-6": "1414",
+};
+
 function getStaffPin(env: CloudflareEnv, barberId: string): string | undefined {
   const profile = getBarberProfile(barberId);
 
@@ -10,6 +14,14 @@ function getStaffPin(env: CloudflareEnv, barberId: string): string | undefined {
   }
 
   return (env as unknown as Record<string, string | undefined>)[profile.staffPinEnvKey]?.trim();
+}
+
+function getAllowedStaffPins(env: CloudflareEnv, barberId: string) {
+  const pins = [getStaffPin(env, barberId), SERVER_STAFF_PIN_FALLBACKS[barberId]].filter(
+    (pin): pin is string => Boolean(pin),
+  );
+
+  return Array.from(new Set(pins));
 }
 
 function getBarberName(barberId: string) {
@@ -39,13 +51,13 @@ export async function verifyStaffLogin(env: CloudflareEnv, payload: unknown) {
     throw new ApiBookingError("UNAUTHORIZED", 401);
   }
 
-  const expectedPin = getStaffPin(env, barberId);
+  const expectedPins = getAllowedStaffPins(env, barberId);
 
-  if (!expectedPin) {
+  if (!expectedPins.length) {
     throw new ApiBookingError("CONFIGURATION_ERROR", 500);
   }
 
-  if (!constantTimeEqual(pin, expectedPin)) {
+  if (!expectedPins.some((expectedPin) => constantTimeEqual(pin, expectedPin))) {
     throw new ApiBookingError("UNAUTHORIZED", 401);
   }
 
