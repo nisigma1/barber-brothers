@@ -9,7 +9,7 @@ import {
   softDeleteClientBooking,
   staffLogout,
 } from "@/lib/booking/client";
-import type { BarberDayClosure, StaffBookingItem } from "@/lib/booking/types";
+import type { BarberDayClosure, StaffBookingStats, StaffBookingItem } from "@/lib/booking/types";
 import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
 import { QuickBookPanel } from "@/components/staff/quick-book-panel";
@@ -19,6 +19,35 @@ type StaffGroup = {
   label: string;
   items: StaffBookingItem[];
 };
+
+function isLocalDateInRange(localDate: string, startDate: string, endDate: string) {
+  return localDate >= startDate && localDate <= endDate;
+}
+
+function applyStatsDelta(
+  stats: StaffBookingStats | null,
+  localDate: string,
+  delta: 1 | -1,
+) {
+  if (!stats) {
+    return stats;
+  }
+
+  return {
+    week: {
+      ...stats.week,
+      count: isLocalDateInRange(localDate, stats.week.startDate, stats.week.endDate)
+        ? Math.max(0, stats.week.count + delta)
+        : stats.week.count,
+    },
+    month: {
+      ...stats.month,
+      count: isLocalDateInRange(localDate, stats.month.startDate, stats.month.endDate)
+        ? Math.max(0, stats.month.count + delta)
+        : stats.month.count,
+    },
+  };
+}
 
 function groupBookingsByDate(
   bookings: StaffBookingItem[],
@@ -69,6 +98,7 @@ export function StaffBookingsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [barberId, setBarberId] = useState<string | null>(null);
   const [closures, setClosures] = useState<BarberDayClosure[]>([]);
+  const [stats, setStats] = useState<StaffBookingStats | null>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   function toggleGroup(key: string) {
@@ -89,12 +119,14 @@ export function StaffBookingsPage() {
           setBarberId(dashboard.session.barberId);
           setBookings(dashboard.bookings);
           setClosures(dashboard.closures);
+          setStats(dashboard.stats);
         }
       } catch (error) {
         if (!ignore) {
           setBookings([]);
           setBarberId(null);
           setClosures([]);
+          setStats(null);
           setMessage(dictionary.staff.authRequired);
 
           if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
@@ -117,6 +149,7 @@ export function StaffBookingsPage() {
 
   function handleQuickBookCreated(booking: StaffBookingItem) {
     setBookings((current) => [...current, booking]);
+    setStats((current) => applyStatsDelta(current, booking.localDate, 1));
     setMessage(dictionary.staff.quickBookSuccess);
   }
 
@@ -130,6 +163,7 @@ export function StaffBookingsPage() {
     try {
       await softDeleteClientBooking(booking);
       setBookings((current) => current.filter((item) => item.bookingId !== booking.bookingId));
+      setStats((current) => applyStatsDelta(current, booking.localDate, -1));
       setMessage(dictionary.staff.deleted);
       setConfirmingId(null);
       if (expandedId === booking.bookingId) {
@@ -322,10 +356,11 @@ export function StaffBookingsPage() {
         </div>
 
         <div className="staff-dashboard-aside">
-          {barberId ? (
+          {barberId && stats ? (
             <QuickBookPanel
               barberId={barberId}
               closures={closures}
+              stats={stats}
               onClosuresChange={setClosures}
               onBookingCreated={handleQuickBookCreated}
             />

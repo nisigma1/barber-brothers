@@ -4,6 +4,7 @@ export { BARBERS, ACTIVE_BARBERS, ACTIVE_BARBER_IDS, getBarberProfile, getBarber
 export type { BarberProfile } from "@/lib/barbers";
 
 export const BRAND_NAME = "Barber Brothers";
+export const APP_VERSION = "v1.12";
 export const SHOP_TIMEZONE = "Europe/Pristina";
 export const SHOP_RUNTIME_TIMEZONE = "Europe/Tirane";
 export const SHOP_CITY = "Fushe Kosove";

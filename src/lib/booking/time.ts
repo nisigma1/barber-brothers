@@ -315,6 +315,14 @@ export function formatConfirmationDate(localDate: string, language: Language) {
   return englishLongDateFormatter.format(getShopNoonDate(localDate));
 }
 
+export function formatShortDate(localDate: string, language: Language) {
+  if (language === "sq") {
+    return formatAlbanianShortDate(localDate);
+  }
+
+  return englishShortDateFormatter.format(getShopNoonDate(localDate));
+}
+
 export function getAvailabilitySlots(
   barberId: BarberId,
   localDate: string,

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { CONTACT_DETAILS, SHOP_CITY } from "@/lib/constants";
+import { APP_VERSION, CONTACT_DETAILS, SHOP_CITY } from "@/lib/constants";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function SiteFooter() {
@@ -89,6 +89,7 @@ export function SiteFooter() {
       <div className="site-footer-strip mx-auto w-full max-w-7xl">
         <span className="site-footer-signature">{dictionary.home.footerSignature}</span>
         <span className="site-footer-copy">© {year} {dictionary.home.footerCopyright}</span>
+        <span className="site-footer-version">{APP_VERSION}</span>
       </div>
     </footer>
   );

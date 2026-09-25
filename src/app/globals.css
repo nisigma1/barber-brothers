@@ -846,6 +846,23 @@ html[data-theme="light"] .site-footer-statement {
   letter-spacing: 0.04em;
 }
 
+.site-footer-version {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: 1.75rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, var(--line));
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  padding: 0.28rem 0.72rem;
+  color: var(--accent-strong);
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
 @media (min-width: 640px) {
   .site-footer-strip {
     padding-inline: 1.5rem;
@@ -2030,6 +2047,96 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
 .quickbook-card {
   display: flex;
   flex-direction: column;
+}
+
+.quickbook-day-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 2.25rem;
+  align-items: stretch;
+  gap: 0.4rem;
+  min-width: 0;
+}
+
+.quickbook-date-button {
+  min-height: 4.65rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.quickbook-day-action {
+  display: inline-flex;
+  min-height: 2.25rem;
+  width: 2.25rem;
+  align-items: center;
+  justify-content: center;
+  align-self: start;
+  border-radius: 999px;
+  border-width: 1px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease,
+    transform 140ms ease;
+}
+
+.quickbook-day-action:hover {
+  transform: translateY(-1px);
+}
+
+.quickbook-stats-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.65rem;
+  margin-top: 0.8rem;
+}
+
+.quickbook-stat-card {
+  min-width: 0;
+  border-radius: 0.95rem;
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(217, 173, 114, 0.12), transparent 48%),
+    var(--soft-bg);
+  padding: 0.8rem 0.9rem;
+}
+
+.quickbook-stat-card span,
+.quickbook-stat-card small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.quickbook-stat-card strong {
+  display: block;
+  margin-top: 0.25rem;
+  color: var(--foreground);
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 1.8rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+  line-height: 0.95;
+}
+
+.quickbook-stat-card small {
+  margin-top: 0.45rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+@media (min-width: 520px) {
+  .quickbook-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .quickbook-modal-shell {

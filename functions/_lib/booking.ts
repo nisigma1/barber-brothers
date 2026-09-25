@@ -23,6 +23,7 @@ import type {
   BookingSummary,
   PublicBookingPayload,
   ServiceId,
+  StaffBookingStats,
   StaffBookingItem,
 } from "../../src/lib/booking/types";
 import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
@@ -71,6 +72,66 @@ function closureFromRow(row: BarberDayClosureRow): BarberDayClosure {
     reason: row.reason,
     createdAt: row.created_at,
   };
+}
+
+function localDateToUtcDate(localDate: string) {
+  const [year, month, day] = localDate.split("-").map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+}
+
+function formatLocalDateFromUtc(date: Date) {
+  const year = date.getUTCFullYear();
+  const month = `${date.getUTCMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getUTCDate()}`.padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function getCurrentWeekRange(today: string) {
+  const date = localDateToUtcDate(today);
+  const weekday = date.getUTCDay();
+  const daysFromMonday = weekday === 0 ? 6 : weekday - 1;
+  const start = new Date(date);
+  start.setUTCDate(date.getUTCDate() - daysFromMonday);
+  const end = new Date(start);
+  end.setUTCDate(start.getUTCDate() + 6);
+
+  return {
+    startDate: formatLocalDateFromUtc(start),
+    endDate: formatLocalDateFromUtc(end),
+  };
+}
+
+function getCurrentMonthRange(today: string) {
+  const date = localDateToUtcDate(today);
+  const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
+  const end = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0));
+
+  return {
+    startDate: formatLocalDateFromUtc(start),
+    endDate: formatLocalDateFromUtc(end),
+  };
+}
+
+async function countConfirmedBookings(
+  env: CloudflareEnv,
+  barberId: string,
+  startDate: string,
+  endDate: string,
+) {
+  const db = getDatabase(env);
+  const row = await db.prepare(
+    `SELECT COUNT(*) AS total
+    FROM bookings
+    WHERE status = 'confirmed'
+      AND barber_id = ?
+      AND local_date >= ?
+      AND local_date <= ?`,
+  )
+    .bind(barberId, startDate, endDate)
+    .first<{ total: number }>();
+
+  return Number(row?.total ?? 0);
 }
 
 async function getBarberDayClosure(
@@ -573,6 +634,30 @@ export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBook
     .all<BookingRow>();
 
   return (rows.results ?? []).map(staffItemFromRow);
+}
+
+export async function getStaffBookingStats(
+  env: CloudflareEnv,
+  barberId: PublicBookingPayload["barberId"],
+): Promise<StaffBookingStats> {
+  const today = getTodayLocalDate();
+  const week = getCurrentWeekRange(today);
+  const month = getCurrentMonthRange(today);
+  const [weekCount, monthCount] = await Promise.all([
+    countConfirmedBookings(env, barberId, week.startDate, week.endDate),
+    countConfirmedBookings(env, barberId, month.startDate, month.endDate),
+  ]);
+
+  return {
+    week: {
+      ...week,
+      count: weekCount,
+    },
+    month: {
+      ...month,
+      count: monthCount,
+    },
+  };
 }
 
 export async function listBarberDayClosures(

@@ -260,6 +260,8 @@ export const translations = {
       quickBookCancel: "Anulo",
       quickBookPending: "Duke ruajtur...",
       quickBookSuccess: "Termini u rezervua.",
+      quickBookWeekStats: "Kliente kete jave",
+      quickBookMonthStats: "Kliente kete muaj",
     },
     footer: {
       line: "Barber Brothers - Fushe Kosove - Rezervime direkte online",
@@ -525,6 +527,8 @@ export const translations = {
       quickBookCancel: "Cancel",
       quickBookPending: "Saving...",
       quickBookSuccess: "Appointment reserved.",
+      quickBookWeekStats: "Clients this week",
+      quickBookMonthStats: "Clients this month",
     },
     footer: {
       line: "Barber Brothers - Fushe Kosove - Direct online booking",

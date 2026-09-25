@@ -13,6 +13,7 @@ import {
 } from "@/lib/booking/client";
 import {
   formatConfirmationDate,
+  formatShortDate,
   getBookableDateOptions,
   getFirstOpenBookableDate,
   isShopClosedOnDate,
@@ -22,6 +23,7 @@ import type {
   BarberClosureReason,
   BarberDayClosure,
   ServiceId,
+  StaffBookingStats,
   StaffBookingItem,
 } from "@/lib/booking/types";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -29,6 +31,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 interface Props {
   barberId: string;
   closures: BarberDayClosure[];
+  stats: StaffBookingStats;
   onClosuresChange(closures: BarberDayClosure[]): void;
   onBookingCreated(booking: StaffBookingItem): void;
 }
@@ -47,6 +50,7 @@ function reasonLabel(
 export function QuickBookPanel({
   barberId,
   closures,
+  stats,
   onClosuresChange,
   onBookingCreated,
 }: Props) {
@@ -210,19 +214,19 @@ export function QuickBookPanel({
 
       <div className="mt-4">
         <p className="eyebrow text-white/45">{dictionary.staff.quickBookDateLabel}</p>
-        <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
+        <div className="mt-2 grid grid-cols-1 gap-2 min-[390px]:grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
           {dateOptions.map((dateOption) => {
             const active = selectedDate === dateOption.localDate;
             const customClosure = closureMap.get(dateOption.localDate) ?? null;
 
             return (
-              <div key={dateOption.localDate} className="relative">
+              <div key={dateOption.localDate} className="quickbook-day-card">
                 <button
                   type="button"
                   aria-pressed={active}
                   disabled={dateOption.closed}
                   onClick={() => setSelectedDate(dateOption.localDate)}
-                  className={`date-pill min-h-[5.2rem] w-full pr-10 text-left text-xs disabled:cursor-not-allowed disabled:opacity-45 sm:text-sm ${active ? "selected-card" : ""}`}
+                  className={`date-pill quickbook-date-button w-full text-left text-xs disabled:cursor-not-allowed disabled:opacity-45 sm:text-sm ${active ? "selected-card" : ""}`}
                 >
                   <span className="block font-semibold text-white">{dateOption.label}</span>
                   {dateOption.closed ? (
@@ -244,13 +248,30 @@ export function QuickBookPanel({
                       current === dateOption.localDate ? null : dateOption.localDate,
                     )
                   }
-                  className={`absolute right-2 top-2 flex h-5 w-5 items-center justify-center rounded-full border text-[0.65rem] font-semibold transition ${customClosure ? "border-rose-400/70 bg-rose-500/18 text-rose-200" : "border-[var(--color-accent)]/65 bg-black/65 text-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-white"}`}
+                  className={`quickbook-day-action ${customClosure ? "border-rose-400/70 bg-rose-500/18 text-rose-200" : "border-[var(--color-accent)]/65 bg-black/65 text-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-white"}`}
                 >
                   X
                 </button>
               </div>
             );
           })}
+        </div>
+
+        <div className="quickbook-stats-grid">
+          <div className="quickbook-stat-card">
+            <span>{dictionary.staff.quickBookWeekStats}</span>
+            <strong>{stats.week.count}</strong>
+            <small>
+              {formatShortDate(stats.week.startDate, language)} - {formatShortDate(stats.week.endDate, language)}
+            </small>
+          </div>
+          <div className="quickbook-stat-card">
+            <span>{dictionary.staff.quickBookMonthStats}</span>
+            <strong>{stats.month.count}</strong>
+            <small>
+              {formatShortDate(stats.month.startDate, language)} - {formatShortDate(stats.month.endDate, language)}
+            </small>
+          </div>
         </div>
 
         {closureMenuDate ? (

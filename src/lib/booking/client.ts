@@ -8,6 +8,7 @@ import type {
   BookingSummary,
   PublicBookingPayload,
   ServiceId,
+  StaffBookingStats,
   StaffBookingItem,
 } from "@/lib/booking/types";
 
@@ -111,6 +112,7 @@ export interface StaffDashboardData {
   session: StaffSession;
   bookings: StaffBookingItem[];
   closures: BarberDayClosure[];
+  stats: StaffBookingStats;
 }
 
 export async function getStaffDashboardData() {
