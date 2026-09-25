@@ -121,6 +121,9 @@ export interface StaffBookingStatsPeriod {
   count: number;
   startDate: string;
   endDate: string;
+  medicalLeaveDays: number;
+  timeOffDays: number;
+  closedDays: number;
 }
 
 export interface StaffBookingStats {

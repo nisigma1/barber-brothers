@@ -9,7 +9,12 @@ import {
   softDeleteClientBooking,
   staffLogout,
 } from "@/lib/booking/client";
-import type { BarberDayClosure, StaffBookingStats, StaffBookingItem } from "@/lib/booking/types";
+import type {
+  BarberClosureReason,
+  BarberDayClosure,
+  StaffBookingStats,
+  StaffBookingItem,
+} from "@/lib/booking/types";
 import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
 import { QuickBookPanel } from "@/components/staff/quick-book-panel";
@@ -46,6 +51,73 @@ function applyStatsDelta(
         ? Math.max(0, stats.month.count + delta)
         : stats.month.count,
     },
+  };
+}
+
+function isSundayLocalDate(localDate: string) {
+  const [year, month, day] = localDate.split("-").map(Number);
+
+  return new Date(Date.UTC(year, month - 1, day)).getUTCDay() === 0;
+}
+
+function adjustReasonCount(
+  period: StaffBookingStats["week"],
+  reason: BarberClosureReason,
+  delta: 1 | -1,
+) {
+  if (reason === "medical-leave") {
+    return {
+      ...period,
+      medicalLeaveDays: Math.max(0, period.medicalLeaveDays + delta),
+    };
+  }
+
+  return {
+    ...period,
+    timeOffDays: Math.max(0, period.timeOffDays + delta),
+  };
+}
+
+function applyClosureStatsChange(
+  stats: StaffBookingStats | null,
+  localDate: string,
+  previousReason: BarberClosureReason | null,
+  nextReason: BarberClosureReason | null,
+) {
+  if (!stats || isSundayLocalDate(localDate) || previousReason === nextReason) {
+    return stats;
+  }
+
+  const updatePeriod = (period: StaffBookingStats["week"]) => {
+    if (!isLocalDateInRange(localDate, period.startDate, period.endDate)) {
+      return period;
+    }
+
+    let nextPeriod = period;
+
+    if (previousReason) {
+      nextPeriod = adjustReasonCount(nextPeriod, previousReason, -1);
+    }
+
+    if (nextReason) {
+      nextPeriod = adjustReasonCount(nextPeriod, nextReason, 1);
+    }
+
+    const closedDelta = previousReason && !nextReason
+      ? -1
+      : !previousReason && nextReason
+        ? 1
+        : 0;
+
+    return {
+      ...nextPeriod,
+      closedDays: Math.max(0, nextPeriod.closedDays + closedDelta),
+    };
+  };
+
+  return {
+    week: updatePeriod(stats.week),
+    month: updatePeriod(stats.month),
   };
 }
 
@@ -151,6 +223,14 @@ export function StaffBookingsPage() {
     setBookings((current) => [...current, booking]);
     setStats((current) => applyStatsDelta(current, booking.localDate, 1));
     setMessage(dictionary.staff.quickBookSuccess);
+  }
+
+  function handleClosureStatsChange(
+    localDate: string,
+    previousReason: BarberClosureReason | null,
+    nextReason: BarberClosureReason | null,
+  ) {
+    setStats((current) => applyClosureStatsChange(current, localDate, previousReason, nextReason));
   }
 
   const groups = useMemo(
@@ -362,6 +442,7 @@ export function StaffBookingsPage() {
               closures={closures}
               stats={stats}
               onClosuresChange={setClosures}
+              onClosureStatsChange={handleClosureStatsChange}
               onBookingCreated={handleQuickBookCreated}
             />
           ) : null}

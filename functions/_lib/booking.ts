@@ -134,6 +134,38 @@ async function countConfirmedBookings(
   return Number(row?.total ?? 0);
 }
 
+async function countBarberClosures(
+  env: CloudflareEnv,
+  barberId: string,
+  startDate: string,
+  endDate: string,
+) {
+  const db = getDatabase(env);
+  const row = await db.prepare(
+    `SELECT
+      SUM(CASE WHEN reason = 'medical-leave' THEN 1 ELSE 0 END) AS medical_leave_days,
+      SUM(CASE WHEN reason = 'time-off' THEN 1 ELSE 0 END) AS time_off_days,
+      COUNT(*) AS closed_days
+    FROM barber_day_closures
+    WHERE barber_id = ?
+      AND local_date >= ?
+      AND local_date <= ?
+      AND strftime('%w', local_date) != '0'`,
+  )
+    .bind(barberId, startDate, endDate)
+    .first<{
+      medical_leave_days: number | null;
+      time_off_days: number | null;
+      closed_days: number | null;
+    }>();
+
+  return {
+    medicalLeaveDays: Number(row?.medical_leave_days ?? 0),
+    timeOffDays: Number(row?.time_off_days ?? 0),
+    closedDays: Number(row?.closed_days ?? 0),
+  };
+}
+
 async function getBarberDayClosure(
   env: CloudflareEnv,
   barberId: string,
@@ -643,19 +675,23 @@ export async function getStaffBookingStats(
   const today = getTodayLocalDate();
   const week = getCurrentWeekRange(today);
   const month = getCurrentMonthRange(today);
-  const [weekCount, monthCount] = await Promise.all([
+  const [weekCount, monthCount, weekClosures, monthClosures] = await Promise.all([
     countConfirmedBookings(env, barberId, week.startDate, week.endDate),
     countConfirmedBookings(env, barberId, month.startDate, month.endDate),
+    countBarberClosures(env, barberId, week.startDate, week.endDate),
+    countBarberClosures(env, barberId, month.startDate, month.endDate),
   ]);
 
   return {
     week: {
       ...week,
       count: weekCount,
+      ...weekClosures,
     },
     month: {
       ...month,
       count: monthCount,
+      ...monthClosures,
     },
   };
 }

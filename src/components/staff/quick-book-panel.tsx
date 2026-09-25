@@ -33,6 +33,11 @@ interface Props {
   closures: BarberDayClosure[];
   stats: StaffBookingStats;
   onClosuresChange(closures: BarberDayClosure[]): void;
+  onClosureStatsChange(
+    localDate: string,
+    previousReason: BarberClosureReason | null,
+    nextReason: BarberClosureReason | null,
+  ): void;
   onBookingCreated(booking: StaffBookingItem): void;
 }
 
@@ -52,6 +57,7 @@ export function QuickBookPanel({
   closures,
   stats,
   onClosuresChange,
+  onClosureStatsChange,
   onBookingCreated,
 }: Props) {
   const { dictionary, language } = useLanguage();
@@ -163,9 +169,11 @@ export function QuickBookPanel({
     setClosureError(null);
 
     try {
+      const previousReason = closureMap.get(closureMenuDate)?.reason ?? null;
       const closure = await setBarberDayClosure(closureMenuDate, reason);
       const nextClosures = closures.filter((item) => item.localDate !== closure.localDate);
       onClosuresChange([...nextClosures, closure].sort((a, b) => a.localDate.localeCompare(b.localDate)));
+      onClosureStatsChange(closure.localDate, previousReason, closure.reason);
       setClosureMenuDate(null);
       if (selectedDate === closure.localDate) {
         closeModal();
@@ -191,8 +199,10 @@ export function QuickBookPanel({
     setClosureError(null);
 
     try {
+      const previousReason = closureMap.get(localDate)?.reason ?? null;
       await removeBarberDayClosure(localDate);
       onClosuresChange(closures.filter((item) => item.localDate !== localDate));
+      onClosureStatsChange(localDate, previousReason, null);
       setClosureMenuDate(null);
     } catch (error) {
       if (error instanceof ClientBookingError) {
@@ -250,7 +260,7 @@ export function QuickBookPanel({
                   }
                   className={`quickbook-day-action ${customClosure ? "border-rose-400/70 bg-rose-500/18 text-rose-200" : "border-[var(--color-accent)]/65 bg-black/65 text-[var(--color-accent)] hover:border-[var(--color-accent)] hover:text-white"}`}
                 >
-                  X
+                  <span aria-hidden="true">×</span>
                 </button>
               </div>
             );
@@ -260,16 +270,46 @@ export function QuickBookPanel({
         <div className="quickbook-stats-grid">
           <div className="quickbook-stat-card">
             <span>{dictionary.staff.quickBookWeekStats}</span>
-            <strong>{stats.week.count}</strong>
+            <div className="quickbook-stat-value">
+              <strong>{stats.week.count}</strong>
+              <em>{dictionary.staff.quickBookClientStat}</em>
+            </div>
             <small>
               {formatShortDate(stats.week.startDate, language)} - {formatShortDate(stats.week.endDate, language)}
+            </small>
+            <div className="quickbook-leave-row" aria-label={dictionary.staff.quickBookLeaveDays}>
+              <span>
+                {stats.week.medicalLeaveDays} {dictionary.staff.quickBookLeaveMedicalShort}
+              </span>
+              <span>
+                {stats.week.timeOffDays} {dictionary.staff.quickBookLeaveTimeOffShort}
+              </span>
+            </div>
+            <small>
+              {stats.week.closedDays} {dictionary.staff.quickBookLeaveDays} ·{" "}
+              {dictionary.staff.quickBookStatsScope}
             </small>
           </div>
           <div className="quickbook-stat-card">
             <span>{dictionary.staff.quickBookMonthStats}</span>
-            <strong>{stats.month.count}</strong>
+            <div className="quickbook-stat-value">
+              <strong>{stats.month.count}</strong>
+              <em>{dictionary.staff.quickBookClientStat}</em>
+            </div>
             <small>
               {formatShortDate(stats.month.startDate, language)} - {formatShortDate(stats.month.endDate, language)}
+            </small>
+            <div className="quickbook-leave-row" aria-label={dictionary.staff.quickBookLeaveDays}>
+              <span>
+                {stats.month.medicalLeaveDays} {dictionary.staff.quickBookLeaveMedicalShort}
+              </span>
+              <span>
+                {stats.month.timeOffDays} {dictionary.staff.quickBookLeaveTimeOffShort}
+              </span>
+            </div>
+            <small>
+              {stats.month.closedDays} {dictionary.staff.quickBookLeaveDays} ·{" "}
+              {dictionary.staff.quickBookStatsScope}
             </small>
           </div>
         </div>

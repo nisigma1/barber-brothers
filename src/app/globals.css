@@ -2051,31 +2051,34 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
 
 .quickbook-day-card {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 2.25rem;
-  align-items: stretch;
-  gap: 0.4rem;
+  grid-template-columns: minmax(0, 1fr) 2.35rem;
+  align-items: start;
+  column-gap: 0.5rem;
   min-width: 0;
 }
 
 .quickbook-date-button {
   min-height: 4.65rem;
   min-width: 0;
+  padding-right: 0.85rem;
   overflow-wrap: anywhere;
   word-break: normal;
 }
 
 .quickbook-day-action {
   display: inline-flex;
-  min-height: 2.25rem;
-  width: 2.25rem;
+  min-height: 2.35rem;
+  width: 2.35rem;
   align-items: center;
   justify-content: center;
   align-self: start;
   border-radius: 999px;
   border-width: 1px;
-  font-size: 0.72rem;
+  font-family: var(--font-barlow), sans-serif;
+  font-size: 1rem;
   font-weight: 800;
   line-height: 1;
+  margin-top: 0.15rem;
   transition:
     border-color 140ms ease,
     background 140ms ease,
@@ -2098,13 +2101,11 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   min-width: 0;
   border-radius: 0.95rem;
   border: 1px solid var(--line);
-  background:
-    radial-gradient(circle at 12% 0%, rgba(217, 173, 114, 0.12), transparent 48%),
-    var(--soft-bg);
-  padding: 0.8rem 0.9rem;
+  background: color-mix(in srgb, var(--soft-bg) 92%, black);
+  padding: 0.85rem 0.9rem;
 }
 
-.quickbook-stat-card span,
+.quickbook-stat-card > span,
 .quickbook-stat-card small {
   display: block;
   color: var(--muted);
@@ -2115,21 +2116,57 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   text-transform: uppercase;
 }
 
+.quickbook-stat-value {
+  display: flex;
+  align-items: baseline;
+  gap: 0.45rem;
+  margin-top: 0.35rem;
+  min-width: 0;
+}
+
 .quickbook-stat-card strong {
-  display: block;
-  margin-top: 0.25rem;
+  display: inline-block;
   color: var(--foreground);
   font-family: var(--font-barlow), sans-serif;
-  font-size: 1.8rem;
+  font-size: 1.55rem;
   font-variant-numeric: tabular-nums;
-  letter-spacing: 0.04em;
-  line-height: 0.95;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+
+.quickbook-stat-value em {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.02em;
 }
 
 .quickbook-stat-card small {
   margin-top: 0.45rem;
   font-size: 0.58rem;
   letter-spacing: 0.08em;
+  text-transform: none;
+}
+
+.quickbook-leave-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.4rem;
+  margin-top: 0.65rem;
+}
+
+.quickbook-leave-row span {
+  min-width: 0;
+  border-radius: 0.55rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.035);
+  color: color-mix(in srgb, var(--foreground) 84%, var(--muted));
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  padding: 0.45rem 0.5rem;
   text-transform: none;
 }
 
