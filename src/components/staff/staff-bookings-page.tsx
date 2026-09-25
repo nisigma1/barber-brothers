@@ -25,6 +25,16 @@ type StaffGroup = {
   items: StaffBookingItem[];
 };
 
+const SELF_BOOKING_FIRST_NAME = "Rezervuar";
+const SELF_BOOKING_LAST_NAME = "Per vete";
+
+function isSelfReservedBooking(booking: StaffBookingItem) {
+  return (
+    booking.customerFirstName === SELF_BOOKING_FIRST_NAME
+    && booking.customerLastName === SELF_BOOKING_LAST_NAME
+  );
+}
+
 function isLocalDateInRange(localDate: string, startDate: string, endDate: string) {
   return localDate >= startDate && localDate <= endDate;
 }
@@ -340,6 +350,7 @@ export function StaffBookingsPage() {
                     const expanded = expandedId === booking.bookingId;
                     const confirming = confirmingId === booking.bookingId;
                     const isDeleting = deletingId === booking.bookingId;
+                    const selfReserved = isSelfReservedBooking(booking);
 
                     return (
                       <div key={booking.bookingId}>
@@ -355,9 +366,12 @@ export function StaffBookingsPage() {
                           </span>
                           <span className="staff-row-body">
                             <span className="staff-row-name">
-                              {booking.customerFirstName} {booking.customerLastName}
+                              {selfReserved
+                                ? dictionary.staff.quickBookModeSelf
+                                : `${booking.customerFirstName} ${booking.customerLastName}`}
                             </span>
                             <span className="staff-row-meta">
+                              {selfReserved ? `${dictionary.staff.quickBookModeSelfHint} · ` : ""}
                               {booking.barberName} · {booking.serviceName} ·{" "}
                               {booking.servicePrice} {booking.currency === "euro" ? "€" : booking.currency}
                             </span>
@@ -371,7 +385,9 @@ export function StaffBookingsPage() {
                           <div className="staff-row-details">
                             <div className="staff-row-detail-line">
                               <span>{dictionary.booking.summaryPhone}</span>
-                              <strong>{booking.customerPhone}</strong>
+                              <strong>
+                                {selfReserved ? dictionary.staff.quickBookModeSelfHint : booking.customerPhone}
+                              </strong>
                             </div>
                             <div className="staff-row-detail-line">
                               <span>{dictionary.booking.summaryService}</span>
@@ -385,12 +401,14 @@ export function StaffBookingsPage() {
                             </div>
 
                             <div className="staff-row-detail-actions">
-                              <a
-                                href={`tel:${booking.customerPhone}`}
-                                className="btn-ghost"
-                              >
-                                {dictionary.staff.callClient}
-                              </a>
+                              {!selfReserved ? (
+                                <a
+                                  href={`tel:${booking.customerPhone}`}
+                                  className="btn-ghost"
+                                >
+                                  {dictionary.staff.callClient}
+                                </a>
+                              ) : null}
 
                               {confirming ? (
                                 <>

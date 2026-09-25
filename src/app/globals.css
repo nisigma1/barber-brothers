@@ -2201,6 +2201,54 @@ html[data-theme="light"] .staff-login-hero p:not(.eyebrow) {
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
 }
 
+.quickbook-mode-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.55rem;
+}
+
+.quickbook-mode-option {
+  min-width: 0;
+  border-radius: 0.85rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+  padding: 0.78rem 0.85rem;
+  text-align: left;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    color 140ms ease;
+}
+
+.quickbook-mode-option strong,
+.quickbook-mode-option span {
+  display: block;
+}
+
+.quickbook-mode-option strong {
+  color: var(--foreground);
+  font-size: 0.88rem;
+  line-height: 1.25;
+}
+
+.quickbook-mode-option span {
+  margin-top: 0.2rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.quickbook-mode-option.is-active {
+  border-color: color-mix(in srgb, var(--accent) 72%, var(--line));
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+@media (min-width: 520px) {
+  .quickbook-mode-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 .install-app-button {
   display: inline-flex;
   align-items: center;

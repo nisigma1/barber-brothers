@@ -42,6 +42,10 @@ interface Props {
 }
 
 const DEFAULT_SERVICE: ServiceId = "haircut";
+const SELF_BOOKING_FIRST_NAME = "Rezervuar";
+const SELF_BOOKING_LAST_NAME = "Per vete";
+
+type QuickBookMode = "self" | "client";
 
 function reasonLabel(
   reason: BarberClosureReason,
@@ -65,6 +69,7 @@ export function QuickBookPanel({
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
   const [openSlot, setOpenSlot] = useState<AvailabilitySlot | null>(null);
+  const [bookingMode, setBookingMode] = useState<QuickBookMode>("self");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [serviceId, setServiceId] = useState<ServiceId>(DEFAULT_SERVICE);
@@ -114,6 +119,7 @@ export function QuickBookPanel({
 
   function closeModal() {
     setOpenSlot(null);
+    setBookingMode("self");
     setFirstName("");
     setLastName("");
     setServiceId(DEFAULT_SERVICE);
@@ -126,10 +132,10 @@ export function QuickBookPanel({
       return;
     }
 
-    const trimmedFirst = firstName.trim();
-    const trimmedLast = lastName.trim();
+    const trimmedFirst = bookingMode === "self" ? SELF_BOOKING_FIRST_NAME : firstName.trim();
+    const trimmedLast = bookingMode === "self" ? SELF_BOOKING_LAST_NAME : lastName.trim();
 
-    if (trimmedFirst.length < 2 || trimmedLast.length < 2) {
+    if (bookingMode === "client" && (trimmedFirst.length < 2 || trimmedLast.length < 2)) {
       setErrorCode("INVALID_REQUEST");
       return;
     }
@@ -387,7 +393,12 @@ export function QuickBookPanel({
                   key={slot.key}
                   type="button"
                   disabled={!slot.available}
-                  onClick={() => slot.available && setOpenSlot(slot)}
+                  onClick={() => {
+                    if (slot.available) {
+                      setBookingMode("self");
+                      setOpenSlot(slot);
+                    }
+                  }}
                   className={`slot-button ${slot.available ? "text-white/85 hover:text-white" : "opacity-45"}`}
                 >
                   <span className="block text-[0.92rem] font-semibold">{slot.localTime}</span>
@@ -407,30 +418,67 @@ export function QuickBookPanel({
               {formatConfirmationDate(selectedDate, language)} · {openSlot.localTime}
             </p>
 
-            <label className="field-label mt-4">
-              {dictionary.staff.quickBookFirstName}
-              <input
-                type="text"
-                value={firstName}
-                onChange={(event) => setFirstName(event.target.value)}
-                className="field-input"
-                autoFocus
-                required
-                minLength={2}
-              />
-            </label>
+            <div className="quickbook-mode-group mt-4" role="radiogroup" aria-label={dictionary.staff.quickBookModeLabel}>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={bookingMode === "self"}
+                onClick={() => {
+                  setBookingMode("self");
+                  setErrorCode(null);
+                }}
+                className={`quickbook-mode-option${bookingMode === "self" ? " is-active" : ""}`}
+              >
+                <strong>{dictionary.staff.quickBookModeSelf}</strong>
+                <span>{dictionary.staff.quickBookModeSelfHint}</span>
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={bookingMode === "client"}
+                onClick={() => {
+                  setBookingMode("client");
+                  setErrorCode(null);
+                }}
+                className={`quickbook-mode-option${bookingMode === "client" ? " is-active" : ""}`}
+              >
+                <strong>{dictionary.staff.quickBookModeClient}</strong>
+                <span>{dictionary.staff.quickBookModeClientHint}</span>
+              </button>
+            </div>
 
-            <label className="field-label mt-3">
-              {dictionary.staff.quickBookLastName}
-              <input
-                type="text"
-                value={lastName}
-                onChange={(event) => setLastName(event.target.value)}
-                className="field-input"
-                required
-                minLength={2}
-              />
-            </label>
+            {bookingMode === "client" ? (
+              <>
+                <label className="field-label mt-4">
+                  {dictionary.staff.quickBookFirstName}
+                  <input
+                    type="text"
+                    value={firstName}
+                    onChange={(event) => setFirstName(event.target.value)}
+                    className="field-input"
+                    autoFocus
+                    required
+                    minLength={2}
+                  />
+                </label>
+
+                <label className="field-label mt-3">
+                  {dictionary.staff.quickBookLastName}
+                  <input
+                    type="text"
+                    value={lastName}
+                    onChange={(event) => setLastName(event.target.value)}
+                    className="field-input"
+                    required
+                    minLength={2}
+                  />
+                </label>
+              </>
+            ) : (
+              <p className="mt-4 rounded-[0.85rem] border border-white/10 bg-white/[0.035] px-3 py-2 text-sm text-white/68">
+                {dictionary.staff.quickBookModeSelfNote}
+              </p>
+            )}
 
             <label className="field-label mt-3">
               {dictionary.staff.quickBookService}
@@ -466,7 +514,11 @@ export function QuickBookPanel({
                 disabled={submitting}
                 className="btn-primary disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {submitting ? dictionary.staff.quickBookPending : dictionary.staff.quickBookConfirm}
+                {submitting
+                  ? dictionary.staff.quickBookPending
+                  : bookingMode === "self"
+                    ? dictionary.staff.quickBookConfirmSelf
+                    : dictionary.staff.quickBookConfirm}
               </button>
               <button type="button" onClick={closeModal} className="btn-secondary">
                 {dictionary.staff.quickBookCancel}
