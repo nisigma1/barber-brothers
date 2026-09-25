@@ -18,6 +18,7 @@ import {
   getFirstOpenBookableDate,
   isShopClosedOnDate,
 } from "@/lib/booking/time";
+import { SELF_BOOKING_FIRST_NAME, SELF_BOOKING_LAST_NAME } from "@/lib/booking/staff-reservations";
 import type {
   AvailabilitySlot,
   BarberClosureReason,
@@ -42,8 +43,6 @@ interface Props {
 }
 
 const DEFAULT_SERVICE: ServiceId = "haircut";
-const SELF_BOOKING_FIRST_NAME = "Rezervuar";
-const SELF_BOOKING_LAST_NAME = "Per vete";
 
 type QuickBookMode = "self" | "client";
 

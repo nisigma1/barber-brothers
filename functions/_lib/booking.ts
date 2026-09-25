@@ -27,6 +27,7 @@ import type {
   StaffBookingItem,
 } from "../../src/lib/booking/types";
 import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
+import { SELF_BOOKING_FIRST_NAME, SELF_BOOKING_LAST_NAME } from "../../src/lib/booking/staff-reservations";
 import {
   barberClosureDeleteSchema,
   barberClosureSchema,
@@ -126,9 +127,10 @@ async function countConfirmedBookings(
     WHERE status = 'confirmed'
       AND barber_id = ?
       AND local_date >= ?
-      AND local_date <= ?`,
+      AND local_date <= ?
+      AND NOT (customer_first_name = ? AND customer_last_name = ?)`,
   )
-    .bind(barberId, startDate, endDate)
+    .bind(barberId, startDate, endDate, SELF_BOOKING_FIRST_NAME, SELF_BOOKING_LAST_NAME)
     .first<{ total: number }>();
 
   return Number(row?.total ?? 0);

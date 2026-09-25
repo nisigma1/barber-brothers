@@ -15,6 +15,7 @@ import type {
   StaffBookingStats,
   StaffBookingItem,
 } from "@/lib/booking/types";
+import { isSelfReservedName } from "@/lib/booking/staff-reservations";
 import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
 import { QuickBookPanel } from "@/components/staff/quick-book-panel";
@@ -25,14 +26,8 @@ type StaffGroup = {
   items: StaffBookingItem[];
 };
 
-const SELF_BOOKING_FIRST_NAME = "Rezervuar";
-const SELF_BOOKING_LAST_NAME = "Per vete";
-
 function isSelfReservedBooking(booking: StaffBookingItem) {
-  return (
-    booking.customerFirstName === SELF_BOOKING_FIRST_NAME
-    && booking.customerLastName === SELF_BOOKING_LAST_NAME
-  );
+  return isSelfReservedName(booking.customerFirstName, booking.customerLastName);
 }
 
 function isLocalDateInRange(localDate: string, startDate: string, endDate: string) {
@@ -231,7 +226,9 @@ export function StaffBookingsPage() {
 
   function handleQuickBookCreated(booking: StaffBookingItem) {
     setBookings((current) => [...current, booking]);
-    setStats((current) => applyStatsDelta(current, booking.localDate, 1));
+    if (!isSelfReservedBooking(booking)) {
+      setStats((current) => applyStatsDelta(current, booking.localDate, 1));
+    }
     setMessage(dictionary.staff.quickBookSuccess);
   }
 
@@ -253,7 +250,9 @@ export function StaffBookingsPage() {
     try {
       await softDeleteClientBooking(booking);
       setBookings((current) => current.filter((item) => item.bookingId !== booking.bookingId));
-      setStats((current) => applyStatsDelta(current, booking.localDate, -1));
+      if (!isSelfReservedBooking(booking)) {
+        setStats((current) => applyStatsDelta(current, booking.localDate, -1));
+      }
       setMessage(dictionary.staff.deleted);
       setConfirmingId(null);
       if (expandedId === booking.bookingId) {
