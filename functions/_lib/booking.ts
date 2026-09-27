@@ -27,7 +27,11 @@ import type {
   StaffBookingItem,
 } from "../../src/lib/booking/types";
 import { normalizeKosovoPhone } from "../../src/lib/booking/phone";
-import { SELF_BOOKING_FIRST_NAME, SELF_BOOKING_LAST_NAME } from "../../src/lib/booking/staff-reservations";
+import {
+  SELF_BOOKING_FIRST_NAME,
+  SELF_BOOKING_LAST_NAME,
+  STAFF_QUICK_BOOK_PHONE,
+} from "../../src/lib/booking/staff-reservations";
 import {
   barberClosureDeleteSchema,
   barberClosureSchema,
@@ -106,11 +110,10 @@ function getCurrentWeekRange(today: string) {
 function getCurrentMonthRange(today: string) {
   const date = localDateToUtcDate(today);
   const start = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), 1));
-  const end = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth() + 1, 0));
 
   return {
     startDate: formatLocalDateFromUtc(start),
-    endDate: formatLocalDateFromUtc(end),
+    endDate: today,
   };
 }
 
@@ -128,9 +131,19 @@ async function countConfirmedBookings(
       AND barber_id = ?
       AND local_date >= ?
       AND local_date <= ?
+      AND customer_phone != ?
+      AND length(trim(customer_first_name)) >= 2
+      AND length(trim(customer_last_name)) >= 2
       AND NOT (customer_first_name = ? AND customer_last_name = ?)`,
   )
-    .bind(barberId, startDate, endDate, SELF_BOOKING_FIRST_NAME, SELF_BOOKING_LAST_NAME)
+    .bind(
+      barberId,
+      startDate,
+      endDate,
+      STAFF_QUICK_BOOK_PHONE,
+      SELF_BOOKING_FIRST_NAME,
+      SELF_BOOKING_LAST_NAME,
+    )
     .first<{ total: number }>();
 
   return Number(row?.total ?? 0);
@@ -450,8 +463,6 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     cancellationToken,
   } satisfies BookingSummary;
 }
-
-const STAFF_QUICK_BOOK_PHONE = "+38300000000";
 
 export async function createStaffQuickBooking(
   env: CloudflareEnv,

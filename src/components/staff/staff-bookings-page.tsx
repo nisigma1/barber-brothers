@@ -15,7 +15,7 @@ import type {
   StaffBookingStats,
   StaffBookingItem,
 } from "@/lib/booking/types";
-import { isSelfReservedName } from "@/lib/booking/staff-reservations";
+import { isSelfReservedName, isStaffManagedBooking } from "@/lib/booking/staff-reservations";
 import { formatConfirmationDate, getTodayLocalDate, addDaysToLocalDate } from "@/lib/booking/time";
 import { useLanguage } from "@/components/providers/language-provider";
 import { QuickBookPanel } from "@/components/staff/quick-book-panel";
@@ -28,6 +28,14 @@ type StaffGroup = {
 
 function isSelfReservedBooking(booking: StaffBookingItem) {
   return isSelfReservedName(booking.customerFirstName, booking.customerLastName);
+}
+
+function isClientCountedBooking(booking: StaffBookingItem) {
+  return !isStaffManagedBooking(
+    booking.customerFirstName,
+    booking.customerLastName,
+    booking.customerPhone,
+  );
 }
 
 function isLocalDateInRange(localDate: string, startDate: string, endDate: string) {
@@ -226,7 +234,7 @@ export function StaffBookingsPage() {
 
   function handleQuickBookCreated(booking: StaffBookingItem) {
     setBookings((current) => [...current, booking]);
-    if (!isSelfReservedBooking(booking)) {
+    if (isClientCountedBooking(booking)) {
       setStats((current) => applyStatsDelta(current, booking.localDate, 1));
     }
     setMessage(dictionary.staff.quickBookSuccess);
@@ -250,7 +258,7 @@ export function StaffBookingsPage() {
     try {
       await softDeleteClientBooking(booking);
       setBookings((current) => current.filter((item) => item.bookingId !== booking.bookingId));
-      if (!isSelfReservedBooking(booking)) {
+      if (isClientCountedBooking(booking)) {
         setStats((current) => applyStatsDelta(current, booking.localDate, -1));
       }
       setMessage(dictionary.staff.deleted);
@@ -350,6 +358,7 @@ export function StaffBookingsPage() {
                     const confirming = confirmingId === booking.bookingId;
                     const isDeleting = deletingId === booking.bookingId;
                     const selfReserved = isSelfReservedBooking(booking);
+                    const clientCounted = isClientCountedBooking(booking);
 
                     return (
                       <div key={booking.bookingId}>
@@ -400,7 +409,7 @@ export function StaffBookingsPage() {
                             </div>
 
                             <div className="staff-row-detail-actions">
-                              {!selfReserved ? (
+                              {clientCounted ? (
                                 <a
                                   href={`tel:${booking.customerPhone}`}
                                   className="btn-ghost"
