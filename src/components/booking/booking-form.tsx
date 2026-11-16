@@ -5,6 +5,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import {
   ADD_ONS,
   ACTIVE_BARBERS,
+  CONTACT_DETAILS,
   DEFAULT_SERVICE_IDS,
   FACE_TREATMENT_SERVICE_ID,
   SERVICES,
@@ -472,6 +473,22 @@ export function BookingForm() {
                   </button>
                 );
               })}
+            </div>
+
+            <p className="text-sm text-white/70">{dictionary.booking.beardSelectionNote}</p>
+
+            <div className="space-y-1.5 rounded-[0.9rem] bg-white/5 p-3 text-sm text-white/70">
+              <p className="flex items-baseline justify-between gap-3">
+                <span>{dictionary.booking.afterHoursHaircut}</span>
+                <strong className="shrink-0 text-white">10€</strong>
+              </p>
+              <p className="flex items-baseline justify-between gap-3">
+                <span>{dictionary.booking.offSiteHaircut}</span>
+                <strong className="shrink-0 text-white">30€</strong>
+              </p>
+              <a className="inline-block text-[var(--color-accent)] underline" href={`tel:${CONTACT_DETAILS.primaryPhone}`}>
+                {dictionary.booking.callToArrangeHaircut}
+              </a>
             </div>
 
             {ADD_ONS.length > 0 ? (

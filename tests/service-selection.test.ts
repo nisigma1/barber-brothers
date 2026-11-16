@@ -17,12 +17,12 @@ describe("service catalogue", () => {
     );
   });
 
-  it("haircut and beard-trim are 30 min main services", () => {
+  it("haircut is 30 min and beard-trim is 15 min", () => {
     const haircut = SERVICES.find((s) => s.id === "haircut")!;
     const beard = SERVICES.find((s) => s.id === "beard-trim")!;
     expect(haircut.durationMinutes).toBe(30);
     expect(haircut.price).toBe(5);
-    expect(beard.durationMinutes).toBe(30);
+    expect(beard.durationMinutes).toBe(15);
     expect(beard.price).toBe(2);
   });
 
@@ -126,12 +126,12 @@ describe("getBookingService duration and pricing", () => {
     expect(service.price).toBe(11);
   });
 
-  it("beard-trim + premium product stays 30 min / 8 EUR", () => {
+  it("beard-trim + premium product is 15 min / 8 EUR", () => {
     const service = getBookingService({
       serviceIds: ["beard-trim"],
       addOnIds: ["premium-product"],
     });
-    expect(service.durationMinutes).toBe(30);
+    expect(service.durationMinutes).toBe(15);
     expect(service.price).toBe(8);
   });
 

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildSlotKey,
   generateDailySlotTimes,
+  getAvailabilitySlots,
   getEndLocalTime,
   getRequiredSlotKeys,
   getRequiredSlotTimes,
@@ -22,6 +23,17 @@ describe("time utilities", () => {
 });
 
 describe("daily slot generation", () => {
+  it("offers 15-min beard trims on the existing grid without reopening booked slots", () => {
+    const barberId = "barber-1";
+    const date = "2026-06-01";
+    const bookedSlots = new Set([buildSlotKey(barberId, date, "14:00")]);
+    const slots = getAvailabilitySlots(barberId, date, bookedSlots, "beard-trim", new Date("2026-06-01T07:00:00Z"));
+
+    expect(slots.find((slot) => slot.localTime === "14:00")).toMatchObject({ available: false });
+    expect(slots.find((slot) => slot.localTime === "14:30")).toMatchObject({ available: true, endLocalTime: "14:45" });
+    expect(slots.some((slot) => slot.localTime === "14:15")).toBe(false);
+  });
+
   it("default 30-min service produces slots in 09:30-20:30 window with 12:30 break removed", () => {
     const slots = generateDailySlotTimes({ serviceId: "haircut" });
     expect(slots[0]).toBe("09:30");

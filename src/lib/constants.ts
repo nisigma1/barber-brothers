@@ -76,7 +76,7 @@ export const SERVICES: ServiceDefinition[] = [
       sq: "Kontur i qarte dhe forme e kontrolluar.",
       en: "Sharp lines and controlled shape.",
     },
-    durationMinutes: 30,
+    durationMinutes: 15,
     price: 2,
     currency: "euro",
   },
