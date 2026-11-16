@@ -32,7 +32,7 @@ export const FACE_TREATMENT_SERVICE_ID = "face-treatment" as const;
 
 export type ServiceDefinition = {
   id: ServiceId;
-  type: "main" | "package";
+  type: "main" | "package" | "special";
   name: Record<Language, string>;
   description: Record<Language, string>;
   durationMinutes: number;
@@ -110,6 +110,24 @@ export const SERVICES: ServiceDefinition[] = [
     price: 20,
     currency: "euro",
   },
+  {
+    id: "after-hours-haircut",
+    type: "special",
+    name: { sq: "Qethje pas orarit", en: "After-hours haircut" },
+    description: { sq: "E hënë–e shtunë, 20:30–23:00", en: "Monday–Saturday, 20:30–23:00" },
+    durationMinutes: 30,
+    price: 10,
+    currency: "euro",
+  },
+  {
+    id: "off-site-haircut",
+    type: "special",
+    name: { sq: "Qethje jashtë lokalit", en: "Off-site haircut" },
+    description: { sq: "Prishtinë dhe Fushë Kosovë", en: "Prishtina and Fushë Kosovë" },
+    durationMinutes: 30,
+    price: 30,
+    currency: "euro",
+  },
 ];
 
 export const ADD_ONS: AddOnDefinition[] = [
@@ -174,6 +192,10 @@ export function isFaceTreatmentSelection(serviceIds: ServiceId[]) {
   return serviceIds.includes(FACE_TREATMENT_SERVICE_ID);
 }
 
+export function isSpecialHaircutSelection(serviceIds: ServiceId[]) {
+  return serviceIds.includes("after-hours-haircut") || serviceIds.includes("off-site-haircut");
+}
+
 export function isValidServiceSelection(selection: ServiceSelectionInput = {}) {
   const serviceIds = getSelectedServiceIds(selection);
   const addOnIds = getSelectedAddOnIds(selection.addOnIds);
@@ -188,7 +210,7 @@ export function isValidServiceSelection(selection: ServiceSelectionInput = {}) {
     return false;
   }
 
-  if (hasAllInOne) {
+  if (hasAllInOne || isSpecialHaircutSelection(serviceIds)) {
     return serviceIds.length === 1 && addOnIds.length === 0;
   }
 
@@ -252,6 +274,8 @@ export const WORKING_HOURS = {
 export const BOOKING_WINDOW_DAYS = 7;
 export const BOOKING_CUTOFF_MINUTES = 60;
 export const SLOT_INTERVAL_MINUTES = 30;
+export const AFTER_HOURS_END_MINUTES = 23 * 60;
+export const OFF_SITE_TRAVEL_MINUTES = 30;
 
 export const LUNCH_BREAK = {
   startMinutes: 12 * 60 + 30,

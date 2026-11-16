@@ -23,6 +23,25 @@ describe("time utilities", () => {
 });
 
 describe("daily slot generation", () => {
+  it("offers after-hours haircuts only after regular hours, finishing by 23:00", () => {
+    const slots = generateDailySlotTimes("after-hours-haircut");
+    expect(slots).toEqual(["20:30", "21:00", "21:30", "22:00", "22:30"]);
+    expect(getEndLocalTime("22:30", "after-hours-haircut")).toBe("23:00");
+  });
+
+  it("reserves travel on both sides of an off-site haircut and respects existing locks", () => {
+    const barberId = "barber-1";
+    const date = "2026-06-01";
+    const service = "off-site-haircut";
+    expect(getRequiredSlotTimes("14:00", service)).toEqual(["13:30", "14:00", "14:30"]);
+    expect(getEndLocalTime("14:00", service)).toBe("14:30");
+    const bookedSlots = new Set([buildSlotKey(barberId, date, "13:30")]);
+    const slots = getAvailabilitySlots(barberId, date, bookedSlots, service, new Date("2026-06-01T07:00:00Z"));
+    expect(slots.find((slot) => slot.localTime === "14:00")?.available).toBe(false);
+    expect(slots.find((slot) => slot.localTime === "14:30")?.available).toBe(true);
+    expect(slots.map((slot) => slot.localTime)).not.toEqual(expect.arrayContaining(["12:00", "20:00"]));
+  });
+
   it("offers 15-min beard trims on the existing grid without reopening booked slots", () => {
     const barberId = "barber-1";
     const date = "2026-06-01";

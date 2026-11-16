@@ -231,11 +231,11 @@ async function getSlotContext(env: CloudflareEnv, payload: PublicBookingPayload)
     throw new ApiBookingError("INVALID_SLOT");
   }
 
-  if (!isSlotAtLeastOneHourAhead(payload.localDate, payload.localTime)) {
+  const requiredSlotTimes = getRequiredSlotTimes(payload.localTime, serviceSelection);
+  if (!isSlotAtLeastOneHourAhead(payload.localDate, requiredSlotTimes[0])) {
     throw new ApiBookingError("BOOKING_CUTOFF");
   }
 
-  const requiredSlotTimes = getRequiredSlotTimes(payload.localTime, serviceSelection);
   const requiredSlotKeys = getRequiredSlotKeys(payload.barberId, payload.localDate, payload.localTime, serviceSelection);
 
   return {
@@ -264,6 +264,8 @@ export function summaryFromRow(row: BookingRow): BookingSummary {
     customerLastName: row.customer_last_name,
     customerPhone: row.customer_phone,
     priceLabel: `${row.service_price} ${row.currency}`,
+    visitCity: row.visit_city ?? undefined,
+    visitAddress: row.visit_address ?? undefined,
   };
 }
 
@@ -426,6 +428,9 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
         bookingRecord.deletedAt,
         bookingRecord.cancellationToken ?? null,
       ),
+      ...(cleanPayload.visitCity && cleanPayload.visitAddress ? [db.prepare(
+        "UPDATE bookings SET visit_city = ?, visit_address = ? WHERE booking_id = ?",
+      ).bind(cleanPayload.visitCity, cleanPayload.visitAddress, bookingRecord.bookingId)] : []),
     ]);
   } catch (error) {
     const message = error instanceof Error ? error.message.toLowerCase() : "";
@@ -461,6 +466,8 @@ export async function createBooking(env: CloudflareEnv, payload: unknown) {
     customerPhone: bookingRecord.customerPhone,
     priceLabel: `${bookingRecord.servicePrice} ${bookingRecord.currency}`,
     cancellationToken,
+    visitCity: cleanPayload.visitCity,
+    visitAddress: cleanPayload.visitAddress,
   } satisfies BookingSummary;
 }
 
@@ -669,7 +676,8 @@ export async function listStaffBookings(env: CloudflareEnv, barberId: PublicBook
     `SELECT
       booking_id, submission_id, slot_key, barber_id, barber_name, service_name, service_duration_minutes,
       service_price, currency, local_date, local_time, end_local_time, start_utc, end_utc,
-      customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at
+      customer_first_name, customer_last_name, customer_phone, timezone, status, created_at, deleted_at,
+      visit_city, visit_address
     FROM bookings
     WHERE status = 'confirmed' AND barber_id = ? AND local_date >= ?
     ORDER BY start_utc ASC

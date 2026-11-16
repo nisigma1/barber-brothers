@@ -1,4 +1,7 @@
 import {
+  AFTER_HOURS_END_MINUTES,
+  OFF_SITE_TRAVEL_MINUTES,
+  getBookingService,
   BARBERS,
   BOOKING_CUTOFF_MINUTES,
   BOOKING_WINDOW_DAYS,
@@ -198,16 +201,21 @@ export function isDateWithinBookingWindow(localDate: string, now = new Date()) {
 }
 
 export function generateDailySlotTimes(serviceSelection: SlotServiceSelection = DEFAULT_SERVICE_ID) {
-  const durationMinutes = getServiceDurationMinutes(toServiceSelectionInput(serviceSelection));
+  const service = getBookingService(toServiceSelectionInput(serviceSelection));
+  const afterHours = service.id === "after-hours-haircut";
+  const travel = service.id === "off-site-haircut" ? OFF_SITE_TRAVEL_MINUTES : 0;
+  const startMinutes = afterHours ? WORKING_HOURS.closeMinutes : WORKING_HOURS.openMinutes;
+  const endMinutes = afterHours ? AFTER_HOURS_END_MINUTES : WORKING_HOURS.closeMinutes;
+  const occupiedMinutes = service.durationMinutes + 2 * travel;
   const slots: string[] = [];
 
   for (
-    let cursor = WORKING_HOURS.openMinutes;
-    cursor + durationMinutes <= WORKING_HOURS.closeMinutes;
+    let cursor = startMinutes;
+    cursor + occupiedMinutes <= endMinutes;
     cursor += SLOT_INTERVAL_MINUTES
   ) {
-    if (!slotOverlapsLunchBreak(cursor, durationMinutes)) {
-      slots.push(minutesToTime(cursor));
+    if (!slotOverlapsLunchBreak(cursor, occupiedMinutes)) {
+      slots.push(minutesToTime(cursor + travel));
     }
   }
 
@@ -258,9 +266,10 @@ export function buildSlotKey(barberId: BarberId, localDate: string, localTime: s
 }
 
 export function getRequiredSlotTimes(localTime: string, serviceSelection: SlotServiceSelection = DEFAULT_SERVICE_ID) {
-  const durationMinutes = getServiceDurationMinutes(toServiceSelectionInput(serviceSelection));
-  const startMinutes = timeToMinutes(localTime);
-  const slotCount = Math.ceil(durationMinutes / SLOT_INTERVAL_MINUTES);
+  const service = getBookingService(toServiceSelectionInput(serviceSelection));
+  const travel = service.id === "off-site-haircut" ? OFF_SITE_TRAVEL_MINUTES : 0;
+  const startMinutes = timeToMinutes(localTime) - travel;
+  const slotCount = Math.ceil((service.durationMinutes + 2 * travel) / SLOT_INTERVAL_MINUTES);
 
   return Array.from({ length: slotCount }, (_, index) => minutesToTime(startMinutes + index * SLOT_INTERVAL_MINUTES));
 }
@@ -332,8 +341,8 @@ export function getAvailabilitySlots(
 ): AvailabilitySlot[] {
   return generateDailySlotTimes(serviceSelection).map((localTime) => {
     const key = buildSlotKey(barberId, localDate, localTime);
-    const requiredSlotKeys = getRequiredSlotKeys(barberId, localDate, localTime, serviceSelection);
-    const hasConflict = requiredSlotKeys.some((requiredKey) => activeSlotKeys.has(requiredKey));
+    const requiredSlotTimes = getRequiredSlotTimes(localTime, serviceSelection);
+    const hasConflict = requiredSlotTimes.some((time) => activeSlotKeys.has(buildSlotKey(barberId, localDate, time)));
     const endLocalTime = getEndLocalTime(localTime, serviceSelection);
 
     return {
@@ -342,7 +351,7 @@ export function getAvailabilitySlots(
       localTime,
       endLocalTime,
       label: `${localTime}-${endLocalTime}`,
-      available: isSlotAtLeastOneHourAhead(localDate, localTime, now) && !hasConflict,
+      available: isSlotAtLeastOneHourAhead(localDate, requiredSlotTimes[0], now) && !hasConflict,
     };
   });
 }

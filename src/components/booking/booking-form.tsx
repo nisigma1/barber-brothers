@@ -5,13 +5,13 @@ import { useEffect, useId, useRef, useState } from "react";
 import {
   ADD_ONS,
   ACTIVE_BARBERS,
-  CONTACT_DETAILS,
   DEFAULT_SERVICE_IDS,
   FACE_TREATMENT_SERVICE_ID,
   SERVICES,
   getBookingService,
   isFaceTreatmentSelection,
   isAllInOneSelection,
+  isSpecialHaircutSelection,
 } from "@/lib/constants";
 import { isBarberClosedOnDate } from "@/lib/barbers";
 import { ClientBookingError, createClientBooking, getClientAvailability } from "@/lib/booking/client";
@@ -22,7 +22,7 @@ import {
   getFirstOpenBookableDate,
   isShopClosedOnDate,
 } from "@/lib/booking/time";
-import type { AddOnId, ApiErrorCode, AvailabilitySlot, BarberId, BookingSummary as BookingSummaryType, ServiceId } from "@/lib/booking/types";
+import { OFF_SITE_CITIES, type AddOnId, type ApiErrorCode, type AvailabilitySlot, type BarberId, type BookingSummary as BookingSummaryType, type OffSiteCity, type ServiceId } from "@/lib/booking/types";
 import { normalizeKosovoPhone } from "@/lib/booking/phone";
 import { useLanguage } from "@/components/providers/language-provider";
 import { BookingSummary } from "@/components/booking/booking-summary";
@@ -62,6 +62,8 @@ export function BookingForm() {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [visitCity, setVisitCity] = useState<OffSiteCity | "">("");
+  const [visitAddress, setVisitAddress] = useState("");
   const [website, setWebsite] = useState("");
   const [slots, setSlots] = useState<AvailabilitySlot[]>([]);
   const [availabilityState, setAvailabilityState] = useState<"idle" | "loading" | "ready" | "error">("idle");
@@ -75,6 +77,8 @@ export function BookingForm() {
   const dateOptions = getBookableDateOptions(language);
   const bookingService = getBookingService({ serviceIds, addOnIds }, language);
   const allInOneSelected = isAllInOneSelection(serviceIds);
+  const specialHaircutSelected = isSpecialHaircutSelection(serviceIds);
+  const offSiteSelected = bookingService.id === "off-site-haircut";
   const faceTreatmentSelected = isFaceTreatmentSelection(serviceIds);
   const selectedBarber = ACTIVE_BARBERS.find((barber) => barber.id === barberId);
   const selectedDate = dateOptions.find((date) => date.localDate === localDate);
@@ -91,7 +95,9 @@ export function BookingForm() {
   const phoneIsValid = normalizedPhone !== null;
   const firstNameValid = firstName.trim().length >= 2;
   const lastNameValid = lastName.trim().length >= 2;
-  const detailsValid = firstNameValid && lastNameValid && phoneIsValid;
+  const addressValid = visitAddress.trim().length >= 5;
+  const detailsValid = firstNameValid && lastNameValid && phoneIsValid
+    && (!offSiteSelected || (Boolean(visitCity) && addressValid));
   const hasCompleteSelection = Boolean(selectedBarber && selectedDate && selectedSlotObject);
   const canConfirm = availabilityIsVerified && hasCompleteSelection && detailsValid && !isSubmitting;
   const availableSlotCount = slots.filter((slot) => slot.available).length;
@@ -176,7 +182,7 @@ export function BookingForm() {
       return;
     }
 
-    const nextServiceIds = allInOneSelected
+    const nextServiceIds = allInOneSelected || specialHaircutSelected
       ? [nextServiceId]
       : serviceIds.includes(nextServiceId)
         ? serviceIds.length > 1
@@ -192,7 +198,7 @@ export function BookingForm() {
     resetAvailabilityForServiceChange();
   }
 
-  function selectPackageService(nextServiceId: ServiceId) {
+  function selectExclusiveService(nextServiceId: ServiceId) {
     if (serviceIds.length === 1 && serviceIds[0] === nextServiceId) {
       return;
     }
@@ -262,6 +268,14 @@ export function BookingForm() {
       nextErrors.phoneNumber = dictionary.booking.validationPhone;
     }
 
+    if (offSiteSelected && !visitCity) {
+      nextErrors.visitCity = dictionary.booking.visitCityRequired;
+    }
+
+    if (offSiteSelected && !addressValid) {
+      nextErrors.visitAddress = dictionary.booking.visitAddressRequired;
+    }
+
     setFieldErrors(nextErrors);
     return Object.keys(nextErrors).length === 0;
   }
@@ -298,9 +312,10 @@ export function BookingForm() {
         lastName,
         phoneNumber,
         website,
+        ...(offSiteSelected && visitCity ? { visitCity, visitAddress: visitAddress.trim() } : {}),
       });
 
-      window.localStorage.setItem(LAST_BOOKING_KEY, JSON.stringify(booking));
+      window.localStorage.setItem(LAST_BOOKING_KEY, JSON.stringify({ ...booking, visitCity: undefined, visitAddress: undefined }));
       resetSubmissionAttempt();
       setSuccessBooking(booking);
     } catch (error) {
@@ -355,6 +370,9 @@ export function BookingForm() {
             [dictionary.booking.summaryTime, `${successBooking.localTime}-${successBooking.endLocalTime}`],
             [dictionary.booking.summaryPhone, successBooking.customerPhone],
             [dictionary.booking.summaryPrice, successBooking.priceLabel],
+            ...(successBooking.visitCity && successBooking.visitAddress
+              ? [[dictionary.booking.visitAddress, `${successBooking.visitAddress}, ${successBooking.visitCity}`]]
+              : []),
           ].map(([label, value]) => (
             <div key={label} className="rounded-[1rem] border border-white/10 bg-black/25 p-4">
               <p className="text-xs uppercase tracking-[0.18em] text-white/42">{label}</p>
@@ -453,7 +471,7 @@ export function BookingForm() {
                     key={service.id}
                     type="button"
                     aria-pressed={active}
-                    onClick={() => selectPackageService(service.id)}
+                    onClick={() => selectExclusiveService(service.id)}
                     className="service-row"
                   >
                     <span className="service-row-indicator service-row-indicator-square" aria-hidden>
@@ -477,18 +495,18 @@ export function BookingForm() {
 
             <p className="text-sm text-white/70">{dictionary.booking.beardSelectionNote}</p>
 
-            <div className="space-y-1.5 rounded-[0.9rem] bg-white/5 p-3 text-sm text-white/70">
-              <p className="flex items-baseline justify-between gap-3">
-                <span>{dictionary.booking.afterHoursHaircut}</span>
-                <strong className="shrink-0 text-white">10€</strong>
-              </p>
-              <p className="flex items-baseline justify-between gap-3">
-                <span>{dictionary.booking.offSiteHaircut}</span>
-                <strong className="shrink-0 text-white">30€</strong>
-              </p>
-              <a className="inline-block text-[var(--color-accent)] underline" href={`tel:${CONTACT_DETAILS.primaryPhone}`}>
-                {dictionary.booking.callToArrangeHaircut}
-              </a>
+            <div className="flex flex-col gap-1.5">
+              {SERVICES.filter((service) => service.type === "special").map((service) => (
+                <button key={service.id} type="button" className="service-row"
+                  aria-pressed={serviceIds.includes(service.id)} onClick={() => selectExclusiveService(service.id)}>
+                  <span className="service-row-indicator service-row-indicator-square" aria-hidden>✓</span>
+                  <span className="service-row-body">
+                    <span className="service-row-name">{service.name[language]}</span>
+                    <span className="w-full text-xs text-white/60">{service.description[language]}</span>
+                  </span>
+                  <span className="service-row-meta"><strong>{service.price}€</strong></span>
+                </button>
+              ))}
             </div>
 
             {ADD_ONS.length > 0 ? (
@@ -497,7 +515,7 @@ export function BookingForm() {
                 <div className="mt-2 flex flex-col gap-1.5">
                   {ADD_ONS.map((addOn) => {
                     const active = addOnIds.includes(addOn.id);
-                    const disabled = allInOneSelected || faceTreatmentSelected;
+                    const disabled = allInOneSelected || faceTreatmentSelected || specialHaircutSelected;
 
                     return (
                       <button
@@ -749,6 +767,36 @@ export function BookingForm() {
                   <span className="field-error">{fieldErrors.phoneNumber || dictionary.booking.validationPhone}</span>
                 ) : null}
               </label>
+              {offSiteSelected ? (
+                <>
+                  <label className="field-label">
+                    {dictionary.booking.visitCity}
+                    <select className="field-input" value={visitCity} required
+                      aria-invalid={Boolean(fieldErrors.visitCity)}
+                      onChange={(event) => {
+                        setVisitCity(event.target.value as OffSiteCity | "");
+                        setFieldErrors((current) => ({ ...current, visitCity: "" }));
+                        resetSubmissionAttempt();
+                      }}>
+                      <option value="">{dictionary.booking.visitCityPlaceholder}</option>
+                      {OFF_SITE_CITIES.map((city) => <option key={city} value={city}>{city}</option>)}
+                    </select>
+                    {fieldErrors.visitCity ? <span className="field-error">{fieldErrors.visitCity}</span> : null}
+                  </label>
+                  <label className="field-label">
+                    {dictionary.booking.visitAddress}
+                    <input className="field-input" value={visitAddress} required minLength={5} maxLength={200}
+                      autoComplete="address-line1" placeholder={dictionary.booking.visitAddressPlaceholder}
+                      aria-invalid={Boolean(fieldErrors.visitAddress)}
+                      onChange={(event) => {
+                        setVisitAddress(event.target.value);
+                        setFieldErrors((current) => ({ ...current, visitAddress: "" }));
+                        resetSubmissionAttempt();
+                      }} />
+                    {fieldErrors.visitAddress ? <span className="field-error">{fieldErrors.visitAddress}</span> : null}
+                  </label>
+                </>
+              ) : null}
               <input
                 type="text"
                 name="bb-company-url"

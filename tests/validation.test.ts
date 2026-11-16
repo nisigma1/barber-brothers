@@ -16,6 +16,15 @@ const validBookingPayload = {
 };
 
 describe("bookingRequestSchema", () => {
+  it("requires an eligible city and address only for off-site bookings", () => {
+    const offSite = { ...validBookingPayload, serviceIds: ["off-site-haircut"] };
+    const location = { visitCity: "Prishtinë", visitAddress: "Rruga Test 12" };
+    expect(bookingRequestSchema.safeParse(offSite).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...offSite, ...location }).success).toBe(true);
+    expect(bookingRequestSchema.safeParse({ ...offSite, ...location, visitCity: "Pejë" }).success).toBe(false);
+    expect(bookingRequestSchema.safeParse({ ...validBookingPayload, ...location }).success).toBe(false);
+  });
+
   it("accepts a clean booking payload", () => {
     const result = bookingRequestSchema.safeParse(validBookingPayload);
     expect(result.success).toBe(true);

@@ -34,6 +34,8 @@ export type BookingRow = {
   created_at: string;
   deleted_at: string | null;
   cancellation_token: string | null;
+  visit_city?: string | null;
+  visit_address?: string | null;
 };
 
 export type BarberDayClosureRow = {

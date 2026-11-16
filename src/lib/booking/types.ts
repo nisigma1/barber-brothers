@@ -1,6 +1,8 @@
 export type Language = "sq" | "en";
 export type BarberId = string;
-export type ServiceId = "haircut" | "beard-trim" | "face-treatment" | "all-in-one";
+export type ServiceId = "haircut" | "beard-trim" | "face-treatment" | "all-in-one" | "after-hours-haircut" | "off-site-haircut";
+export const OFF_SITE_CITIES = ["Prishtinë", "Fushë Kosovë"] as const;
+export type OffSiteCity = (typeof OFF_SITE_CITIES)[number];
 export type AddOnId = "premium-product";
 export type BookingStatus = "confirmed" | "deleted";
 export type SlotLockStatus = "active" | "released";
@@ -51,6 +53,8 @@ export interface PublicBookingPayload {
   lastName: string;
   phoneNumber: string;
   website?: string;
+  visitCity?: OffSiteCity;
+  visitAddress?: string;
 }
 
 export interface BookingRecord {
@@ -106,6 +110,8 @@ export interface BookingSummary {
   customerLastName: string;
   customerPhone: string;
   priceLabel: string;
+  visitCity?: string;
+  visitAddress?: string;
   cancellationToken?: string;
 }
 

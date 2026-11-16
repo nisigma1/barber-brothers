@@ -486,7 +486,7 @@ export function QuickBookPanel({
                 onChange={(event) => setServiceId(event.target.value as ServiceId)}
                 className="field-input"
               >
-                {SERVICES.map((service) => (
+                {SERVICES.filter((service) => service.type !== "special").map((service) => (
                   <option key={service.id} value={service.id}>
                     {service.name[language]} · {service.durationMinutes} min · {service.price}€
                   </option>

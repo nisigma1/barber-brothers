@@ -408,6 +408,13 @@ export function StaffBookingsPage() {
                               <strong>{booking.barberName}</strong>
                             </div>
 
+                            {booking.visitCity && booking.visitAddress ? (
+                              <div className="staff-row-detail-line">
+                                <span>{dictionary.booking.visitAddress}</span>
+                                <strong className="min-w-0 [overflow-wrap:anywhere]">{booking.visitAddress}, {booking.visitCity}</strong>
+                              </div>
+                            ) : null}
+
                             <div className="staff-row-detail-actions">
                               {clientCounted ? (
                                 <a

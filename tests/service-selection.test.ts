@@ -11,10 +11,16 @@ import {
 } from "@/lib/constants";
 
 describe("service catalogue", () => {
-  it("has the expected four bookable services", () => {
+  it("has the expected bookable services", () => {
     expect(SERVICES.map((s) => s.id).sort()).toEqual(
-      ["all-in-one", "beard-trim", "face-treatment", "haircut"].sort(),
+      ["after-hours-haircut", "all-in-one", "beard-trim", "face-treatment", "haircut", "off-site-haircut"],
     );
+  });
+
+  it.each([["after-hours-haircut", 10], ["off-site-haircut", 30]] as const)("prices %s at %i EUR and books it separately", (id, price) => {
+    expect(getBookingService(id)).toMatchObject({ durationMinutes: 30, price });
+    expect(isValidServiceSelection({ serviceIds: [id, "haircut"] })).toBe(false);
+    expect(isValidServiceSelection({ serviceIds: [id], addOnIds: ["premium-product"] })).toBe(false);
   });
 
   it("haircut is 30 min and beard-trim is 15 min", () => {
