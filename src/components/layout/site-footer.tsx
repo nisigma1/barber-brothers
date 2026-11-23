@@ -8,7 +8,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 
 export function SiteFooter() {
   const pathname = usePathname();
-  const { dictionary } = useLanguage();
+  const { dictionary, language } = useLanguage();
 
   if (pathname === "/preview") {
     return null;
@@ -89,6 +89,15 @@ export function SiteFooter() {
       <div className="site-footer-strip mx-auto w-full max-w-7xl">
         <span className="site-footer-signature">{dictionary.home.footerSignature}</span>
         <span className="site-footer-copy">© {year} {dictionary.home.footerCopyright}</span>
+        <span className="text-[var(--muted)]">
+          {language === "sq" ? "Realizuar nga " : "Designed & developed by "}
+          <a
+            href="https://www.malera.studio/"
+            className="inline-block rounded-sm py-1 text-[var(--foreground)] underline underline-offset-4 hover:decoration-[var(--accent-strong)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[var(--accent-strong)]"
+          >
+            Malera Studio
+          </a>
+        </span>
         <span className="site-footer-version">{APP_VERSION}</span>
       </div>
     </footer>
