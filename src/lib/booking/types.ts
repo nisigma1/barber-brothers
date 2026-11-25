@@ -123,20 +123,6 @@ export interface StaffBookingItem extends BookingSummary {
   status: BookingStatus;
 }
 
-export interface StaffBookingStatsPeriod {
-  count: number;
-  startDate: string;
-  endDate: string;
-  medicalLeaveDays: number;
-  timeOffDays: number;
-  closedDays: number;
-}
-
-export interface StaffBookingStats {
-  week: StaffBookingStatsPeriod;
-  month: StaffBookingStatsPeriod;
-}
-
 export interface BarberDayClosure {
   barberId: BarberId;
   localDate: string;

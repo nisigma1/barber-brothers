@@ -10,9 +10,7 @@ import {
   staffLogout,
 } from "@/lib/booking/client";
 import type {
-  BarberClosureReason,
   BarberDayClosure,
-  StaffBookingStats,
   StaffBookingItem,
 } from "@/lib/booking/types";
 import { isSelfReservedName, isStaffManagedBooking } from "@/lib/booking/staff-reservations";
@@ -36,102 +34,6 @@ function isClientCountedBooking(booking: StaffBookingItem) {
     booking.customerLastName,
     booking.customerPhone,
   );
-}
-
-function isLocalDateInRange(localDate: string, startDate: string, endDate: string) {
-  return localDate >= startDate && localDate <= endDate;
-}
-
-function applyStatsDelta(
-  stats: StaffBookingStats | null,
-  localDate: string,
-  delta: 1 | -1,
-) {
-  if (!stats) {
-    return stats;
-  }
-
-  return {
-    week: {
-      ...stats.week,
-      count: isLocalDateInRange(localDate, stats.week.startDate, stats.week.endDate)
-        ? Math.max(0, stats.week.count + delta)
-        : stats.week.count,
-    },
-    month: {
-      ...stats.month,
-      count: isLocalDateInRange(localDate, stats.month.startDate, stats.month.endDate)
-        ? Math.max(0, stats.month.count + delta)
-        : stats.month.count,
-    },
-  };
-}
-
-function isSundayLocalDate(localDate: string) {
-  const [year, month, day] = localDate.split("-").map(Number);
-
-  return new Date(Date.UTC(year, month - 1, day)).getUTCDay() === 0;
-}
-
-function adjustReasonCount(
-  period: StaffBookingStats["week"],
-  reason: BarberClosureReason,
-  delta: 1 | -1,
-) {
-  if (reason === "medical-leave") {
-    return {
-      ...period,
-      medicalLeaveDays: Math.max(0, period.medicalLeaveDays + delta),
-    };
-  }
-
-  return {
-    ...period,
-    timeOffDays: Math.max(0, period.timeOffDays + delta),
-  };
-}
-
-function applyClosureStatsChange(
-  stats: StaffBookingStats | null,
-  localDate: string,
-  previousReason: BarberClosureReason | null,
-  nextReason: BarberClosureReason | null,
-) {
-  if (!stats || isSundayLocalDate(localDate) || previousReason === nextReason) {
-    return stats;
-  }
-
-  const updatePeriod = (period: StaffBookingStats["week"]) => {
-    if (!isLocalDateInRange(localDate, period.startDate, period.endDate)) {
-      return period;
-    }
-
-    let nextPeriod = period;
-
-    if (previousReason) {
-      nextPeriod = adjustReasonCount(nextPeriod, previousReason, -1);
-    }
-
-    if (nextReason) {
-      nextPeriod = adjustReasonCount(nextPeriod, nextReason, 1);
-    }
-
-    const closedDelta = previousReason && !nextReason
-      ? -1
-      : !previousReason && nextReason
-        ? 1
-        : 0;
-
-    return {
-      ...nextPeriod,
-      closedDays: Math.max(0, nextPeriod.closedDays + closedDelta),
-    };
-  };
-
-  return {
-    week: updatePeriod(stats.week),
-    month: updatePeriod(stats.month),
-  };
 }
 
 function groupBookingsByDate(
@@ -183,7 +85,6 @@ export function StaffBookingsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [barberId, setBarberId] = useState<string | null>(null);
   const [closures, setClosures] = useState<BarberDayClosure[]>([]);
-  const [stats, setStats] = useState<StaffBookingStats | null>(null);
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({});
 
   function toggleGroup(key: string) {
@@ -204,14 +105,12 @@ export function StaffBookingsPage() {
           setBarberId(dashboard.session.barberId);
           setBookings(dashboard.bookings);
           setClosures(dashboard.closures);
-          setStats(dashboard.stats);
         }
       } catch (error) {
         if (!ignore) {
           setBookings([]);
           setBarberId(null);
           setClosures([]);
-          setStats(null);
           setMessage(dictionary.staff.authRequired);
 
           if (error instanceof ClientBookingError && error.code === "UNAUTHORIZED") {
@@ -234,18 +133,7 @@ export function StaffBookingsPage() {
 
   function handleQuickBookCreated(booking: StaffBookingItem) {
     setBookings((current) => [...current, booking]);
-    if (isClientCountedBooking(booking)) {
-      setStats((current) => applyStatsDelta(current, booking.localDate, 1));
-    }
     setMessage(dictionary.staff.quickBookSuccess);
-  }
-
-  function handleClosureStatsChange(
-    localDate: string,
-    previousReason: BarberClosureReason | null,
-    nextReason: BarberClosureReason | null,
-  ) {
-    setStats((current) => applyClosureStatsChange(current, localDate, previousReason, nextReason));
   }
 
   const groups = useMemo(
@@ -258,9 +146,6 @@ export function StaffBookingsPage() {
     try {
       await softDeleteClientBooking(booking);
       setBookings((current) => current.filter((item) => item.bookingId !== booking.bookingId));
-      if (isClientCountedBooking(booking)) {
-        setStats((current) => applyStatsDelta(current, booking.localDate, -1));
-      }
       setMessage(dictionary.staff.deleted);
       setConfirmingId(null);
       if (expandedId === booking.bookingId) {
@@ -469,13 +354,11 @@ export function StaffBookingsPage() {
         </div>
 
         <div className="staff-dashboard-aside">
-          {barberId && stats ? (
+          {barberId ? (
             <QuickBookPanel
               barberId={barberId}
               closures={closures}
-              stats={stats}
               onClosuresChange={setClosures}
-              onClosureStatsChange={handleClosureStatsChange}
               onBookingCreated={handleQuickBookCreated}
             />
           ) : null}

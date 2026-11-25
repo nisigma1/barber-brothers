@@ -1,9 +1,10 @@
-name = "barber-brothers"
+name = "barber-brothers-qeta"
+account_id = "3aa12d83073f64d9085f0dff41ad0feb"
 compatibility_date = "2026-04-30"
 pages_build_output_dir = "out"
 
 [[d1_databases]]
 binding = "DB"
 database_name = "barber-brothers-db"
-database_id = "1fd74c5a-6bf8-4356-aadb-422c716a4186"
+database_id = "bcb5934d-0545-42eb-8850-45ea10e244e3"
 migrations_dir = "migrations"

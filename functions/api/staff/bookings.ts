@@ -1,6 +1,5 @@
 import {
   ApiBookingError,
-  getStaffBookingStats,
   listBarberDayClosures,
   listStaffBookings,
   softDeleteBooking,
@@ -25,10 +24,9 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
   }
 
   const profile = getBarberProfile(session.barberId);
-  const [bookings, closures, stats] = await Promise.all([
+  const [bookings, closures] = await Promise.all([
     listStaffBookings(env, session.barberId),
     listBarberDayClosures(env, session.barberId),
-    getStaffBookingStats(env, session.barberId),
   ]);
 
   return jsonResponse({
@@ -38,7 +36,6 @@ export const onRequestGet = async ({ env, request }: PagesContext) => {
     },
     bookings,
     closures,
-    stats,
   });
 };
 
