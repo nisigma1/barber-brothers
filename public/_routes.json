@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "include": [
+    "/api/*",
+    "/staff",
+    "/staff/",
+    "/staff/signup",
+    "/staff/signup/",
+    "/googlea3dcd0a38a812f73.html",
+    "/brand/edi.jpeg",
+    "/brand/edi.webp",
+    "/brand/hero-logo.png"
+  ],
+  "exclude": []
+}
